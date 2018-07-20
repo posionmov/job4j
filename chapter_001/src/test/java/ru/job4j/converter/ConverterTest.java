@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
  * Converter test
  * @author Sergey Galanov
  * @since 20.07.2018
- * @version 1.0
+ * @version 1.1
  */
 public class ConverterTest {
 
@@ -24,13 +24,35 @@ public class ConverterTest {
     }
 
     /**
-     * test for func ""
+     * test for func "rubToEuro"
      */
     @Test
     public void when70RubleToEurothen1() {
         Converter conv = new Converter();
         double result = conv.rubToEuro(70);
         double expected = 1;
+        assertThat(result, is(expected));
+    }
+
+    /**
+     * Test for func "dollarToRub"
+     */
+    @Test
+    public void when250DollarThen15000Rubles() {
+        Converter conv = new Converter();
+        double result = conv.dollarToRub(250);
+        double expected = 15000;
+        assertThat(result, is(expected));
+    }
+
+    /**
+     * Test for func "euroToRub"
+     */
+    @Test
+    public void when250EuroThen17500Rubles() {
+        Converter conv = new Converter();
+        double result = conv.euroToRub(250);
+        double expected = 17500;
         assertThat(result, is(expected));
     }
 }
