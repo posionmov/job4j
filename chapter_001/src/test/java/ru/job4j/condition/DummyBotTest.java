@@ -14,7 +14,7 @@ public class DummyBotTest {
     @Test
     public void whenHiBotThenHiFromBot() {
         DummyBot bot = new DummyBot();
-        assertThat(bot.questions("Привет, Бот."),is("Привет, умник"));
+        assertThat(bot.questions("Привет, Бот."), is("Привет, умник"));
     }
 
     /**
@@ -23,7 +23,7 @@ public class DummyBotTest {
     @Test
     public void whenByeBotThanByeFromBot() {
         DummyBot bot = new DummyBot();
-        assertThat(bot.questions("Пока."),is("До скорой встречи."));
+        assertThat(bot.questions("Пока."), is("До скорой встречи."));
     }
 
     /**
@@ -32,6 +32,6 @@ public class DummyBotTest {
     @Test
     public void whenQwertyThanBotDoNotUnderstand() {
         DummyBot bot = new DummyBot();
-        assertThat(bot.questions("qwerty"),is("Это ставит меня в тупик. Спросите другой вопрос."));
+        assertThat(bot.questions("qwerty"), is("Это ставит меня в тупик. Спросите другой вопрос."));
     }
 }
