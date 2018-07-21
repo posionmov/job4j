@@ -9,11 +9,20 @@ import static org.junit.Assert.*;
 public class MaxTest {
 
     /**
-     * Test for func "max" in Max.java
+     * Test for func "max(int, int)" in Max.java
      */
     @Test
     public void when2And3Then3() {
         Max max = new Max();
         assertThat(max.max(2, 3), is(3));
+    }
+
+    /**
+     * Test for func "max(int, int, int) if Max.java
+     */
+    @Test
+    public void when2And6And3Then6() {
+        Max max = new Max();
+        assertThat(max.max(2, 6, 3), is(6));
     }
 }
