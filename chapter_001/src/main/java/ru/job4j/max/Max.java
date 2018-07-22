@@ -26,8 +26,6 @@ public class Max {
      * @return max from three numbers
      */
     public int max(int first, int second, int third) {
-        int temporary = max(first, second);
-        temporary = max(temporary, third);
-        return temporary;
+        return max(max(first, second), third);
     }
 }
