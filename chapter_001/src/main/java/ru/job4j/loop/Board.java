@@ -17,32 +17,16 @@ public class Board {
     public String paint(int width, int height) {
         StringBuilder screen = new StringBuilder();
         String ln = System.lineSeparator();
-
-        String x = "X";
-        String nothing = " ";
-        String tmp = "";
-
         for (int i = 1; i <= width; i++) {
-            if (i % 2 == 0) {
-                tmp = nothing;
-                nothing = x;
-                x = tmp;
-            } else {
-                x = "X";
-                nothing = " ";
-                tmp = "";
-            }
             for (int j = 1; j <= height; j++) {
-
-                if (j % 2 == 0) {
-                        screen.append(nothing);
-                    } else if (j % 2 != 0) {
-                        screen.append(x);
-                        if (j == height) {
-                            screen.append((ln));
-                        }
-                    }
-
+                if ((i + j) % 2 == 0) {
+                    screen.append("X");
+                } else {
+                    screen.append(" ");
+                }
+                if (j == height) {
+                    screen.append((ln));
+                }
             }
         }
         return screen.toString();
