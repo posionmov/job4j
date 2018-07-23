@@ -7,8 +7,8 @@ import static org.hamcrest.core.Is.is;
 /**
  * Class for checking MatrixCheck.java
  * @author Galanov Sergey
- * @since 22.07.2018
- * @version 1.0
+ * @since 23.07.2018
+ * @version 1.1
  */
 public class MatrixCheckTest {
 
@@ -42,9 +42,9 @@ public class MatrixCheckTest {
     @Test
     public void whenOddDataMonoThenTrue() {
         MatrixCheck check = new MatrixCheck();
-        boolean[][] input = new boolean[][] {{true, false}, {false, true}};
+        boolean[][] input = new boolean[][] {{true, false}, {true, true}};
         boolean result = check.mono(input);
-        boolean expect = true;
+        boolean expect = false;
         assertThat(result, is(expect));
     }
 
