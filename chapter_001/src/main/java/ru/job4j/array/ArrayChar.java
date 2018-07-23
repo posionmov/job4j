@@ -3,8 +3,8 @@ package ru.job4j.array;
 /**
  * Class for cheking prefix of word
  * @author Galanov Sergey
- * @since 22.07.2018
- * @version 1.0
+ * @since 23.07.2018
+ * @version 1.1
  */
 public class ArrayChar {
     /**
@@ -31,6 +31,7 @@ public class ArrayChar {
         for (int index = 0; index != value.length; index++) {
             if (this.data[index] != value[index]) {
                 result = false;
+                break;
             }
         }
         return result;
