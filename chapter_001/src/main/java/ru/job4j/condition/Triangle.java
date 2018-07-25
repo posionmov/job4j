@@ -55,14 +55,11 @@ public class Triangle {
      * @return
      */
     public double area() {
-
         double rsl = -1;
         double ab = this.a.distanceTo(b);
         double ac = this.a.distanceTo(c);
         double bc = this.b.distanceTo(c);
-
         double p = this.period(ab, ac, bc);
-
         if (this.exists(ab, ac, bc)) {
             rsl = Math.sqrt(p * (p - ab) * (p - bc) * (p - ac));
         }

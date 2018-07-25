@@ -40,7 +40,6 @@ public class Point {
     public static void main(String[] args) {
         Point a = new Point(5, 3);
         Point b = new Point(2, 6);
-
         System.out.println("Point a = " + a.x + " " + a.y);
         System.out.println("Point b = " + b.x + " " + b.y);
         System.out.println("Расстояние между точками А и Б = " + a.distanceTo(b));
