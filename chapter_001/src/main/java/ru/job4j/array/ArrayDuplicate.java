@@ -31,7 +31,7 @@ public class ArrayDuplicate {
         }
         return Arrays.copyOf(array, iterations - 1);
     }
-    */
+
     public String[] removing(String[] array) {
         String tmp;
         int iter = 0;
@@ -72,5 +72,22 @@ public class ArrayDuplicate {
             }
         }
         return Arrays.copyOf(array, iter);
+    }
+    */
+    public String[] removing(String[] array) {
+        int unic = array.length - 1;
+        String tmp;
+        for (int i = 0; i != array.length - 1; i++) {
+            for (int j = i + 1; j != array.length; j++) {
+                if (array[i].equals(array[j])) {
+                    tmp = array[j];
+                    array[j] = array[unic];
+                    array[unic] = tmp;
+                    --unic;
+                    --j;
+                }
+            }
+        }
+        return Arrays.copyOf(array, unic + 1);
     }
 }
