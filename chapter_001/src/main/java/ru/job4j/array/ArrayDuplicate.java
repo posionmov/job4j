@@ -75,19 +75,17 @@ public class ArrayDuplicate {
     }
     */
     public String[] removing(String[] array) {
-        int unic = array.length - 1;
+        int unic = array.length;
         String tmp;
-        for (int i = 0; i != array.length - 1; i++) {
-            for (int j = i + 1; j != array.length; j++) {
+        for (int i = 0; i < unic; i++) {
+            for (int j = i + 1; j < unic; j++) {
                 if (array[i].equals(array[j])) {
-                    tmp = array[j];
-                    array[j] = array[unic];
-                    array[unic] = tmp;
-                    --unic;
-                    --j;
+                    array[j] = array[unic - 1];
+                    unic--;
+                    j--;
                 }
             }
         }
-        return Arrays.copyOf(array, unic + 1);
+        return Arrays.copyOf(array, unic);
     }
 }
