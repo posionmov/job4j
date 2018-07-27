@@ -60,21 +60,13 @@ public class Tracker {
      * @param id - id of deleting item
      */
     public void delete(String id) {
-        Item[] result = new Item[position - 1];
-        int pos = 0;            // с какой позициий вставлять
-        int newPositions = 0;   //Количетво вставляемых позиций
-        for (int i = 0; i <= position; i++) {
-            if (this.items[i].getId().equals(id)) {
-                pos = i;
-                for (int index = i; index <= this.position - 1; index++) {
-                    if (index < this.position - 1) {
-                        result[newPositions++] = items[index + 1];
-                    }
-                }
+        for (int i = 0; i < position; i++) {
+            if (this.items[i] != null && this.items[i].getId().equals(id)) {
+                System.arraycopy(this.items, i + 1, this.items, i, this.items.length - 1 - i); //тут вы сдвигаете все элементы справа от удаляемого на 1 позицию влево
+                this.position--;
                 break;
             }
         }
-        System.arraycopy(result, newPositions - 1, this.items, pos, newPositions + 1);
     }
 
     /**

@@ -43,7 +43,7 @@ public class TrackerTest {
     @Test
     public void whenDeleteThenReturnNewArray() {
         Tracker tracker = new Tracker();
-        Item[] expect = new Item[3];
+        Item[] expect = new Item[2];
         Item one = new Item("one", "oneDescription", 123L);
         tracker.add(one);
         expect[0] = one;
@@ -52,7 +52,6 @@ public class TrackerTest {
         Item three = new Item("three", "threeDescription", 125L);
         tracker.add(three);
         expect[1] = three;
-        expect[2] = null;
         tracker.delete(two.getId());
         System.out.println("123");
         assertThat(tracker.findAll(), is(expect));
