@@ -4,9 +4,17 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.is;
 
+/**
+ * Class for testing Tracker.java
+ * @author Galanov Sergey
+ * @since 27.07.2018
+ * @version 1.3
+ */
 public class TrackerTest {
 
-    //Add
+    /**
+     * Test for func "add"
+     */
     @Test
     public void whenAddNewItemThenTrackerHasSomeItem() {
         Tracker tracker = new Tracker();
@@ -15,7 +23,9 @@ public class TrackerTest {
         assertThat(tracker.findAll()[0], is(item));
     }
 
-    //Replace
+    /**
+     * Test for func "replace"
+     */
     @Test
     public void whenReplaceNameThenReturnNewName() {
         Tracker tracker = new Tracker();
@@ -24,14 +34,16 @@ public class TrackerTest {
         Item nextItem = new Item("test2", "testDescription2", 12345L);
         nextItem.setID(previous.getId());
         tracker.replace(previous.getId(), nextItem);
-        assertThat(tracker.findById(previous.getId()).genName(), is("test2"));
+        assertThat(tracker.findById(previous.getId()).getName(), is("test2"));
     }
 
-    //Delete ------
+    /**
+     * Test for func "delete"
+     */
     @Test
     public void whenDeleteThenReturnNewArray() {
         Tracker tracker = new Tracker();
-        Item[] expect = new Item[2];
+        Item[] expect = new Item[3];
         Item one = new Item("one", "oneDescription", 123L);
         tracker.add(one);
         expect[0] = one;
@@ -40,12 +52,15 @@ public class TrackerTest {
         Item three = new Item("three", "threeDescription", 125L);
         tracker.add(three);
         expect[1] = three;
+        expect[2] = null;
         tracker.delete(two.getId());
         System.out.println("123");
         assertThat(tracker.findAll(), is(expect));
     }
 
-    //FindAll
+    /**
+     * Test for func "find all"
+     */
     @Test
     public void whenCreateArrayThenFindAll() {
         Tracker tracker = new Tracker();
@@ -62,11 +77,13 @@ public class TrackerTest {
         assertThat(tracker.findAll(), is(expect));
     }
 
-    //Find By Name
+    /**
+     * Test for func "findByName"
+     */
     @Test
     public void whenSendNameThenFindAll() {
         Tracker tracker = new Tracker();
-        Item[] expect = new Item[3];
+        Item[] expect = new Item[2];
         Item one = new Item("one", "oneDescription", 123L);
         tracker.add(one);
         expect[0] = one;
@@ -78,7 +95,9 @@ public class TrackerTest {
         assertThat(tracker.findByName("one"), is(expect));
     }
 
-    //Find By Id
+    /**
+     * Test for func "findById"
+     */
     @Test
     public void whenSendIdThenFindOneObject() {
         Tracker tracker = new Tracker();

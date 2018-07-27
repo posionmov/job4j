@@ -22,7 +22,7 @@ public class Item {
         return this.id;
     }
 
-    public String genName() {
+    public String getName() {
         return this.name;
     }
 
