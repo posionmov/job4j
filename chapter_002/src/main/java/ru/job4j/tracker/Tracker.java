@@ -62,7 +62,7 @@ public class Tracker {
     public void delete(String id) {
         for (int i = 0; i < position; i++) {
             if (this.items[i] != null && this.items[i].getId().equals(id)) {
-                System.arraycopy(this.items, i + 1, this.items, i, this.items.length - 1 - i); //тут вы сдвигаете все элементы справа от удаляемого на 1 позицию влево
+                System.arraycopy(this.items, i + 1, this.items, i, this.items.length - 1 - i);
                 this.position--;
                 break;
             }
