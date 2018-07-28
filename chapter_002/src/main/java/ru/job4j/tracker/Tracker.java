@@ -49,7 +49,7 @@ public class Tracker {
         for (int i = 0; i <= position; i++) {
             if (items[i] != null && items[i].getId().equals(id)) {
                 items[i] = item;
-                items[i].setID(id);
+                items[i].setID(id); //Добавление в новый объект текущий id
                 break;
             }
         }
