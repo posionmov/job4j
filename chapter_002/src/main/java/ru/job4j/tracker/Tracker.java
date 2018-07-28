@@ -35,7 +35,7 @@ public class Tracker {
      * @return - this item
      */
     public Item add(Item item) {
-        item.setID(String.valueOf(generateId()));
+        item.setID(this.generateId());
         this.items[position++] = item;
         return item;
     }
@@ -49,7 +49,7 @@ public class Tracker {
         for (int i = 0; i <= position; i++) {
             if (items[i] != null && items[i].getId().equals(id)) {
                 items[i] = item;
-                items[i].setID(item.getId());
+                items[i].setID(id);
                 break;
             }
         }
@@ -62,7 +62,7 @@ public class Tracker {
     public void delete(String id) {
         for (int i = 0; i < position; i++) {
             if (this.items[i] != null && this.items[i].getId().equals(id)) {
-                System.arraycopy(this.items, i + 1, this.items, i, this.items.length - 1 - i); //тут вы сдвигаете все элементы справа от удаляемого на 1 позицию влево
+                System.arraycopy(this.items, i + 1, this.items, i, this.items.length - 1 - i);
                 this.position--;
                 break;
             }
@@ -91,16 +91,14 @@ public class Tracker {
      */
     public Item[] findByName(String key) {
         int matches = 0;
-        Item tmp;
-        for (int i = 0; i != position; i++) {
+        Item[] result = new Item[this.position];
+        for (int i = 0; i != this.position; i++) {
             if (this.items[i].getName().equals(key)) {
-                tmp = items[matches];
-                items[matches] = items[i];
-                items[i] = tmp;
-                matches++;
+                result[matches++] = items[i];
             }
         }
-        return Arrays.copyOf(this.items, matches);
+        System.out.println("123");
+        return Arrays.copyOf(result, matches);
     }
 
     /**
