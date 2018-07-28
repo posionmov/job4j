@@ -35,7 +35,7 @@ public class Tracker {
      * @return - this item
      */
     public Item add(Item item) {
-        item.setID(String.valueOf(generateId()));
+        item.setID(this.generateId());
         this.items[position++] = item;
         return item;
     }
@@ -49,7 +49,7 @@ public class Tracker {
         for (int i = 0; i <= position; i++) {
             if (items[i] != null && items[i].getId().equals(id)) {
                 items[i] = item;
-                items[i].setID(item.getId());
+                items[i].setID(id);
                 break;
             }
         }
@@ -91,7 +91,7 @@ public class Tracker {
      */
     public Item[] findByName(String key) {
         int matches = 0;
-        Item[] result = new Item[this.position - 1];
+        Item[] result = new Item[this.position];
         for (int i = 0; i != this.position; i++) {
             if (this.items[i].getName().equals(key)) {
                 result[matches++] = items[i];
