@@ -97,7 +97,6 @@ public class Tracker {
                 result[matches++] = items[i];
             }
         }
-        System.out.println("123");
         return Arrays.copyOf(result, matches);
     }
 
