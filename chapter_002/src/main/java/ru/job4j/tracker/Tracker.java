@@ -5,7 +5,7 @@ import java.util.*;
  * Class for working with arra of items
  * @author Galanov Sergey
  * @since 27.07.2018
- * @version 1.3
+ * @version 1.4
  */
 public class Tracker {
 
@@ -45,28 +45,35 @@ public class Tracker {
      * @param id - id for finding Item
      * @param item - new Item for this id
      */
-    public void replace(String id, Item item) {
+    public boolean replace(String id, Item item) {
+        boolean isCorrect = false;
         for (int i = 0; i <= position; i++) {
             if (items[i] != null && items[i].getId().equals(id)) {
                 items[i] = item;
                 items[i].setID(id); //Добавление в новый объект текущий id
+                isCorrect = true;
                 break;
             }
         }
+        return isCorrect;
     }
 
     /**
      * Func for delete Item if Array
      * @param id - id of deleting item
+     * @return true if item is delete
      */
-    public void delete(String id) {
+    public boolean delete(String id) {
+        boolean isCorrect = false;
         for (int i = 0; i < position; i++) {
             if (this.items[i] != null && this.items[i].getId().equals(id)) {
                 System.arraycopy(this.items, i + 1, this.items, i, this.items.length - 1 - i);
                 this.position--;
+                isCorrect = true;
                 break;
             }
         }
+        return isCorrect;
     }
 
     /**

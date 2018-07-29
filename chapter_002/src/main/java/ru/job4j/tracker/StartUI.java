@@ -4,7 +4,7 @@ package ru.job4j.tracker;
  * Class for placing, editing and deleting bids
  * @author Galanov Sergey
  * @since 28.07.2018
- * @version 1.0
+ * @version 1.3
  */
 public class StartUI {
 
@@ -113,30 +113,11 @@ public class StartUI {
      * @return correct data
      */
     private String correctData(String type) {
-        boolean correct = false;
-        String result = null;
+        String result = "";
         if (type.equals("id")) {
-            result = this.input.ask("Введите id: ");
-            while (!correct) {
-                if (this.tracker.findById(result) == null) {
-                    System.out.println("Не верный id. Попробуйте еще раз. \nДля выхода напишите нажмите ввод");
-                    result = this.input.ask("Ваше действие: ");
-                    if (result.equals("")) {
-                        this.init();
-                    }
-                } else {
-                    correct = true;
-                }
-            }
+            result = this.input.ask("Для выхода нажмите Enter.\nВведите id: ");
         } else if (type.equals("name")) {
-            result = this.input.ask("Введите имя: ");
-            while (!correct) {
-                if (this.tracker.findByName(result) == null || this.tracker.findByName(result).length < 1) {
-                    result = this.input.ask("Не верное имя, попробуйте еще раз: ");
-                } else {
-                    correct = true;
-                }
-            }
+            result = this.input.ask("Для выхода нажмите Enter.\nВведите имя: ");
         }
         return result;
     }
@@ -145,29 +126,19 @@ public class StartUI {
      * Func for edit some element in array
      */
     private void editItem() {
-        /*
         String id = this.correctData("id");
-        Item item = this.tracker.findById(id);
-        String chose = this.input.ask("Что вы хотите изменить? \n1 - Имя \n2 - Описание\n3 - Оба параметра\nВаш выбор: ");
-        if (chose.equals("1")) {
-            String newName = this.input.ask("Введите новое имя: ");
-            item.setName(newName);
-        } else if (chose.equals("2")) {
-            String newDesc = this.input.ask("Введите новое описание: ");
-            item.setDescription(newDesc);
-        } else if (chose.equals("3")) {
-            String newName = this.input.ask("Введите новое имя: ");
-            item.setName(newName);
-            String newDesc = this.input.ask("Введите новое описание: ");
-            item.setDescription(newDesc);
+        String newName = this.input.ask("Введите новое имя: ");
+        String newDesc = this.input.ask("Введите новое описание: ");
+        Item item = new Item(newName, newDesc, System.nanoTime());
+        boolean isEdited =  this.tracker.replace(id, item);
+        if (!id.equals("") && isEdited) {
+            System.out.println("<----------------------- Готово! ----------------------->");
+        } else if (!id.equals("")) {
+            System.out.println("Запись не найдена, пожалуйста повторите.");
+            this.editItem();
+        } else {
+            this.init();
         }
-        System.out.println("<-------------- Заменяю содержимое заявки -------------->");
-        this.tracker.replace(id, item);
-        System.out.println("<----------------------- Готово! ----------------------->");
-        */
-        String id = this.correctData("id");
-        Item item = this.tracker.findById(id);
-
     }
 
     /**
@@ -175,9 +146,15 @@ public class StartUI {
      */
     private void deleteItem() {
         String id = this.correctData("id");
-        System.out.println("<-------------- Удаляю данную заявку -------------->");
-        this.tracker.delete(id);
-        System.out.println("<---------------- Заявка удалена! ----------------->");
+        boolean isDelete =  this.tracker.delete(id);
+        if (isDelete) {
+            System.out.println("<---------------- Заявка удалена! ----------------->");
+        } else if (!id.equals("")) {
+            System.out.println("Не найдена запись, пожалуйста повторите.");
+            this.deleteItem();
+        } else {
+            this.init();
+        }
     }
 
     /**
