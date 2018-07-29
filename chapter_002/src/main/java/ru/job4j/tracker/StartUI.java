@@ -3,8 +3,8 @@ package ru.job4j.tracker;
 /**
  * Class for placing, editing and deleting bids
  * @author Galanov Sergey
- * @since 28.07.2018
- * @version 1.3
+ * @since 29.07.2018
+ * @version 1.4
  */
 public class StartUI {
 
@@ -115,9 +115,9 @@ public class StartUI {
     private String correctData(String type) {
         String result = "";
         if (type.equals("id")) {
-            result = this.input.ask("Для выхода нажмите Enter.\nВведите id: ");
+            result = this.input.ask("Для выхода нажмите Enter." + System.lineSeparator() + "Введите id: ");
         } else if (type.equals("name")) {
-            result = this.input.ask("Для выхода нажмите Enter.\nВведите имя: ");
+            result = this.input.ask("Для выхода нажмите Enter." + System.lineSeparator() + "Введите имя: ");
         }
         return result;
     }
@@ -152,8 +152,6 @@ public class StartUI {
         } else if (!id.equals("")) {
             System.out.println("Не найдена запись, пожалуйста повторите.");
             this.deleteItem();
-        } else {
-            this.init();
         }
     }
 
@@ -163,12 +161,17 @@ public class StartUI {
     private void findItemById() {
         String id = this.correctData("id");
         Item item = this.tracker.findById(id);
-        System.out.println("<-------------- Информация о заявке --------------->");
-        System.out.println("ID: " + item.getId());
-        System.out.println("Имя: " + item.getName());
-        System.out.println("Описание: " + item.getDescription());
-        System.out.println("Дата создания: " + item.getCreated());
-        System.out.println("<-------------- Информация о заявке --------------->");
+        if (item != null) {
+            System.out.println("<-------------- Информация о заявке --------------->");
+            System.out.println("ID: " + item.getId());
+            System.out.println("Имя: " + item.getName());
+            System.out.println("Описание: " + item.getDescription());
+            System.out.println("Дата создания: " + item.getCreated());
+            System.out.println("<-------------- Информация о заявке --------------->");
+        } else if (!id.equals("")) {
+            System.out.println("Заявка не найдена, попробуйте  еще раз.");
+            this.findItemById();
+        }
     }
 
     /**
@@ -177,16 +180,20 @@ public class StartUI {
     private void findByName() {
         String name = this.correctData("name");
         Item[] items = this.tracker.findByName(name);
-        System.out.println("Найденные заявки:");
-        for (int i = 0; i != items.length; i++) {
-            System.out.println("<------------- Информация о заявке № " + (i + 1) + "------------->");
-            System.out.println("ID: " + items[i].getId());
-            System.out.println("Имя: " + items[i].getName());
-            System.out.println("Описание: " + items[i].getDescription());
-            System.out.println("Дата создания: " + items[i].getCreated());
-            System.out.println("<-------------- Информация о заявке --------------->");
+        if (items.length > 0) {
+            System.out.println("Найденные заявки:");
+            for (int i = 0; i != items.length; i++) {
+                System.out.println("<------------- Информация о заявке № " + (i + 1) + "------------->");
+                System.out.println("ID: " + items[i].getId());
+                System.out.println("Имя: " + items[i].getName());
+                System.out.println("Описание: " + items[i].getDescription());
+                System.out.println("Дата создания: " + items[i].getCreated());
+                System.out.println("<-------------- Информация о заявке --------------->");
+            }
+            System.out.println("<--------------- Конец найденных заявок --------------->");
+        } else {
+            System.out.println("Заявки не найены");
         }
-        System.out.println("<--------------- Конец найденных заявок --------------->");
     }
 }
 

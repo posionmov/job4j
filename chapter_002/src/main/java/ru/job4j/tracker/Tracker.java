@@ -4,8 +4,8 @@ import java.util.*;
 /**
  * Class for working with arra of items
  * @author Galanov Sergey
- * @since 27.07.2018
- * @version 1.4
+ * @since 29.07.2018
+ * @version 1.5
  */
 public class Tracker {
 
