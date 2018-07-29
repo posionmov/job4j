@@ -47,18 +47,25 @@ public class StartUI {
             this.showMenu();
             String answer = this.input.ask("Введите номер интересующей Вас операции: ");
             if (answer.equals(Integer.toString(ADD))) {
+                System.out.println("----------------------------------------------------------");
                 this.addItem();
             } else if (answer.equals(Integer.toString(SHOW))) {
+                System.out.println("----------------------------------------------------------");
                 this.showAllItems();
             } else if (answer.equals(Integer.toString(EDIT))) {
+                System.out.println("----------------------------------------------------------");
                 this.editItem();
             } else if (answer.equals(Integer.toString(DELETE))) {
+                System.out.println("----------------------------------------------------------");
                 this.deleteItem();
             } else if (answer.equals(Integer.toString(FINDID))) {
+                System.out.println("----------------------------------------------------------");
                 this.findItemById();
             } else if (answer.equals(Integer.toString(FINDNAME))) {
+                System.out.println("----------------------------------------------------------");
                 this.findByName();
             } else if (answer.equals(Integer.toString(EXIT))) {
+                System.out.println("----------------------------------------------------------");
                 System.out.println("Выключение");
                 this.exit = true;
             }
@@ -127,17 +134,17 @@ public class StartUI {
      */
     private void editItem() {
         String id = this.correctData("id");
-        String newName = this.input.ask("Введите новое имя: ");
-        String newDesc = this.input.ask("Введите новое описание: ");
-        Item item = new Item(newName, newDesc, System.nanoTime());
-        boolean isEdited =  this.tracker.replace(id, item);
-        if (!id.equals("") && isEdited) {
-            System.out.println("<----------------------- Готово! ----------------------->");
-        } else if (!id.equals("")) {
-            System.out.println("Запись не найдена, пожалуйста повторите.");
-            this.editItem();
-        } else {
-            this.init();
+        if (!id.equals("")) {
+            String newName = this.input.ask("Введите новое имя: ");
+            String newDesc = this.input.ask("Введите новое описание: ");
+            Item item = new Item(newName, newDesc, System.nanoTime());
+            boolean isEdited = this.tracker.replace(id, item);
+            if (isEdited) {
+                System.out.println("<----------------------- Готово! ----------------------->");
+            } else if (!isEdited) {
+                System.out.println("Запись не найдена, пожалуйста повторите.");
+                this.editItem();
+            }
         }
     }
 
