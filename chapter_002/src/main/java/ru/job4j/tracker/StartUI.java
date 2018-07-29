@@ -119,7 +119,11 @@ public class StartUI {
             result = this.input.ask("Введите id: ");
             while (!correct) {
                 if (this.tracker.findById(result) == null) {
-                    result = this.input.ask("Не верный id, попробуйте еще раз: ");
+                    System.out.println("Не верный id. Попробуйте еще раз. \nДля выхода напишите нажмите ввод");
+                    result = this.input.ask("Ваше действие: ");
+                    if (result.equals("")) {
+                        this.init();
+                    }
                 } else {
                     correct = true;
                 }
@@ -141,6 +145,7 @@ public class StartUI {
      * Func for edit some element in array
      */
     private void editItem() {
+        /*
         String id = this.correctData("id");
         Item item = this.tracker.findById(id);
         String chose = this.input.ask("Что вы хотите изменить? \n1 - Имя \n2 - Описание\n3 - Оба параметра\nВаш выбор: ");
@@ -159,6 +164,10 @@ public class StartUI {
         System.out.println("<-------------- Заменяю содержимое заявки -------------->");
         this.tracker.replace(id, item);
         System.out.println("<----------------------- Готово! ----------------------->");
+        */
+        String id = this.correctData("id");
+        Item item = this.tracker.findById(id);
+
     }
 
     /**
