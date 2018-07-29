@@ -4,8 +4,17 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.is;
 
+/**
+ * Class for testing ArrayMerge.java
+ * @author Galanov Sergey
+ * @since 29.07.2018
+ * @version 1.0
+ */
 public class ArrayMergeTest {
 
+    /**
+     * Func for testing if both array is sorted and unic
+     */
     @Test
     public void whenTwoArrayThenOneSortedArray() {
     int[] firstArray = new int[] {1, 3, 5};
@@ -16,6 +25,9 @@ public class ArrayMergeTest {
     assertThat(result, is(expect));
     }
 
+    /**
+     * Func for testing if arrays not unic
+     */
     @Test
     public void whenTwoAnotherArraysThenOneSortedArray() {
         int[] first = new int[] {1, 3, 5, 7, 9};
@@ -25,6 +37,10 @@ public class ArrayMergeTest {
         int[] result = arrayMerge.mergeArrays(first, second);
         assertThat(result, is(expect));
     }
+
+    /**
+     * Test of both arrays is same
+     */
     @Test
     public void whenTwoSameArraysThenOneArray() {
         int[] first = new int[] {1, 5, 7, 9, 12};

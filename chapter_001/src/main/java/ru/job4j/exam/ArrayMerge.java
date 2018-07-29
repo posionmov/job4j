@@ -1,10 +1,20 @@
 package ru.job4j.exam;
-
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
+/**
+ * Class for merge two sorted arrays
+ * @author Galanov Sergey
+ * @since 29.07.2018
+ * @version 1.0
+ */
 public class ArrayMerge {
 
+    /**
+     * Func for merge two sorted arrays
+     * @param first - first array if int[]
+     * @param second - second array of int[]
+     * @return new sorted array of int[]
+     */
     public int[] mergeArrays(int[] first, int[] second) {
         int[] result = new int[first.length + second.length];
         int indexFirst = 0;
