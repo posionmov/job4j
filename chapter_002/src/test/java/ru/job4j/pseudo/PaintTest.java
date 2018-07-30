@@ -1,5 +1,7 @@
 package ru.job4j.pseudo;
 import org.junit.Test;
+import org.junit.After;
+import org.junit.Before;
 import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.is;
 import java.io.ByteArrayOutputStream;
@@ -12,15 +14,35 @@ import java.io.PrintStream;
  * @version 1.0
  */
 public class PaintTest {
+    /**
+     * Содержит дефолтный вывод в консоль и Буфер (для результата)
+     */
+    private final PrintStream stdout = System.out;
+    private final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+    /**
+     * Methods before test is begin
+     */
+    @Before
+    public void loadOutput() {
+        System.out.println("execute before method");
+        System.setOut(new PrintStream(this.out));
+    }
+
+    /**
+     * Methods after test is begin
+     */
+    @After
+    public void backOutput() {
+        System.setOut(this.stdout);
+        System.out.println("execute after method");
+    }
 
     /**
      * Test for drawing square in terminal
      */
     @Test
     public void whenDrawSquareThenSquareIsDrawing() {
-        PrintStream stdout = System.out;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(out));
         new Paint().draw(new Square());
         assertThat(new String(out.toByteArray()), is(new StringBuilder()
                 .append("*******")
@@ -35,9 +57,6 @@ public class PaintTest {
      */
     @Test
     public void whenDrawTriangleThenTriangleIsDrawing() {
-        PrintStream stdout = System.out;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(out));
         new Paint().draw(new Triangle());
         assertThat(new String(out.toByteArray()), is(new StringBuilder()
                 .append("   *   ")
