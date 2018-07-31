@@ -11,8 +11,8 @@ import java.io.PrintStream;
  * Class for testing StartUI class
  * This tests imitate user
  * @author Galanov Sergey
- * @since 30.07.2018
- * @version 1.0
+ * @since 31.07.2018
+ * @version 1.1
  */
 public class StartUITest {
     /**
@@ -20,13 +20,13 @@ public class StartUITest {
      */
     private final PrintStream stdout = System.out;
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    private String menu = new StringBuilder().append("0. Добавить заявку").append(System.lineSeparator())
-            .append("1. Показать все заявки").append(System.lineSeparator())
-            .append("2. Редактировать заявку").append(System.lineSeparator())
-            .append("3. Удалиь заявку").append(System.lineSeparator())
-            .append("4. Найти заявку по id").append(System.lineSeparator())
-            .append("5. Найти заявки по имени").append(System.lineSeparator())
-            .append("6. Выйти из программы").append(System.lineSeparator())
+    private String menu = new StringBuilder().append("0 - Создание заявки").append(System.lineSeparator())
+            .append("1 - Показать все заявки").append(System.lineSeparator())
+            .append("2 - Редактирование заявки").append(System.lineSeparator())
+            .append("3 - Удаление заявки").append(System.lineSeparator())
+            .append("4 - Поиск заявки по id").append(System.lineSeparator())
+            .append("5 - Поиск заявки по имени").append(System.lineSeparator())
+            .append("6 - Выйти из программы").append(System.lineSeparator())
             .append("----------------------------------------------------------").append(System.lineSeparator()).toString();
 
     /**
@@ -122,7 +122,7 @@ public class StartUITest {
         new StartUI(input, tracker).init();
         assertThat(new String(out.toByteArray()), is(new StringBuilder()
                 .append(this.menu)
-                .append("<-------------- Информация о заявке --------------->").append(System.lineSeparator())
+                .append("<-------------- Информация о заявке -------------->").append(System.lineSeparator())
                 .append("ID: ").append(item1.getId()).append(System.lineSeparator())
                 .append("Имя: ").append(item1.getName()).append(System.lineSeparator())
                 .append("Описание: ").append(item1.getDescription()).append(System.lineSeparator())
@@ -150,18 +150,18 @@ public class StartUITest {
         assertThat(new String(out.toByteArray()), is(new StringBuilder()
                 .append(this.menu)
                 .append("Найденные заявки:").append(System.lineSeparator())
-                .append("<------------- Информация о заявке № 1------------->").append(System.lineSeparator())
+                .append("<------------- Информация о заявке № 1----------->").append(System.lineSeparator())
                 .append("ID: ").append(item1.getId()).append(System.lineSeparator())
                 .append("Имя: ").append(item1.getName()).append(System.lineSeparator())
                 .append("Описание: ").append(item1.getDescription()).append(System.lineSeparator())
                 .append("Дата создания: ").append(item1.getCreated()).append(System.lineSeparator())
-                .append("<-------------- Информация о заявке --------------->").append(System.lineSeparator())
-                .append("<------------- Информация о заявке № 2------------->").append(System.lineSeparator())
+                .append("<-------------- Информация о заявке ------------->").append(System.lineSeparator())
+                .append("<------------- Информация о заявке № 2----------->").append(System.lineSeparator())
                 .append("ID: ").append(item3.getId()).append(System.lineSeparator())
                 .append("Имя: ").append(item3.getName()).append(System.lineSeparator())
                 .append("Описание: ").append(item3.getDescription()).append(System.lineSeparator())
                 .append("Дата создания: ").append(item3.getCreated()).append(System.lineSeparator())
-                .append("<-------------- Информация о заявке --------------->").append(System.lineSeparator())
+                .append("<-------------- Информация о заявке ------------->").append(System.lineSeparator())
                 .append("<--------------- Конец найденных заявок --------------->").append(System.lineSeparator())
                 .append(this.menu)
                 .append("Выключение").append(System.lineSeparator()).toString()));
