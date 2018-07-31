@@ -28,13 +28,23 @@ public class MenuTracker {
     /**
      * Функция для добавления в массив всех элементов меню (которые являются отдельными внутренними классами)
      */
-    public void fillActions() {
+    public int[] fillActions() {
+        int[] result = new int[7];
         this.actions[0] = this.new AddItem();
+        result[0] = 0;
         this.actions[1] = this.new ShowAll();
+        result[1] = 1;
         this.actions[2] = new MenuTracker.EditItem();
+        result[2] = 2;
         this.actions[3] = new MenuTracker.DeleteItem();
+        result[3] = 3;
         this.actions[4] = new FindItemById();
+        result[4] = 4;
         this.actions[5] = new FindByName();
+        result[5] = 5;
+        this.actions[6] = new ExitProgram();
+        result[6] = 6;
+        return result;
     }
 
     /**
@@ -46,7 +56,6 @@ public class MenuTracker {
                 System.out.println(action.info());
             }
         }
-        System.out.println("6 - Выйти из программы");
         System.out.println("----------------------------------------------------------");
     }
 
@@ -54,8 +63,14 @@ public class MenuTracker {
      * Функция для выполнения выбранного действия
      * @param key - ключ конкретного действия
      */
-    public void select(int key) {
-       this.actions[key].execute(this.input, this.tracker);
+    public int select(int key) {
+
+       if (key < this.actions.length) {
+           this.actions[key].execute(this.input, this.tracker);
+           return key;
+       } else {
+           return 6;
+       }
     }
 
     //<--------------- Не статические классы ----------------->
@@ -154,7 +169,7 @@ public class MenuTracker {
          * @param tracker объект класса Tracker
          */
         public void execute(Input input, Tracker tracker) {
-            String id = input.ask("Введите id");
+            String id = input.ask("Введите id: ");
             if (!id.equals("")) {
                 String newName = input.ask("Введите новое имя: ");
                 String newDesc = input.ask("Введите новое описание: ");
@@ -197,7 +212,7 @@ public class MenuTracker {
          * @param tracker объект класса Tracker
          */
         public void execute(Input input, Tracker tracker) {
-            String id = input.ask("Введите id");
+            String id = input.ask("Введите id: ");
             boolean isDelete =  tracker.delete(id);
             if (isDelete) {
                 System.out.println("<---------------- Заявка удалена ----------------->");
@@ -236,7 +251,7 @@ class FindItemById implements UserAction {
      * @param tracker объект класса Tracker
      */
     public void execute(Input input, Tracker tracker) {
-        String id = input.ask("Введите id");
+        String id = input.ask("Введите id: ");
         Item item = tracker.findById(id);
         if (item != null) {
             System.out.println("<-------------- Информация о заявке -------------->");
@@ -278,7 +293,7 @@ class FindByName implements UserAction {
      * @param tracker объект класса Tracker
      */
     public void execute(Input input, Tracker tracker) {
-        String name = input.ask("Введите имя");
+        String name = input.ask("Введите имя: ");
         Item[] items = tracker.findByName(name);
         if (items.length > 0) {
             System.out.println("Найденные заявки:");
@@ -302,5 +317,20 @@ class FindByName implements UserAction {
      */
     public String info() {
         return String.format("%s - Поиск заявки по имени", this.key());
+    }
+}
+
+class ExitProgram implements UserAction {
+
+    public int key() {
+        return 6;
+    }
+
+    public void execute(Input input, Tracker tracker) {
+
+    }
+
+    public String info() {
+        return String.format("%s - Выйти из программы", this.key());
     }
 }

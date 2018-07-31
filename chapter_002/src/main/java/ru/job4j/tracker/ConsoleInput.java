@@ -10,10 +10,25 @@ import java.util.*;
 public class ConsoleInput implements Input {
     private Scanner scanner = new Scanner(System.in);
 
-    @Override
     public String ask(String question) {
         System.out.print(question);
         return scanner.nextLine();
+    }
+
+    public int ask(String question, int[] range) {
+        int result = Integer.valueOf(this.ask(question));
+        boolean isExist = false;
+        for (int value : range) {
+            if (result == value) {
+                isExist = true;
+                break;
+            }
+        }
+        if (isExist) {
+            return result;
+        } else {
+            throw new MenuOutException("Введено число, которое больше количество пунктов меню");
+        }
     }
 
 }
