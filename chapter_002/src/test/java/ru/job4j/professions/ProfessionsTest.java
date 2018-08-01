@@ -10,9 +10,10 @@ public class ProfessionsTest {
     @Test
     public void whenDoctorHealThenDiagnose() {
         Doctor doctor = new Doctor();
-        Patient patient = new Patient("Robert");
-        Diagnose diagnose = new Diagnose("name", "desc");
-        assertThat((String) (doctor.heal(patient).name), is("name"));
+        Patient patient = new Patient("Robert", "кашель");
+        Diagnose result = doctor.heal(patient);
+        String expect = "Болезнь легких";
+        assertThat(result.getName(), is(expect));
     }
 
     @Test

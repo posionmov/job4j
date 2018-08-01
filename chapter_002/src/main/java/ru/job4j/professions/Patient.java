@@ -1,9 +1,16 @@
 package ru.job4j.professions;
 
 public class Patient {
-    public String name;
 
-    public Patient(String name) {
+    private String name;
+    private String symptoms;
+
+    public Patient(String name, String symptoms) {
         this.name = name;
+        this.symptoms = symptoms;
+    }
+
+    public String getSymptoms() {
+        return this.symptoms;
     }
 }

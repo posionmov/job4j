@@ -1,13 +1,16 @@
 package ru.job4j.professions;
 
-public class Diagnose extends Profession {
+public class Diagnose {
 
-    public Diagnose() {
-
-    }
+    private String name;
+    private String description;
 
     public Diagnose(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }
