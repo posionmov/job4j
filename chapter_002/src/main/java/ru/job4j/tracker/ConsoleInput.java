@@ -25,11 +25,10 @@ public class ConsoleInput implements Input {
                 break;
             }
         }
-        if (isExist) {
-            return result;
-        } else {
+        if (!isExist) {
             throw new MenuOutException("Введено число, которое больше количество пунктов меню");
         }
+        return result;
     }
 
 }
