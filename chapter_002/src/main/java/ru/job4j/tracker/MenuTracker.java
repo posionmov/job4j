@@ -4,7 +4,7 @@ package ru.job4j.tracker;
  * Класс для работы с меню
  * @author Galanov Sergey
  * @since 01.08.2018
- * @version 1.1
+ * @version 1.2
  */
 public class MenuTracker {
 
@@ -14,6 +14,8 @@ public class MenuTracker {
     private Input input; //Используемый ввод
     private Tracker tracker; //Используемый массив
     private UserAction[] actions = new UserAction[7]; //Массив с действиями
+    private int curPosition = 0;
+    private int curKey = 0;
 
     /**
      * Конструктор для данного класса
@@ -28,15 +30,15 @@ public class MenuTracker {
     /**
      * Функция для добавления в массив всех элементов меню (которые являются отдельными внутренними классами)
      */
-    public int[] fillActions() {
+    public int[] fillActions(StartUI ui) {
         int[] result = new int[7];
-        this.actions[0] = this.new AddItem();
-        this.actions[1] = this.new ShowAll();
-        this.actions[2] = new MenuTracker.EditItem();
-        this.actions[3] = new MenuTracker.DeleteItem();
-        this.actions[4] = new FindItemById();
-        this.actions[5] = new FindByName();
-        this.actions[6] = new ExitProgram();
+        this.actions[curPosition++] = this.new AddItem(curKey++, "Создание заявки");
+        this.actions[curPosition++] = this.new ShowAll(curKey++, "Показать все заявки");
+        this.actions[curPosition++] = new MenuTracker.EditItem(curKey++, "Редактирование заявки");
+        this.actions[curPosition++] = new MenuTracker.DeleteItem(curKey++, "Удаление заявки");
+        this.actions[curPosition++] = new FindItemById(curKey++, "Поиск заявки по id");
+        this.actions[curPosition++] = new FindByName(curKey++, "Поиск заявки по имени");
+        this.actions[curPosition++] = new ExitProgram(curKey++, "Выйти из программы", ui);
         result = this.appendInArray();
         return result;
     }
@@ -84,14 +86,15 @@ public class MenuTracker {
     /**
      * Класс для добавления элемента в массив
      */
-    private class AddItem implements UserAction {
+    private class AddItem extends BaseAction {
 
         /**
-         * Метод интерфейса
-         * @return ключ данной операции
+         * Конструктор данного класса
+         * @param key - ключ
+         * @param name - имя операции
          */
-        public int key() {
-            return 0;
+        public AddItem(int key, String name) {
+            super(key, name);
         }
 
         /**
@@ -99,6 +102,7 @@ public class MenuTracker {
          * @param input объект, который использует интерфейс Input
          * @param tracker объект класса Tracker
          */
+        @Override
         public void execute(Input input, Tracker tracker) {
             System.out.println("<----------------- Создание новой заявки ----------------->");
             String name = input.ask("Введите имя заявки: ");
@@ -114,21 +118,17 @@ public class MenuTracker {
          * @return - информация о данном действии
          */
         public String info() {
-            return String.format("%s - Создание заявки", this.key());
+            return super.info();
         }
     }
 
     /**
      * Класс для нахождения и отображения в консоли всех элементов массив
      */
-    private class ShowAll implements UserAction {
+    private class ShowAll extends BaseAction {
 
-        /**
-         * Метод интерфейса
-         * @return ключ данной операции
-         */
-        public int key() {
-            return 1;
+        public ShowAll(int key, String name) {
+            super(key, name);
         }
 
         /**
@@ -150,7 +150,7 @@ public class MenuTracker {
          * @return - информация о данном действии
          */
         public String info() {
-            return String.format("%s - Показать все заявки", this.key());
+            return super.info();
         }
     }
 
@@ -159,14 +159,10 @@ public class MenuTracker {
     /**
      * Класс для редактирования элементов в массиве
      */
-    private static class EditItem implements UserAction {
+    private static class EditItem extends BaseAction {
 
-        /**
-         * Метод интерфейса
-         * @return ключ данной операции
-         */
-        public int key() {
-            return 2;
+        public EditItem(int key, String name) {
+            super(key, name);
         }
 
         /**
@@ -195,21 +191,17 @@ public class MenuTracker {
          * @return - информация о данном действии
          */
         public String info() {
-            return String.format("%s - Редактирование заявки", this.key());
+            return super.info();
         }
     }
 
     /**
      * Класс для удаления обьекта в массиве
      */
-    private static class DeleteItem implements UserAction {
+    private static class DeleteItem extends BaseAction {
 
-        /**
-         * Метод интерфейса
-         * @return ключ данной операции
-         */
-        public int key() {
-            return 3;
+        public DeleteItem(int key, String name) {
+            super(key, name);
         }
 
         /**
@@ -233,7 +225,7 @@ public class MenuTracker {
          * @return - информация о данном действии
          */
         public String info() {
-            return String.format("%s - Удаление заявки", this.key());
+            return super.info();
         }
     }
 }
@@ -241,14 +233,10 @@ public class MenuTracker {
 /**
  * Класс для поиска обьекта в массиве
  */
-class FindItemById implements UserAction {
+class FindItemById extends BaseAction {
 
-    /**
-     * Метод интерфейса
-     * @return ключ данной операции
-     */
-    public int key() {
-        return 4;
+    public FindItemById(int key, String name) {
+        super(key, name);
     }
 
     /**
@@ -277,20 +265,17 @@ class FindItemById implements UserAction {
      * @return - информация о данном действии
      */
     public String info() {
-        return String.format("%s - Поиск заявки по id", this.key());
+        return super.info();
     }
 }
 
 /**
  * Класс для поиска обьектов в массиве
  */
-class FindByName implements UserAction {
-    /**
-     * Метод интерфейса
-     * @return ключ данной операции
-     */
-    public int key() {
-        return 5;
+class FindByName extends BaseAction {
+
+    public FindByName(int key, String name) {
+        super(key, name);
     }
 
     /**
@@ -322,21 +307,24 @@ class FindByName implements UserAction {
      * @return - информация о данном действии
      */
     public String info() {
-        return String.format("%s - Поиск заявки по имени", this.key());
+        return super.info();
     }
 }
 
-class ExitProgram implements UserAction {
+class ExitProgram extends BaseAction {
 
-    public int key() {
-        return 6;
+    private final StartUI ui;
+
+    public ExitProgram(int key, String name, StartUI ui) {
+        super(key, name);
+        this.ui = ui;
     }
 
     public void execute(Input input, Tracker tracker) {
-
+        this.ui.isOver();
     }
 
     public String info() {
-        return String.format("%s - Выйти из программы", this.key());
+        return super.info();
     }
 }

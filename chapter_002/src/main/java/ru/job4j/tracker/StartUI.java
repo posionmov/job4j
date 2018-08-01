@@ -17,6 +17,7 @@ public class StartUI {
     private final ValidateInput input;
     private final Tracker tracker;
     int[] range;
+    private boolean isWorking = true;
 
     /**
      * Constructor for these class
@@ -34,17 +35,20 @@ public class StartUI {
      */
     public void init() {
         MenuTracker menu = new MenuTracker(this.input, this.tracker);
-        this.range = menu.fillActions();
-        int curOperation;
+        this.range = menu.fillActions(this);
         do {
             menu.show();
-            curOperation = menu.select(input.ask("Введите номер интересующей Вас операции: ", this.range));
-        } while (curOperation != 6);
+            menu.select(input.ask("Введите номер интересующей Вас операции: ", this.range));
+        } while (isWorking);
         System.out.println("Выключение");
     }
 
     public static void main(String[] args) {
         new StartUI(new ValidateInput(new ConsoleInput()), new Tracker()).init();
+    }
+
+    public void isOver() {
+        this.isWorking = false;
     }
 }
 
