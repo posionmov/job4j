@@ -3,8 +3,8 @@ package ru.job4j.tracker;
 /**
  * Класс для работы с меню
  * @author Galanov Sergey
- * @since 31.07.2018
- * @version 1.0
+ * @since 01.08.2018
+ * @version 1.1
  */
 public class MenuTracker {
 
@@ -30,21 +30,35 @@ public class MenuTracker {
      */
     public int[] fillActions() {
         int[] result = new int[7];
+        int operation = 0;
+        int curIndex = 0;
         this.actions[0] = this.new AddItem();
-        result[0] = 0;
+        this.appendInArray(result, curIndex++, operation++);
         this.actions[1] = this.new ShowAll();
-        result[1] = 1;
+        this.appendInArray(result, curIndex++, operation++);
         this.actions[2] = new MenuTracker.EditItem();
-        result[2] = 2;
+        this.appendInArray(result, curIndex++, operation++);
         this.actions[3] = new MenuTracker.DeleteItem();
-        result[3] = 3;
+        this.appendInArray(result, curIndex++, operation++);
         this.actions[4] = new FindItemById();
-        result[4] = 4;
+        this.appendInArray(result, curIndex++, operation++);
         this.actions[5] = new FindByName();
-        result[5] = 5;
+        this.appendInArray(result, curIndex++, operation++);
         this.actions[6] = new ExitProgram();
-        result[6] = 6;
+        this.appendInArray(result, curIndex++, operation++);
         return result;
+    }
+
+    /**
+     * Функция по добавлению в массив нового элемента
+     * @param array - массив, в который необходимо добавить элемент
+     * @param curIndex - индекс элемента массива, в который нужно вставить элемент
+     * @param curValue - значение, которое необходимо поместить в массив
+     * @return массив, который содержит новое значение
+     */
+    private int[] appendInArray(int[] array, int curIndex, int curValue) {
+        array[curIndex] = curValue;
+        return array;
     }
 
     /**
