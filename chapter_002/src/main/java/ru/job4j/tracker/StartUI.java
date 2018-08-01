@@ -14,7 +14,7 @@ public class StartUI {
      * tracker - final object of class Tracker
      * range - массив значений пунктов меню
      */
-    private final ConsoleInput input;
+    private final ValidateInput input;
     private final Tracker tracker;
     int[] range;
 
@@ -24,7 +24,7 @@ public class StartUI {
      * @param input   - initializing for class ConsoleInput
      * @param tracker - initializing for class Tracker
      */
-    public StartUI(ConsoleInput input, Tracker tracker) {
+    public StartUI(ValidateInput input, Tracker tracker) {
         this.input = input;
         this.tracker = tracker;
     }
@@ -44,7 +44,7 @@ public class StartUI {
     }
 
     public static void main(String[] args) {
-        new StartUI(new ValidateInput(), new Tracker()).init();
+        new StartUI(new ValidateInput(new ConsoleInput()), new Tracker()).init();
     }
 }
 

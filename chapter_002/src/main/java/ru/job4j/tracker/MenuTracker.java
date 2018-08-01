@@ -30,35 +30,27 @@ public class MenuTracker {
      */
     public int[] fillActions() {
         int[] result = new int[7];
-        int operation = 0;
-        int curIndex = 0;
         this.actions[0] = this.new AddItem();
-        this.appendInArray(result, curIndex++, operation++);
         this.actions[1] = this.new ShowAll();
-        this.appendInArray(result, curIndex++, operation++);
         this.actions[2] = new MenuTracker.EditItem();
-        this.appendInArray(result, curIndex++, operation++);
         this.actions[3] = new MenuTracker.DeleteItem();
-        this.appendInArray(result, curIndex++, operation++);
         this.actions[4] = new FindItemById();
-        this.appendInArray(result, curIndex++, operation++);
         this.actions[5] = new FindByName();
-        this.appendInArray(result, curIndex++, operation++);
         this.actions[6] = new ExitProgram();
-        this.appendInArray(result, curIndex++, operation++);
+        result = this.appendInArray();
         return result;
     }
 
     /**
-     * Функция по добавлению в массив нового элемента
-     * @param array - массив, в который необходимо добавить элемент
-     * @param curIndex - индекс элемента массива, в который нужно вставить элемент
-     * @param curValue - значение, которое необходимо поместить в массив
-     * @return массив, который содержит новое значение
+     * Функция по добавлению в массив элементов меню
+     * @return массив, который содержит все элементы меню
      */
-    private int[] appendInArray(int[] array, int curIndex, int curValue) {
-        array[curIndex] = curValue;
-        return array;
+    private int[] appendInArray() {
+        int[] result = new int[this.actions.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = this.actions[i].key();
+        }
+        return result;
     }
 
     /**

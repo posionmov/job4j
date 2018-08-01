@@ -54,7 +54,7 @@ public class StartUITest {
     @Test
     public void whenUserAddNewItemThenTrackerHaveNewItemWithSameName() {
         Tracker tracker = new Tracker();
-        ConsoleInput input = new StubInput(new String[] {"0", "test name", "test desc", "6"});
+        ValidateInput input = new ValidateInput(new StubInput(new String[] {"0", "test name", "test desc", "6"}));
         new StartUI(input, tracker).init();
         assertThat(tracker.findAll()[0].getName(), is("test name"));
     }
@@ -69,7 +69,7 @@ public class StartUITest {
         Item item2 = new Item("name2", "desc2", System.nanoTime());
         tracker.add(item1);
         tracker.add(item2);
-        ConsoleInput input = new StubInput(new String[] {"1", "6"});
+        ValidateInput input = new ValidateInput(new StubInput(new String[] {"1", "6"}));
         new StartUI(input, tracker).init();
         assertThat(new String(out.toByteArray()), is(new StringBuilder()
                 .append(this.menu)
@@ -90,7 +90,7 @@ public class StartUITest {
         Tracker tracker = new Tracker();
         Item item = new Item("name1", "desc1", System.nanoTime());
         tracker.add(item);
-        ConsoleInput input = new StubInput(new String[] {"2", item.getId(), "name2", "desc2", "6"});
+        ValidateInput input = new ValidateInput(new StubInput(new String[] {"2", item.getId(), "name2", "desc2", "6"}));
         new StartUI(input, tracker).init();
         assertThat(tracker.findAll()[0].getName(), is("name2"));
     }
@@ -103,7 +103,7 @@ public class StartUITest {
         Tracker tracker = new Tracker();
         Item item = new Item("name1", "desc1", System.nanoTime());
         tracker.add(item);
-        ConsoleInput input = new StubInput(new String[] {"3", item.getId(), "6"});
+        ValidateInput input = new ValidateInput(new StubInput(new String[] {"3", item.getId(), "6"}));
         new StartUI(input, tracker).init();
         assertThat(tracker.findAll().length, is(0));
     }
@@ -118,7 +118,7 @@ public class StartUITest {
         Item item2 = new Item("name2", "desc2", System.nanoTime());
         tracker.add(item1);
         tracker.add(item2);
-        ConsoleInput input = new StubInput(new String[] {"4", item1.getId(), "6"});
+        ValidateInput input = new ValidateInput(new StubInput(new String[] {"4", item1.getId(), "6"}));
         new StartUI(input, tracker).init();
         assertThat(new String(out.toByteArray()), is(new StringBuilder()
                 .append(this.menu)
@@ -145,7 +145,7 @@ public class StartUITest {
         tracker.add(item1);
         tracker.add(item2);
         tracker.add(item3);
-        ConsoleInput input = new StubInput(new String[] {"5", item1.getName(), "6"});
+        ValidateInput input = new ValidateInput(new StubInput(new String[] {"5", item1.getName(), "6"}));
         new StartUI(input, tracker).init();
         assertThat(new String(out.toByteArray()), is(new StringBuilder()
                 .append(this.menu)
