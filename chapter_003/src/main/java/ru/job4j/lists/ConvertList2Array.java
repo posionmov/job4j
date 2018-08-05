@@ -6,7 +6,7 @@ import java.util.List;
  * Класс для превращения коллекции в двумерный массив (точнее в матрицу)
  * @author Galanov Sergey
  * @since 05.08.2018
- * @version 1.0
+ * @version 1.1
  */
 public class ConvertList2Array {
 
@@ -18,16 +18,14 @@ public class ConvertList2Array {
      */
     public int[][] convertListToArray(List<Integer> list, int rows) {
         int[][] result = new int[rows][rows];
-        int curI = 0;
-        int curJ = 0;
-        while (list.size() % rows != 0) {
-            list.add(0);
-        }
-        for (int item : list) {
-            result[curI][curJ++] = item;
-            if (curJ == rows) {
-                curJ = 0;
-                curI++;
+        int curPosition = 0;
+        for (int i = 0; i != rows; i++) {
+            for (int j = 0; j != rows; j++) {
+                if (curPosition != list.size()) {
+                    result[i][j] = list.get(curPosition++);
+                } else {
+                    break;
+                }
             }
         }
         return result;
