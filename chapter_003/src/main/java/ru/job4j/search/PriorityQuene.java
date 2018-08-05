@@ -21,13 +21,18 @@ public class PriorityQuene {
      * @param task добавляемое задание
      */
     public void putInTasks(Task task) {
-        this.tasks.add(task);
-        this.items++;
-        for (int i = 0; i != this.items - 1; i++) {
-            if (this.tasks.get(i).getPrior() > task.getPrior()) {
-                this.tasks.set(i + 1, this.tasks.get(i));
-                this.tasks.set(i, task);
+        if (this.tasks.size() > 0) {
+            for (int i = 0; i != this.tasks.size(); i++) {
+                if (this.tasks.get(i).getPrior() > task.getPrior()) {
+                    this.tasks.add(i, task);
+                    break;
+                } else if (this.tasks.get(this.tasks.size() - 1).getPrior() < task.getPrior()) {
+                    this.tasks.add(this.tasks.size(), task);
+                    break;
+                }
             }
+        } else {
+            this.tasks.add(0, task);
         }
     }
 

@@ -25,7 +25,10 @@ public class PriorityQueneTest {
         priorityQuene.putInTasks(new Task("Low", 5));
         priorityQuene.putInTasks(new Task("Upper Low", 4));
         priorityQuene.putInTasks(new Task("Medium", 3));
+        priorityQuene.putInTasks(new Task("Super low", 8));
         Task result = priorityQuene.take();
+
+
         assertThat(result.getDescription(), is("High"));
     }
 }
