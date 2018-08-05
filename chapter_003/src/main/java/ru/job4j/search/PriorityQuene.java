@@ -6,7 +6,7 @@ import java.util.LinkedList;
  * Класс-обертка над LinkedList
  * @author Galanov Sergey
  * @since 05.08.2018
- * @version 1.0
+ * @version 1.2
  */
 public class PriorityQuene {
 
@@ -21,19 +21,14 @@ public class PriorityQuene {
      * @param task добавляемое задание
      */
     public void putInTasks(Task task) {
-        if (this.tasks.size() > 0) {
-            for (int i = 0; i != this.tasks.size(); i++) {
-                if (this.tasks.get(i).getPrior() > task.getPrior()) {
-                    this.tasks.add(i, task);
-                    break;
-                } else if (this.tasks.get(this.tasks.size() - 1).getPrior() < task.getPrior()) {
-                    this.tasks.add(this.tasks.size(), task);
-                    break;
-                }
+        int index = this.tasks.size();
+        for (int i = 0; i != this.tasks.size(); i++) {
+            if (this.tasks.get(i).getPrior() > task.getPrior()) {
+                index = i;
+                break;
             }
-        } else {
-            this.tasks.add(0, task);
         }
+        this.tasks.add(index, task);
     }
 
     /**
