@@ -33,4 +33,12 @@ public class User implements Comparable<User> {
     public int compareTo(User o) {
         return Integer.compare(this.age, o.age);
     }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public int getAge() {
+        return this.age;
+    }
 }
