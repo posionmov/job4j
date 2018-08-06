@@ -11,8 +11,8 @@ import java.io.PrintStream;
  * Class for testing StartUI class
  * This tests imitate user
  * @author Galanov Sergey
- * @since 31.07.2018
- * @version 1.1
+ * @since 06.08.2018
+ * @version 1.3
  */
 public class StartUITest {
     /**
@@ -56,7 +56,7 @@ public class StartUITest {
         Tracker tracker = new Tracker();
         ValidateInput input = new ValidateInput(new StubInput(new String[] {"0", "test name", "test desc", "6"}));
         new StartUI(input, tracker).init();
-        assertThat(tracker.findAll()[0].getName(), is("test name"));
+        assertThat(tracker.findAll().get(0).getName(), is("test name"));
     }
 
     /**
@@ -92,7 +92,7 @@ public class StartUITest {
         tracker.add(item);
         ValidateInput input = new ValidateInput(new StubInput(new String[] {"2", item.getId(), "name2", "desc2", "6"}));
         new StartUI(input, tracker).init();
-        assertThat(tracker.findAll()[0].getName(), is("name2"));
+        assertThat(tracker.findAll().get(0).getName(), is("name2"));
     }
 
     /**
@@ -105,7 +105,7 @@ public class StartUITest {
         tracker.add(item);
         ValidateInput input = new ValidateInput(new StubInput(new String[] {"3", item.getId(), "6"}));
         new StartUI(input, tracker).init();
-        assertThat(tracker.findAll().length, is(0));
+        assertThat(tracker.findAll().size(), is(0));
     }
 
     /**

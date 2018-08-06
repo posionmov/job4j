@@ -1,10 +1,12 @@
 package ru.job4j.tracker;
 
+import java.util.List;
+
 /**
  * Class for placing, editing and deleting bids
  * @author Galanov Sergey
- * @since 31.07.2018
- * @version 1.6
+ * @since 06.08.2018
+ * @version 1.7
  */
 public class StartUI {
 
@@ -12,11 +14,11 @@ public class StartUI {
      * Contains private variable:
      * input - final object of class ConsoleInput
      * tracker - final object of class Tracker
-     * range - массив значений пунктов меню
+     * range - Коллекция значений пунктов меню
      */
     private final ValidateInput input;
     private final Tracker tracker;
-    int[] range;
+    private List<Integer> range;
     private boolean isWorking = true;
 
     /**

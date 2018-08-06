@@ -1,10 +1,13 @@
 package ru.job4j.tracker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Класс для работы с меню
  * @author Galanov Sergey
- * @since 01.08.2018
- * @version 1.2
+ * @since 06.08.2018
+ * @version 1.3
  */
 public class MenuTracker {
 
@@ -13,8 +16,7 @@ public class MenuTracker {
      */
     private Input input; //Используемый ввод
     private Tracker tracker; //Используемый массив
-    private UserAction[] actions = new UserAction[7]; //Массив с действиями
-    private int curPosition = 0;
+    private List<UserAction> actions = new ArrayList<UserAction>(); // Коллекция с действиями
     private int curKey = 0;
 
     /**
@@ -30,15 +32,15 @@ public class MenuTracker {
     /**
      * Функция для добавления в массив всех элементов меню (которые являются отдельными внутренними классами)
      */
-    public int[] fillActions(StartUI ui) {
-        int[] result = new int[7];
-        this.actions[curPosition++] = this.new AddItem(curKey++, "Создание заявки");
-        this.actions[curPosition++] = this.new ShowAll(curKey++, "Показать все заявки");
-        this.actions[curPosition++] = new MenuTracker.EditItem(curKey++, "Редактирование заявки");
-        this.actions[curPosition++] = new MenuTracker.DeleteItem(curKey++, "Удаление заявки");
-        this.actions[curPosition++] = new FindItemById(curKey++, "Поиск заявки по id");
-        this.actions[curPosition++] = new FindByName(curKey++, "Поиск заявки по имени");
-        this.actions[curPosition++] = new ExitProgram(curKey++, "Выйти из программы", ui);
+    public List<Integer> fillActions(StartUI ui) {
+        List<Integer> result;
+        this.actions.add(this.new AddItem(curKey++, "Создание заявки"));
+        this.actions.add(this.new ShowAll(curKey++, "Показать все заявки"));
+        this.actions.add(new MenuTracker.EditItem(curKey++, "Редактирование заявки"));
+        this.actions.add(new MenuTracker.DeleteItem(curKey++, "Удаление заявки"));
+        this.actions.add(new FindItemById(curKey++, "Поиск заявки по id"));
+        this.actions.add(new FindByName(curKey++, "Поиск заявки по имени"));
+        this.actions.add(new ExitProgram(curKey++, "Выйти из программы", ui));
         result = this.appendInArray();
         return result;
     }
@@ -47,10 +49,10 @@ public class MenuTracker {
      * Функция по добавлению в массив элементов меню
      * @return массив, который содержит все элементы меню
      */
-    private int[] appendInArray() {
-        int[] result = new int[this.actions.length];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = this.actions[i].key();
+    private List<Integer> appendInArray() {
+        List<Integer> result = new ArrayList<Integer>();
+        for (UserAction userAction : this.actions) {
+            result.add(userAction.key());
         }
         return result;
     }
@@ -73,8 +75,8 @@ public class MenuTracker {
      */
     public int select(int key) {
 
-       if (key < this.actions.length) {
-           this.actions[key].execute(this.input, this.tracker);
+       if (key < this.actions.size()) {
+           this.actions.get(key).execute(this.input, this.tracker);
            return key;
        } else {
            return 6;
@@ -137,9 +139,8 @@ public class MenuTracker {
          * @param tracker объект класса Tracker
          */
         public void execute(Input input, Tracker tracker) {
-            Item[] items = tracker.findAll();
             System.out.println("<-------------- Список всех текущих заявок -------------->");
-            for (Item item : items) {
+            for (Item item : tracker.findAll()) {
                 System.out.println("Id: " + item.getId() + ", Имя: " + item.getName() + ", Описание: " + item.getDescription());
             }
             System.out.println("<--------- Окончание списока всех текущих заявок --------->");
@@ -285,15 +286,15 @@ class FindByName extends BaseAction {
      */
     public void execute(Input input, Tracker tracker) {
         String name = input.ask("Введите имя: ");
-        Item[] items = tracker.findByName(name);
-        if (items.length > 0) {
+        List<Item> items = tracker.findByName(name);
+        if (items.size() > 0) {
             System.out.println("Найденные заявки:");
-            for (int i = 0; i != items.length; i++) {
+            for (int i = 0; i != items.size(); i++) {
                 System.out.println("<------------- Информация о заявке № " + (i + 1) + "----------->");
-                System.out.println("ID: " + items[i].getId());
-                System.out.println("Имя: " + items[i].getName());
-                System.out.println("Описание: " + items[i].getDescription());
-                System.out.println("Дата создания: " + items[i].getCreated());
+                System.out.println("ID: " + items.get(i).getId());
+                System.out.println("Имя: " + items.get(i).getName());
+                System.out.println("Описание: " + items.get(i).getDescription());
+                System.out.println("Дата создания: " + items.get(i).getCreated());
                 System.out.println("<-------------- Информация о заявке ------------->");
             }
             System.out.println("<--------------- Конец найденных заявок --------------->");

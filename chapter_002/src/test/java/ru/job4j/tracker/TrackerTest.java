@@ -1,14 +1,18 @@
 package ru.job4j.tracker;
 
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.is;
 
 /**
  * Class for testing Tracker.java
  * @author Galanov Sergey
- * @since 27.07.2018
- * @version 1.3
+ * @since 06.08.2018
+ * @version 1.4
  */
 public class TrackerTest {
 
@@ -20,7 +24,7 @@ public class TrackerTest {
         Tracker tracker = new Tracker();
         Item item = new Item("test1", "testDescription", 123L);
         tracker.add(item);
-        assertThat(tracker.findAll()[0], is(item));
+        assertThat(tracker.findAll().get(0), is(item));
     }
 
     /**
@@ -43,15 +47,15 @@ public class TrackerTest {
     @Test
     public void whenDeleteThenReturnNewArray() {
         Tracker tracker = new Tracker();
-        Item[] expect = new Item[2];
+        List<Item> expect = new ArrayList<>();
         Item one = new Item("one", "oneDescription", 123L);
         tracker.add(one);
-        expect[0] = one;
+        expect.add(one);
         Item two = new Item("two", "twoDescription", 124L);
         tracker.add(two);
         Item three = new Item("three", "threeDescription", 125L);
         tracker.add(three);
-        expect[1] = three;
+        expect.add(three);
         tracker.delete(two.getId());
         System.out.println("123");
         assertThat(tracker.findAll(), is(expect));
@@ -63,16 +67,16 @@ public class TrackerTest {
     @Test
     public void whenCreateArrayThenFindAll() {
         Tracker tracker = new Tracker();
-        Item[] expect = new Item[3];
+        List<Item> expect = new ArrayList<>();
         Item one = new Item("one", "oneDescription", 123L);
         tracker.add(one);
-        expect[0] = one;
+        expect.add(one);
         Item two = new Item("two", "twoDescription", 124L);
         tracker.add(two);
-        expect[1] = two;
+        expect.add(two);
         Item three = new Item("three", "threeDescription", 125L);
         tracker.add(three);
-        expect[2] = three;
+        expect.add(three);
         assertThat(tracker.findAll(), is(expect));
     }
 
@@ -82,15 +86,15 @@ public class TrackerTest {
     @Test
     public void whenSendNameThenFindAll() {
         Tracker tracker = new Tracker();
-        Item[] expect = new Item[2];
+        List<Item> expect = new ArrayList<>();
         Item one = new Item("one", "oneDescription", 123L);
         tracker.add(one);
-        expect[0] = one;
+        expect.add(one);
         Item two = new Item("two", "twoDescription", 124L);
         tracker.add(two);
         Item three = new Item("one", "threeDescription", 125L);
         tracker.add(three);
-        expect[1] = three;
+        expect.add(three);
         assertThat(tracker.findByName("one"), is(expect));
     }
 

@@ -1,5 +1,7 @@
 package ru.job4j.tracker;
 
+import java.util.List;
+
 /**
  *  Класс для проверки корректности вводимых данных
  * @author Galanov Sergey
@@ -25,7 +27,7 @@ public class ValidateInput implements Input {
      * @param range - массив возможных ответов
      * @return - вводимый пользователем ответ, но только если он выполняет условия
      */
-    public int ask(String question, int[] range) {
+    public int ask(String question, List<Integer> range) {
         boolean invalidNumber = true;
         int result = -1;
         do {

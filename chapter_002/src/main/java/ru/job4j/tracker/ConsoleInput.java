@@ -16,7 +16,7 @@ public class ConsoleInput implements Input {
         return scanner.nextLine();
     }
 
-    public int ask(String question, int[] range) {
+    public int ask(String question, List<Integer> range) {
         int result = Integer.valueOf(this.ask(question));
         boolean isExist = false;
         for (int value : range) {

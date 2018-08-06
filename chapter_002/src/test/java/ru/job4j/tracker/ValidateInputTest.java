@@ -36,7 +36,6 @@ public class ValidateInputTest {
     public void whenInvalidInputThenException() {
         Tracker tracker = new Tracker();
         ValidateInput input = new ValidateInput(new StubInput(new String[] {"qwe", "6"}));
-        //input.ask("Enter", new int[] {1});
         new StartUI(input, tracker).init();
         assertThat(new String(this.out.toByteArray()), is(new StringBuilder()
                 .append(this.menu)

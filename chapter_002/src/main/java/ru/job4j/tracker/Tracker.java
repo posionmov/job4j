@@ -2,10 +2,10 @@ package ru.job4j.tracker;
 import java.util.*;
 
 /**
- * Class for working with arra of items
+ * Class for working with List of items
  * @author Galanov Sergey
- * @since 29.07.2018
- * @version 1.5
+ * @since 06.08.2018
+ * @version 1.6
  */
 public class Tracker {
 
@@ -16,7 +16,9 @@ public class Tracker {
      *  - current number of Items
      *  - variable for create random number
      */
-    private Item[] items = new Item[100];
+    //private Item[] items = new Item[100];
+    private List<Item> items = new ArrayList<>();
+
     private int position = 0;
     private static final Random RANDOM = new Random();
 
@@ -36,7 +38,7 @@ public class Tracker {
      */
     public Item add(Item item) {
         item.setID(this.generateId());
-        this.items[position++] = item;
+        this.items.add(position++, item);
         return item;
     }
 
@@ -48,9 +50,9 @@ public class Tracker {
     public boolean replace(String id, Item item) {
         boolean isCorrect = false;
         for (int i = 0; i <= position; i++) {
-            if (items[i] != null && items[i].getId().equals(id)) {
-                items[i] = item;
-                items[i].setID(id); //Добавление в новый объект текущий id
+            if (this.items.get(i) != null && items.get(i).getId().equals(id)) {
+                this.items.set(i, item);
+                this.items.get(i).setID(id); //Добавление в новый объект текущий id
                 isCorrect = true;
                 break;
             }
@@ -66,8 +68,8 @@ public class Tracker {
     public boolean delete(String id) {
         boolean isCorrect = false;
         for (int i = 0; i < position; i++) {
-            if (this.items[i] != null && this.items[i].getId().equals(id)) {
-                System.arraycopy(this.items, i + 1, this.items, i, this.items.length - 1 - i);
+            if (this.items.get(i) != null && this.items.get(i).getId().equals(id)) {
+                this.items.remove(i);
                 this.position--;
                 isCorrect = true;
                 break;
@@ -80,15 +82,9 @@ public class Tracker {
      * Func for recive all none-null Items if array
      * @return array of all none-null Items
      */
-    public Item[] findAll() {
-        Item[] result = new Item[position];
-        int index = 0;
-        for (int i = 0; i != position; i++) {
-            if (items[i] != null) {
-                result[index++] = items[i];
-            }
-        }
-        return result;
+
+    public List<Item> findAll() {
+        return this.items;
     }
 
     /**
@@ -96,15 +92,14 @@ public class Tracker {
      * @param key - name (property)
      * @return array of Items with this name
      */
-    public Item[] findByName(String key) {
-        int matches = 0;
-        Item[] result = new Item[this.position];
+    public List<Item> findByName(String key) {
+        List<Item> result = new ArrayList<Item>();
         for (int i = 0; i != this.position; i++) {
-            if (this.items[i].getName().equals(key)) {
-                result[matches++] = items[i];
+            if (this.items.get(i).getName().equals(key)) {
+                result.add(this.items.get(i));
             }
         }
-        return Arrays.copyOf(result, matches);
+        return result;
     }
 
     /**
