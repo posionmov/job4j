@@ -1,12 +1,13 @@
 package ru.job4j.lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Класс для превращения коллекции в двумерный массив (точнее в матрицу)
  * @author Galanov Sergey
- * @since 05.08.2018
- * @version 1.1
+ * @since 06.08.2018
+ * @version 1.2
  */
 public class ConvertList2Array {
 
@@ -26,6 +27,16 @@ public class ConvertList2Array {
                 } else {
                     break;
                 }
+            }
+        }
+        return result;
+    }
+
+    public List<Integer> convert(List<int[]> list) {
+        List<Integer> result = new ArrayList<>();
+        for (int[] i : list) {
+            for (int j : i) {
+                result.add(j);
             }
         }
         return result;
