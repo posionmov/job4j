@@ -4,8 +4,8 @@ import java.util.Arrays;
 /**
  * Class for merge two sorted arrays
  * @author Galanov Sergey
- * @since 29.07.2018
- * @version 1.0
+ * @since 06.08.2018
+ * @version 1.1
  */
 public class ArrayMerge {
 
@@ -21,22 +21,17 @@ public class ArrayMerge {
         int indexSecond = 0;
         int repeat = result.length;
         for (int i = 0; i != result.length; i++) {
-            if ((indexFirst <= first.length - 1) && (indexSecond <= second.length - 1)) {
-                if (first[indexFirst] > second[indexSecond]) {
-                    result[i] = second[indexSecond++];
-                } else if (first[indexFirst] < second[indexSecond]) {
+            if (indexFirst != first.length && indexSecond != second.length) {
+                if (first[indexFirst] != second[indexSecond]) {
+                    result[i] = first[indexFirst] < second[indexSecond] ? first[indexFirst++] : second[indexSecond++];
+                } else {
                     result[i] = first[indexFirst++];
-                } else if (first[indexFirst] == second[indexSecond]) {
-                    result[i] = first[indexFirst];
-                    indexFirst++;
                     indexSecond++;
                     repeat--;
                 }
-            } else if ((indexFirst <= first.length - 1) || (indexSecond <= second.length - 1)) {
-                if (indexFirst >= first.length) {
-                    result[i] = second[indexSecond];
-                } else if (indexSecond >= second.length) {
-                    result[i] = first[indexFirst];
+            } else {
+                if (indexFirst != first.length || indexSecond != second.length) {
+                    result[i] = indexFirst >= first.length ? second[indexSecond] : first[indexFirst];
                 }
             }
         }
