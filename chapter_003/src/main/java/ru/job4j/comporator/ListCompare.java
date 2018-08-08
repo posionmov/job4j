@@ -24,9 +24,10 @@ public class ListCompare implements Comparator<String> {
     public int compare(String o1, String o2) {
         int result = Integer.compare(o1.length(), o2.length());
         int minLength = o1.length() > o2.length() ? o2.length() : o1.length();
-        for (int i = 0; i != minLength; i++) {
-            if (Character.compare(o1.charAt(i), o2.charAt(i)) != 0) {
-                result = Character.compare(o1.charAt(i), o2.charAt(i));
+        for (int i = 0; i < minLength; i++) {
+            int temp = Character.compare(o1.charAt(i), o2.charAt(i));
+            if (temp != 0) {
+                result = temp;
                 break;
             }
         }
