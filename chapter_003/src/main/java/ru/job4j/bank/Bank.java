@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Класс, реализующий работу банка
+ * @author Galanov Sergey
+ * @since 08.08.2018
+ * @version 1.1
+ */
 public class Bank {
 
     private Map<User, List<Account>> customers = new HashMap<>();
@@ -88,28 +94,13 @@ public class Bank {
      * @return - успех проделанной операции (true - удачно, false - не получилось)
      */
     public boolean transferMoney(String srcPassport, int srcRequisite, String destPassport, int dstRequisite, double amount) {
-        boolean isEnough = true;
-        for (Map.Entry<User, List<Account>> item : this.customers.entrySet()) {
-            if (item.getKey().getPassport().equals(srcPassport) && isEnough) {
-                for (Account account : item.getValue()) {
-                    if (account.getRequisites() == srcRequisite) {
-                        if (account.getValue() < amount) {
-                            isEnough = false;
-                            break;
-                        } else {
-                            if (item.getKey().getPassport().equals(destPassport)) {
-                                for (Account accountDest : item.getValue()) {
-                                    if (String.valueOf(accountDest.getRequisites()).equals(dstRequisite)) {
-                                        accountDest.increaseValue(amount);
-                                        account.decreaseValue(amount);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        boolean isEnough = false;
+        Account srcAccount = this.getAccount(srcRequisite, srcPassport);
+        Account destAccount = this.getAccount(dstRequisite, destPassport);
+        if (srcAccount.getRequisites() != 0 && srcAccount.getValue() >= amount) {
+            isEnough = true;
+            srcAccount.decreaseValue(amount);
+            destAccount.increaseValue(amount);
         }
         return isEnough;
     }
@@ -123,6 +114,24 @@ public class Bank {
         for (Map.Entry<User, List<Account>> item : this.customers.entrySet()) {
             result.add(item.getKey());
             System.out.println(item.getKey().getPassport());
+        }
+        return result;
+    }
+
+    /**
+     * Метод полуения счета по реквизитам счета и паспортным данным
+     * @param requisites - реквизиты счета
+     * @param passport - паспортные данные
+     * @return конекретный счет конкретного пользователя
+     */
+    public Account getAccount(int requisites, String passport) {
+        Account result = new Account(0, 0);
+        List<Account> list = this.getUserAccounts(passport);
+        for (Account account : list) {
+            if (account.getRequisites() == requisites) {
+                result = account;
+                break;
+            }
         }
         return result;
     }
