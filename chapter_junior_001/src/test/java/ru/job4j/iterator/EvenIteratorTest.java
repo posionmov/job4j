@@ -2,21 +2,30 @@ package ru.job4j.iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import java.util.NoSuchElementException;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-
+/**
+ * Класс для тестирования EvenIterator.java
+ * @author Петр Арсентьев
+ */
 public class EvenIteratorTest {
 
+    /**
+     * Содержит переменную - обьект проверяемого класса
+     */
     private EvenIterator it;
 
+    /**
+     * Метод, выполняющийся до проведения теста
+     * илициализирует обьект проверяемого класса и передает ему в конструктор массив
+     */
     @Before
     public void setUp() {
         it = new EvenIterator(new int[] {1, 2, 3, 4, 5, 6, 7});
     }
+
 
     @Test(expected = NoSuchElementException.class)
     public void shouldReturnEvenNumbersSequentially() {
