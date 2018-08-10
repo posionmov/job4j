@@ -7,15 +7,15 @@ import java.util.NoSuchElementException;
  * Класс, реализующий интерфейс Итератора
  * @author Galanov Sergey
  * @since 10.08.2018
- * @version 1.0
+ * @version 1.1
  */
 public class IteratorForArrays implements Iterator {
 
     /**
      * Содерит внутренние поля
      */
-    private int curIndexI; // Текущий индекс по Х
-    private int curIndexJ; // Текущий индекс по У
+    private int curIndexI = 0; // Текущий индекс по Х
+    private int curIndexJ = 0; // Текущий индекс по У
     private final int[][] array; // Двумерный массив
 
     /**
@@ -24,11 +24,7 @@ public class IteratorForArrays implements Iterator {
      * выкидывает исключение " NoSuchElementException " если массив пустой
      */
     public IteratorForArrays(int[][] array) {
-        if (array.length == 0) {
-            throw new NoSuchElementException();
-        }
         this.array = array;
-        System.out.println(this.array.length);
     }
 
     /**
@@ -56,12 +52,16 @@ public class IteratorForArrays implements Iterator {
     @Override
     public Object next() {
         int result;
+        if (this.array.length <= this.curIndexI) { // Выкидывание ошибки если в массиве нет элементов, но идет попытка вернуть элемент
+            throw new NoSuchElementException();
+        }
         if (this.curIndexJ < this.array[this.curIndexI].length - 1) {
             result = this.array[this.curIndexI][this.curIndexJ++];
         } else {
             result = this.array[this.curIndexI++][this.curIndexJ];
             this.curIndexJ = 0;
         }
+
         return result;
     }
 }
