@@ -52,7 +52,7 @@ public class IteratorForArrays implements Iterator {
     @Override
     public Object next() {
         int result;
-        if (this.array.length <= this.curIndexI) { // Выкидывание ошибки если в массиве нет элементов, но идет попытка вернуть элемент
+        if (!this.hasNext()) { // Выкидывание ошибки если в массиве нет элементов, но идет попытка вернуть элемент
             throw new NoSuchElementException();
         }
         if (this.curIndexJ < this.array[this.curIndexI].length - 1) {
