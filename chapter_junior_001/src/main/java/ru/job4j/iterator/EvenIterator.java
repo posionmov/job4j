@@ -42,7 +42,7 @@ public class EvenIterator implements Iterator {
      */
     @Override
     public Object next() {
-        if (this.curIndex == this.array.length) {
+        if (!this.hasNext()) {
             throw new NoSuchElementException();
         }
         this.hasNext();
