@@ -6,8 +6,8 @@ import java.util.NoSuchElementException;
 /**
  * Класс, реализующий интерфейс Итератора
  * @author Galanov Sergey
- * @since 10.08.2018
- * @version 1.0
+ * @since 12.08.2018
+ * @version 1.1
  */
 public class EvenIterator implements Iterator {
 
@@ -32,29 +32,35 @@ public class EvenIterator implements Iterator {
      */
     @Override
     public boolean hasNext() {
-        boolean result = false;
-        for (int i = curIndex; i < array.length; i++) {
-            if (this.array[i] % 2 == 0) {
-                result = true;
-                break;
-            }
-        }
-        return result;
+        return this.findInArray();
     }
 
     /**
      * Реализация метода интерфейса
-     * ВОзращает текущее четное число и переводит указатель дальше до первого четного числа (или выбрасывает исключение)
+     * Возращает текущее четное число и переводит указатель дальше до первого четного числа (или выбрасывает исключение)
      * @return текущее четное число
      */
     @Override
     public Object next() {
-        while (this.array[curIndex] % 2 != 0) {
-            curIndex++;
-            if (curIndex == this.array.length) {
-                throw new NoSuchElementException();
+        this.findInArray();
+        return this.array[this.curIndex++];
+    }
+
+    /**
+     * Вспомогательная функция поиска в массиве следующего четного числа
+     * @return true - если следующее четное число есть, false - если следующего четного числа нет
+     */
+    public boolean findInArray() {
+        boolean result = false;
+        if (this.curIndex == this.array.length) {
+            throw new NoSuchElementException();
+        }
+        for (; curIndex < this.array.length; this.curIndex++) {
+            if (this.array[curIndex] % 2 == 0) {
+                result = true;
+                break;
             }
         }
-        return this.array[curIndex++];
+        return  result;
     }
 }
