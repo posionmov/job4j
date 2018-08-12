@@ -42,7 +42,10 @@ public class EvenIterator implements Iterator {
      */
     @Override
     public Object next() {
-        this.findInArray();
+        if (this.curIndex == this.array.length) {
+            throw new NoSuchElementException();
+        }
+        this.hasNext();
         return this.array[this.curIndex++];
     }
 
@@ -52,9 +55,6 @@ public class EvenIterator implements Iterator {
      */
     public boolean findInArray() {
         boolean result = false;
-        if (this.curIndex == this.array.length) {
-            throw new NoSuchElementException();
-        }
         for (; curIndex < this.array.length; this.curIndex++) {
             if (this.array[curIndex] % 2 == 0) {
                 result = true;
@@ -63,4 +63,5 @@ public class EvenIterator implements Iterator {
         }
         return  result;
     }
+
 }
