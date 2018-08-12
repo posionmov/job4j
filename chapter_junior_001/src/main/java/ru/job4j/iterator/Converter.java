@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
  * Класс для конвертации нескольких последовательностей в одну
  * @author Galanov Sergey
  * @since 12.08.2018
- * @version 1.0
+ * @version 1.1
  */
 public class Converter {
 
@@ -53,11 +53,15 @@ public class Converter {
              */
             public boolean find() {
                 boolean isExist = false;
-                if (!curIterator.hasNext() && it.hasNext()) {
-                    curIterator = it.next();
+                while (it.hasNext()) {
+                    if (!curIterator.hasNext() && it.hasNext()) {
+                        curIterator = it.next();
+                    } else {
+                        break;
+                    }
                 }
                 if (curIterator.hasNext()) {
-                   isExist = true;
+                    isExist = true;
                 }
                 return isExist;
             }
