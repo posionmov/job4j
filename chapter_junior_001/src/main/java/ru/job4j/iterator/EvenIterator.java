@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
  * Класс, реализующий интерфейс Итератора
  * @author Galanov Sergey
  * @since 12.08.2018
- * @version 1.1
+ * @version 1.3
  */
 public class EvenIterator implements Iterator {
 
@@ -45,7 +45,6 @@ public class EvenIterator implements Iterator {
         if (!this.hasNext()) {
             throw new NoSuchElementException();
         }
-        this.hasNext();
         return this.array[this.curIndex++];
     }
 
