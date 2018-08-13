@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
  * @param <T> - любой ссылочный тип данных
  * @author Galanov Sergey
  * @since 13.08.2018
- * @version 1.0
+ * @version 1.1
  */
 public class SimpleArray<T> implements Iterable<T> {
 
@@ -57,14 +57,17 @@ public class SimpleArray<T> implements Iterable<T> {
      * Последний элемент приравнивается к null
      * @param model - удалемое значение
      */
-    public void delete(T model) {
+    public boolean delete(T model) {
+        boolean result = false;
         for (int i = 0; i < this.array.length; i++) {
             if (this.array[i].equals(model)) {
                 System.arraycopy(this.array, i + 1, this.array, i, this.array.length - 1 - i);
                 this.array[this.array.length - 1] = null;
+                result = true;
                 break;
             }
         }
+        return result;
     }
 
     /**
