@@ -4,7 +4,7 @@ package ru.job4j.lists;
  * Класс, который имитирует работу LinkedList
  * @author Galanov Sergey
  * @since 13.08.2018
- * @version 1.0
+ * @version 1.1
  * @param <E>
  */
 public class SimpleArrayList<E> {
@@ -31,7 +31,18 @@ public class SimpleArrayList<E> {
      * @return удаленный элемент
      */
     public E delete() {
-        return findInArray(this.size - 1);
+        Node<E> element = this.first;
+        E result = null;
+        for (int i = 0; i < this.size; i++) {
+            if (i == this.size - 2) {
+                result = element.next.date;
+                element.next = element.next.next;
+                size--;
+                break;
+            }
+            element = element.next;
+        }
+        return result;
     }
 
     /**

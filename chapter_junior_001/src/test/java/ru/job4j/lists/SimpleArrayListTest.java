@@ -49,6 +49,7 @@ public class SimpleArrayListTest {
     @Test
     public void whenAddThreeElementsAndDeleteOneGetSizeResultIsTwo() {
         assertThat(this.list.delete(), is(5));
+        assertThat(this.list.getSize(), is(2));
     }
 
 }
