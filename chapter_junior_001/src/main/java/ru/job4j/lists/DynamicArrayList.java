@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
  * Класс-обертка массива, придающий ему динамичность
  * @author Galanov Sergey
  * @since 14.08.2018
- * @version 1.0
+ * @version 1.1
  * @param <E> - любой класс
  */
 public class DynamicArrayList<E> implements Iterable<E> {
@@ -28,10 +28,17 @@ public class DynamicArrayList<E> implements Iterable<E> {
      */
     public void add(E object) {
         if (curLeght == this.container.length) {
-            this.container = Arrays.copyOf(this.container, curLeght + 1);
+            this.growLength();
         }
         this.container[curLeght++] = object;
         this.curMod++;
+    }
+
+    /**
+     * Метод, который увеличивает длину текущего массива
+     */
+    private void growLength() {
+        this.container = Arrays.copyOf(this.container, (int) (curLeght * 1.5));
     }
 
     /**
