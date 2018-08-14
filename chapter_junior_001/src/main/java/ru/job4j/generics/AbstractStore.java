@@ -6,10 +6,10 @@ import java.util.Iterator;
  * Абстрактный класс, описывающий общую работу с оберткой массива SimpleArray
  * @author Galanov Sergey
  * @since 13.08.2018
- * @version 1.0
+ * @version 1.1
  * @param <T> - любой ссылочный тип данных, наследуемый от класса Base
  */
-public abstract class AbstractStore<T extends Base> {
+public abstract class AbstractStore<T extends Base> implements Store<T> {
 
     /**
      * Содержит внутренее поле.
