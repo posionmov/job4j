@@ -11,7 +11,7 @@ import java.util.Iterator;
  * Класс для тестирования класса DynamicArrayLinkedList.java
  * @author Galanov Sergey
  * @since 14.08.2018
- * @version 1.0
+ * @version 1.1
  */
 public class DynamicArrayLinkedListTest {
 
@@ -68,6 +68,16 @@ public class DynamicArrayLinkedListTest {
         assertThat(iterator.hasNext(), is(true));
         assertThat(iterator.next(), is("three"));
         assertThat(iterator.hasNext(), is(false));
+    }
+
+    /**
+     * Тест если добавить пустой массив
+     * Показывает, что ошибка не вылетает
+     */
+    @Test
+    public void whenCreateEmptyArrayThen() {
+        DynamicArrayLinkedList<String> array = new DynamicArrayLinkedList<>();
+        array.delete(0);
     }
 
 }
