@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
  * Класс для реализации связанного списка
  * @author Galanov Sergey
  * @since 14.08.2018
- * @version 1.1
+ * @version 1.2
  * @param <E> любой обьект класса E
  */
 public class DynamicArrayLinkedList<E> implements Iterable<E> {
@@ -58,11 +58,10 @@ public class DynamicArrayLinkedList<E> implements Iterable<E> {
             result.nextObject = null;
         } else if (this.size - 1 == index) {
             this.previous = this.previous.nextObject;
-            this.size--;
         } else {
             result.nextObject = result.nextObject.nextObject;
-            this.size--;
         }
+        this.size--;
     }
 
     /**
@@ -102,11 +101,8 @@ public class DynamicArrayLinkedList<E> implements Iterable<E> {
                 if (this.curMods != mods) {
                     throw new ConcurrentModificationException();
                 }
-                for (; this.curIndex < size; this.curIndex++) {
-                    if (get(this.curIndex) != null) {
-                        result = true;
-                        break;
-                    }
+                if (this.curIndex < size && get(this.curIndex + 1) != null) {
+                    result = true;
                 }
                 return result;
             }
