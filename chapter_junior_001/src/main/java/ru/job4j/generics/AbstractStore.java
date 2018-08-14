@@ -5,8 +5,8 @@ import java.util.Iterator;
 /**
  * Абстрактный класс, описывающий общую работу с оберткой массива SimpleArray
  * @author Galanov Sergey
- * @since 13.08.2018
- * @version 1.1
+ * @since 14.08.2018
+ * @version 1.2
  * @param <T> - любой ссылочный тип данных, наследуемый от класса Base
  */
 public abstract class AbstractStore<T extends Base> implements Store<T> {
@@ -34,17 +34,11 @@ public abstract class AbstractStore<T extends Base> implements Store<T> {
      */
     public boolean replace(String id, T model) {
         boolean result = false;
-        int index = 0;
-        Iterator<T> iterator = array.iterator();
-        while (iterator.hasNext()) {
-            if (array.get(index).getId().equals(id)) {
-                System.out.println();
-                array.set(index, model);
+        for (int i = 0; i < this.array.getSize(); i++) {
+            if (this.array.get(i) != null && this.array.get(i).getId().equals(id)) {
+                this.array.set(i, model);
                 result = true;
                 break;
-            } else {
-                index++;
-                iterator.next();
             }
         }
         return result;

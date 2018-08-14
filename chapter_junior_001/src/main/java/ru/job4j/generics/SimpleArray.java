@@ -9,8 +9,8 @@ import java.util.NoSuchElementException;
  * который позволяет создавать итератор
  * @param <T> - любой ссылочный тип данных
  * @author Galanov Sergey
- * @since 13.08.2018
- * @version 1.1
+ * @since 14.08.2018
+ * @version 1.2
  */
 public class SimpleArray<T> implements Iterable<T> {
 
@@ -90,6 +90,13 @@ public class SimpleArray<T> implements Iterable<T> {
         if (checkingIndex >= this.array.length) {
             throw new ArrayIndexOutOfBoundsException();
         }
+    }
+
+    /**
+     * Метод, возращающий текущий размер массива
+     */
+    public int getSize() {
+        return this.array.length;
     }
 
     /**
