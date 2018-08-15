@@ -68,6 +68,13 @@ public class DynamicArrayLinkedList<E> implements Iterable<E> {
     }
 
     /**
+     * Метод, возращающий текущию длину списка
+     */
+    public int getLength() {
+        return this.size;
+    }
+
+    /**
      * Класс, реализующий хранение данных и ссылки на предыдущий обьект класса
      * @param <e>
      */
