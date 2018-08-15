@@ -8,8 +8,8 @@ import java.util.NoSuchElementException;
 /**
  * Класс-обертка массива, придающий ему динамичность
  * @author Galanov Sergey
- * @since 14.08.2018
- * @version 1.1
+ * @since 15.08.2018
+ * @version 1.2
  * @param <E> - любой класс
  */
 public class DynamicArrayList<E> implements Iterable<E> {
@@ -33,6 +33,9 @@ public class DynamicArrayList<E> implements Iterable<E> {
         this.container[curLeght++] = object;
         this.curMod++;
     }
+    public int getSize() {
+        return this.curLeght;
+    }
 
     /**
      * Метод, который увеличивает длину текущего массива
@@ -40,6 +43,8 @@ public class DynamicArrayList<E> implements Iterable<E> {
     private void growLength() {
         this.container = Arrays.copyOf(this.container, (int) (curLeght * 1.5));
     }
+
+
 
     /**
      * Метод получения значения элемента из массива по индексу
