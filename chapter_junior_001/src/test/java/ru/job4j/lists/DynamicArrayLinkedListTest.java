@@ -10,8 +10,8 @@ import java.util.Iterator;
 /**
  * Класс для тестирования класса DynamicArrayLinkedList.java
  * @author Galanov Sergey
- * @since 14.08.2018
- * @version 1.1
+ * @since 15.08.2018
+ * @version 1.2
  */
 public class DynamicArrayLinkedListTest {
 
@@ -77,7 +77,21 @@ public class DynamicArrayLinkedListTest {
     @Test
     public void whenCreateEmptyArrayThen() {
         DynamicArrayLinkedList<String> array = new DynamicArrayLinkedList<>();
-        array.delete(0);
+        this.array.delete(0);
+    }
+    /**
+     * Тест на удаление элементов
+     */
+    @Test
+    public void whenDeleteThenChangeLength() {
+        this.array.delete(0);
+        assertThat(this.array.getLength(), is(2));
+        assertThat(this.array.get(0), is("two"));
+        this.array.delete(0);
+        assertThat(this.array.getLength(), is(1));
+        assertThat(this.array.get(0), is("three"));
+        this.array.delete(0);
+        assertThat(this.array.getLength(), is(0));
     }
 
 }
