@@ -7,7 +7,7 @@ import java.util.List;
  * Класс-оболочка массива
  * @author Galanov Sergey
  * @since 17.08.2018
- * @version 1.0
+ * @version 1.1
  * @param <E>
  */
 public class Node<E extends Comparable<E>> {
@@ -49,5 +49,21 @@ public class Node<E extends Comparable<E>> {
      */
     public boolean eqValue(E another) {
         return this.value.compareTo(another) == 0;
+    }
+
+    /**
+     * Вспомогательный метод
+     * @return true, если у текущего элемента 2 или менее ребенка
+     */
+    public boolean hasTwoOrLessChild() {
+        return this.children.size() <= 2;
+    }
+
+    /**
+     * Вспомогательный метод
+     * @return true если у данного элемента нет детей
+     */
+    public boolean dontHaveChilds() {
+        return this.children.size() == 0;
     }
 }

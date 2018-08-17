@@ -84,6 +84,42 @@ public class SimpleTreeRealise<E extends Comparable<E>> implements SimpleTree {
         return result;
     }
 
+    /**
+     * Метод, проверяющий все ли элементы в древе имеют только 2 или менее потомков
+     * @return true если все элементы древа имеют 2 или менее потомка
+     */
+    public boolean isBinary() {
+        boolean result = this.root.hasTwoOrLessChild();
+        boolean result1, result2;
+        if (result && this.root.leaves().size() > 1) {
+            result1 = checkAllTree(this.root.leaves().get(0));
+            result2 = checkAllTree(this.root.leaves().get(1));
+            result = result1 & result2;
+        } else if (this.root.leaves().size() == 1) {
+            result = checkAllTree(this.root.leaves().get(0));
+        }
+        return result;
+    }
+
+    /**
+     * Вспомогательный метод, который пробегается по всему древу
+     * @param element начальный элемент для пробега
+     * @return true если дерево бинарное
+     */
+    private boolean checkAllTree(Node<E> element) {
+        boolean result = false;
+            if (element.hasTwoOrLessChild()) {
+                for (int i = 0; i < element.leaves().size(); i++) {
+                    if (!element.leaves().get(i).dontHaveChilds()) {
+                        result = checkAllTree(element.leaves().get(i));
+                    } else {
+                        result = true;
+                    }
+                }
+            }
+        return result;
+    }
+
     @Override
     public Iterator iterator() {
         return new Iterator() {
@@ -106,11 +142,12 @@ public class SimpleTreeRealise<E extends Comparable<E>> implements SimpleTree {
 
             private boolean checkNext() {
                 boolean result = false;
-                for (int i = curIndex; i < this.listOfTheseChilds.size(); i++) {
-                    if (listOfTheseChilds.get(i++) != null) {
-                        result = true;
-                        this.curIndex++;
-                        break;
+                if (curIndex < listOfTheseChilds.size()) {
+                    for (int i = curIndex; i < this.listOfTheseChilds.size(); i++) {
+                        if (listOfTheseChilds.get(i) != null) {
+                            result = true;
+                            break;
+                        }
                     }
                 }
                 return result;
