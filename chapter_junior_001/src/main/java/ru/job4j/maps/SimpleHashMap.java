@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
  * Класс, имитирующий поведение HashMap
  * @author Galanov Sergey
  * @since 18.08.2018
- * @version 1.1
+ * @version 1.2
  * @param <K> обьект любого класса, используется как ключ
  * @param <V> обьект любого класса, отличного от К, используется как значение
  */
@@ -39,8 +39,8 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
     public boolean insert(K key, V value) {
         boolean result = false;
         if (checkUnique(key)) {
-            Element<K, V> element = new Element<>(key);
-            element.put(value);
+            Element<K, V> element = new Element<>(key, value);
+            //element.put(value);
             this.array[this.calculateIndexOfElement(key.hashCode())] = element;
             this.curLength++;
             this.resize();
@@ -154,52 +154,71 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
      */
     private class Element<K, V> {
 
-        /**
-         * Содержит поля класса:
-         * - связанный список
-         * - текущий индекс значения
-         */
-        private DynamicArrayLinkedList<Object> arrayForIterator = new DynamicArrayLinkedList<>();
-        private int curValueIndex = 1;
         private K key;
+        private V value;
+        private Element<K, V> next;
 
-        public Element(K key) {
+        public Element(K key, V value) {
             this.key = key;
+            this.value = value;
         }
 
-        /**
-         * Метод возращает текущее значение из списка
-         * @return значение из списка
-         */
-        V getValue() {
-            return (V) this.arrayForIterator.get(1);
+        public K getKey() {
+            return this.key;
         }
 
-        /**
-         * Метод, который "кладет" значени в список если его там еще нет
-         * @param value значение, которое следует положить в список
-         */
-        void put(V value) {
-            if (!this.checkValue(value)) {
-                this.arrayForIterator.add(value);
-                this.curValueIndex += 2;
-            }
+        public V getValue() {
+            return this.value;
         }
 
-        /**
-         * Метод, проверяющий наличие в данном списке конкретного значения
-         * @param value проверяемое значение
-         * @return true если значение есть
-         */
-        private boolean checkValue(V value) {
-            boolean result = false;
-            for (int i = 1; i < this.curValueIndex; i += 2) {
-                if (this.arrayForIterator.get(i).equals(value)) {
-                    result = true;
-                    break;
-                }
-            }
-            return result;
-        }
+
+//
+//        /**
+//         * Содержит поля класса:
+//         * - связанный список
+//         * - текущий индекс значения
+//         */
+//        private DynamicArrayLinkedList<Object> arrayForIterator = new DynamicArrayLinkedList<>();
+//        private int curValueIndex = 1;
+//        private K key;
+//
+//        public Element(K key) {
+//            this.key = key;
+//        }
+//
+//        /**
+//         * Метод возращает текущее значение из списка
+//         * @return значение из списка
+//         */
+//        V getValue() {
+//            return (V) this.arrayForIterator.get(1);
+//        }
+//
+//        /**
+//         * Метод, который "кладет" значени в список если его там еще нет
+//         * @param value значение, которое следует положить в список
+//         */
+//        void put(V value) {
+//            if (!this.checkValue(value)) {
+//                this.arrayForIterator.add(value);
+//                this.curValueIndex += 2;
+//            }
+//        }
+//
+//        /**
+//         * Метод, проверяющий наличие в данном списке конкретного значения
+//         * @param value проверяемое значение
+//         * @return true если значение есть
+//         */
+//        private boolean checkValue(V value) {
+//            boolean result = false;
+//            for (int i = 1; i < this.curValueIndex; i += 2) {
+//                if (this.arrayForIterator.get(i).equals(value)) {
+//                    result = true;
+//                    break;
+//                }
+//            }
+//            return result;
+//        }
     }
 }
