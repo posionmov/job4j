@@ -9,18 +9,17 @@ import java.util.NoSuchElementException;
 /**
  * Класс, имитирующий поведение HashMap
  * @author Galanov Sergey
- * @since 16.08.2018
- * @version 1.0
+ * @since 18.08.2018
+ * @version 1.1
  * @param <K> обьект любого класса, используется как ключ
  * @param <V> обьект любого класса, отличного от К, используется как значение
  */
-public class SimpleHashMap<K, V> implements Iterable {
+public class SimpleHashMap<K, V> implements Iterable<K> {
 
     /**
      * Приватные поля класса
      */
-    private Element[] array = new Element[10]; // текущий массив
-    private int curIndex = 0; // Текущий индекс
+    private Element[] array = new Element[16]; // текущий массив
     private int curLength = 0; //Текущая длина
 
     /**
@@ -40,14 +39,11 @@ public class SimpleHashMap<K, V> implements Iterable {
     public boolean insert(K key, V value) {
         boolean result = false;
         if (checkUnique(key)) {
-            Element element = new Element();
-            element.put(key, value);
-            this.array[this.curIndex] = element;
-            this.curIndex++;
-            if (this.curIndex == this.array.length) {
-                this.array = Arrays.copyOf(this.array, this.array.length * 2);
-            }
+            Element<K, V> element = new Element<>(key);
+            element.put(value);
+            this.array[this.calculateIndexOfElement(key.hashCode())] = element;
             this.curLength++;
+            this.resize();
             result = true;
         }
         return result;
@@ -60,12 +56,10 @@ public class SimpleHashMap<K, V> implements Iterable {
      */
     private boolean checkUnique(K key) {
         boolean result = true;
-        for (int i = 0; i < this.curLength; i++) {
-            if (this.array[i].getKey().equals(key)) {
-                result = false;
-                break;
-            }
+        if (this.array[this.calculateIndexOfElement(key.hashCode())] != null) {
+            result = false;
         }
+
         return result;
     }
 
@@ -75,13 +69,7 @@ public class SimpleHashMap<K, V> implements Iterable {
      * @return значение, которое было найдено п оключу
      */
     public V get(K key) {
-        V result = null;
-        for (int i = 0; i < this.curLength; i++) {
-            if (this.array[i].getKey().equals(key)) {
-                result = (V) this.array[i].getValue();
-            }
-        }
-        return result;
+        return (V) this.array[this.calculateIndexOfElement(key.hashCode())].getValue();
     }
 
     /**
@@ -91,14 +79,39 @@ public class SimpleHashMap<K, V> implements Iterable {
      */
     public boolean delete(K key) {
         boolean result = false;
-        for (int i = 0; i < this.curLength; i++) {
-            if (this.array[i].getKey().equals(key)) {
-                System.arraycopy(this.array, i + 1, this.array, i, this.array.length - i - 1);
-                this.curLength--;
-                result = true;
-            }
+
+        int position = this.calculateIndexOfElement(key.hashCode());
+        if (this.array[position] != null) {
+            this.array[position] = null;
+            result = true;
+            this.curLength--;
         }
         return result;
+    }
+
+    /**
+     * Метод, вычисляющий положение в массиве
+     * @param hash результат вычисления хэш кода
+     * @return индекс элемента в массиве
+     */
+    private int calculateIndexOfElement(int hash) {
+        return hash & (this.array.length - 1);
+    }
+
+    /**
+     * Метод, производящий перераспределение всех элементов при увеличении длины массива
+     */
+    private void resize() {
+        if (isFulled()) {
+            this.array = Arrays.copyOf(this.array, this.array.length * 2);
+        }
+    }
+
+    /**
+     * Метод, проверяющий наполненность
+     */
+    private boolean isFulled() {
+        return  (this.curLength / this.array.length) >= 0.75;
     }
 
     /**
@@ -108,7 +121,6 @@ public class SimpleHashMap<K, V> implements Iterable {
     @Override
     public Iterator iterator() {
         return new Iterator<V>() {
-
             private int curIndex = 0;
 
             @Override
@@ -121,11 +133,18 @@ public class SimpleHashMap<K, V> implements Iterable {
                 if (!this.hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return (V) array[curIndex++].getValue();
+                V result = null;
+                for (; curIndex < array.length; curIndex++) {
+                    if (array[curIndex] != null) {
+                        result = (V) array[curIndex++].getValue();
+                        break;
+                    }
+                }
+                return result;
             }
 
             private boolean isNext() {
-                return this.curIndex != curLength;
+                return this.curIndex <= curLength;
             }
         };
     }
@@ -134,19 +153,53 @@ public class SimpleHashMap<K, V> implements Iterable {
      * Приватный класс, описывающий связку ключ-значение
      */
     private class Element<K, V> {
-        DynamicArrayLinkedList<Object> arrayForIterator = new DynamicArrayLinkedList<>();
 
-        K getKey() {
-            return (K) this.arrayForIterator.get(1);
+        /**
+         * Содержит поля класса:
+         * - связанный список
+         * - текущий индекс значения
+         */
+        private DynamicArrayLinkedList<Object> arrayForIterator = new DynamicArrayLinkedList<>();
+        private int curValueIndex = 1;
+        private K key;
+
+        public Element(K key) {
+            this.key = key;
         }
 
+        /**
+         * Метод возращает текущее значение из списка
+         * @return значение из списка
+         */
         V getValue() {
-            return (V) this.arrayForIterator.get(0);
+            return (V) this.arrayForIterator.get(1);
         }
 
-        void put(K key, V value) {
-            this.arrayForIterator.add(value);
-            this.arrayForIterator.add(key);
+        /**
+         * Метод, который "кладет" значени в список если его там еще нет
+         * @param value значение, которое следует положить в список
+         */
+        void put(V value) {
+            if (!this.checkValue(value)) {
+                this.arrayForIterator.add(value);
+                this.curValueIndex += 2;
+            }
+        }
+
+        /**
+         * Метод, проверяющий наличие в данном списке конкретного значения
+         * @param value проверяемое значение
+         * @return true если значение есть
+         */
+        private boolean checkValue(V value) {
+            boolean result = false;
+            for (int i = 1; i < this.curValueIndex; i += 2) {
+                if (this.arrayForIterator.get(i).equals(value)) {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
     }
 }
