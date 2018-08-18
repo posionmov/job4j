@@ -1,6 +1,6 @@
 package ru.job4j.maps;
 
-import ru.job4j.lists.DynamicArrayLinkedList;
+//import ru.job4j.lists.DynamicArrayLinkedList;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -103,7 +103,15 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
      */
     private void resize() {
         if (isFulled()) {
-            this.array = Arrays.copyOf(this.array, this.array.length * 2);
+            //this.array = Arrays.copyOf(this.array, this.array.length * 2);
+            Element[] array = new Element[this.array.length * 2];
+            for (Element element : this.array) {
+                if (element != null) {
+                    int newIndex = this.calculateIndexOfElement(element.getKey().hashCode());
+                    array[newIndex] = element;
+                }
+            }
+            this.array = array;
         }
     }
 
@@ -111,7 +119,12 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
      * Метод, проверяющий наполненность
      */
     private boolean isFulled() {
-        return  (this.curLength / this.array.length) >= 0.75;
+
+        float curLength = this.curLength;
+        float arrayLength = this.array.length;
+        float result = curLength / arrayLength;
+
+        return result >= 0.75;
     }
 
     /**

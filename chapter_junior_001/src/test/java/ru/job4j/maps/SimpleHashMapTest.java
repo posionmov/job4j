@@ -10,8 +10,8 @@ import java.util.Iterator;
 /**
  * Класс для тестирования импровизированной мапы
  * @author Galanov Sergey
- * @since 16.08.2018
- * @version 1.0
+ * @since 18.08.2018
+ * @version 1.1
  */
 public class SimpleHashMapTest {
 
@@ -67,17 +67,24 @@ public class SimpleHashMapTest {
      */
     @Test
     public void whenInsertMoreElementsThenCurSizeIsGrow() {
-        this.simpleHashMap.insert(4, "1");
-        this.simpleHashMap.insert(5, "1");
-        this.simpleHashMap.insert(6, "1");
-        this.simpleHashMap.insert(7, "1");
-        this.simpleHashMap.insert(8, "1");
-        this.simpleHashMap.insert(9, "1");
-        this.simpleHashMap.insert(10, "1");
+        this.simpleHashMap.insert(510, "1");
         this.simpleHashMap.insert(11, "1");
+        this.simpleHashMap.insert(520, "1");
         this.simpleHashMap.insert(12, "1");
+        this.simpleHashMap.insert(530, "1");
         this.simpleHashMap.insert(13, "1");
-        assertThat(this.simpleHashMap.getCurLength(), is(13));
+        this.simpleHashMap.insert(531, "1");
+        this.simpleHashMap.insert(14, "1");
+        this.simpleHashMap.insert(532, "1");
+        this.simpleHashMap.insert(15, "1");
+        this.simpleHashMap.insert(533, "1");
+        this.simpleHashMap.insert(16, "1");
+        this.simpleHashMap.insert(534, "1");
+        this.simpleHashMap.insert(17, "1");
+        this.simpleHashMap.insert(535, "1");
+        this.simpleHashMap.insert(18, "1");
+
+        assertThat(this.simpleHashMap.getCurLength(), is(16));
     }
 
     /**
