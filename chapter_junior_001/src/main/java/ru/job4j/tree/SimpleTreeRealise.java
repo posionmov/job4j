@@ -5,11 +5,11 @@ import java.util.*;
 /**
  * Класс, реализующий работу с импровизированным древом
  * @author Galanov Sergey
- * @since 17.08.2018
- * @version 1.0
+ * @since 20.08.2018
+ * @version 1.1
  * @param <E>
  */
-public class SimpleTreeRealise<E extends Comparable<E>> implements SimpleTree {
+public class SimpleTreeRealise<E extends Comparable<E>> implements SimpleTree<E> {
 
     /**
      * Содержит приватные поля класса
@@ -31,13 +31,16 @@ public class SimpleTreeRealise<E extends Comparable<E>> implements SimpleTree {
      * @return true если такого ребенка нет и он вставился
      */
     @Override
-    public boolean add(Comparable parent, Comparable children) {
-        Node newChild = new Node<>(children);
+    public boolean add(E parent, E children) {
+        Node<E> newChild = new Node<>(children);
         boolean result = false;
-        Optional<Node<E>> findParent = this.findBy(parent); // поиск родителя
-        Node<E> finder = Optional.of(findParent).get().get();
-        if (!findParent.equals(Optional.empty()) && !this.isExist(finder, children)) { // Если найденный родидель не пустой и не содержит ребенка
-            finder.add(newChild);
+        Node<E> findParent = this.findBy(parent); // поиск родителя
+        Node<E> findChildren = this.findBy(children); // Поиск ребенка
+        if (findParent != null && findChildren == null) {
+            if (!this.isExist(findParent, children)) { // Если найденный родидель не пустой и не содержит ребенка
+                findParent.add(newChild);
+                result = true;
+            }
         }
         return result;
     }
@@ -49,14 +52,14 @@ public class SimpleTreeRealise<E extends Comparable<E>> implements SimpleTree {
      * @return обьект класса Optional, содержащий найденный элемент
      */
     @Override
-    public Optional<Node<E>> findBy(Comparable value) {
-        Optional<Node<E>> result = Optional.empty(); // Результативная переменная
+    public Node<E> findBy(E value) {
+        Node<E> result = null; // Результативная переменная
         Queue<Node<E>> data = new LinkedList<>(); // Создание LinkedList и Queue как впомогательную переменную, хранящую все дерево
         data.offer(this.root); // Во вспомогательную переменную записывается текущее значение списка
         while (!data.isEmpty()) { // Цикл, работающий пока вспомогательная переменная не пустая
             Node<E> el = data.poll(); // Присваивает переменной el первое значение из списка и удаляет его из списка
-            if (el.eqValue((E) value)) { // Если это значение равно передаваемому
-                result = Optional.of(el);
+            if (el.eqValue(value)) { // Если это значение равно передаваемому
+                result = el;
                 break;
             }
             for (Node<E> child : el.leaves()) {
@@ -67,12 +70,12 @@ public class SimpleTreeRealise<E extends Comparable<E>> implements SimpleTree {
     }
 
     /**
-     * Вспомогательный метод, проверяющий есть ли у данного обьекта определнный сын
+     * Вспомогательный метод, проверяющий есть ли у данного обьекта определенный сын
      * @param parent родиьель, в котором требуется проверить всех детей
      * @param children ребенок для поиска
      * @return true если такой ребенок уже есть у родителя
      */
-    private boolean isExist(Node<E> parent, Comparable children) {
+    private boolean isExist(Node<E> parent, E children) {
         boolean result = false;
         List<Node<E>> listOfChildren = parent.leaves();
         for (int i = 0; i < listOfChildren.size(); i++) {
@@ -118,6 +121,16 @@ public class SimpleTreeRealise<E extends Comparable<E>> implements SimpleTree {
                 }
             }
         return result;
+    }
+
+    /**
+     * Метод, возращающий всех детей у заданного отца
+     * @param father значение отца (его внутренняя переменная
+     * @return список всех детей отца
+     */
+    public List<Node<E>> allChildrens(E father) {
+        Node<E> element = this.findBy(father);
+        return element.leaves();
     }
 
     @Override

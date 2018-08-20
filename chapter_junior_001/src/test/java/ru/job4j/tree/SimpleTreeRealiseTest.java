@@ -1,15 +1,14 @@
 package ru.job4j.tree;
 
 import org.junit.Test;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 /**
  * Класс для тестирования импровизированного древа
  * @author Galanov Sergey
- * @since 17.08.2018
- * @version 1.1
+ * @since 20.08.2018
+ * @version 1.2
  */
 public class SimpleTreeRealiseTest {
 
@@ -24,8 +23,7 @@ public class SimpleTreeRealiseTest {
         tree.add(1, 4);
         tree.add(4, 5);
         tree.add(5, 6);
-        assertThat(tree.findBy(6).isPresent(), is(true)
-        );
+        assertThat(tree.allChildrens(1).size(), is(3));
     }
 
     /**
@@ -35,8 +33,7 @@ public class SimpleTreeRealiseTest {
     public void when6ElFindNotExitThenOptionEmpty() {
         SimpleTreeRealise<Integer> tree = new SimpleTreeRealise<>(1);
         tree.add(1, 2);
-        assertThat(tree.findBy(7).isPresent(), is(false)
-        );
+        assertThat(tree.allChildrens(1).size(), is(1));
     }
 
     /**
@@ -51,6 +48,8 @@ public class SimpleTreeRealiseTest {
         tree.add(3, 6);
         tree.add(4, 7);
         assertThat(tree.isBinary(), is(true));
+        assertThat(tree.allChildrens(3).size(), is(2));
+        assertThat(tree.allChildrens(4).size(), is(1));
     }
 
     /**
@@ -86,6 +85,7 @@ public class SimpleTreeRealiseTest {
         tree.add(3, 6);
         tree.add(3, 7);
         assertThat(tree.isBinary(), is(false));
+        assertThat(tree.allChildrens(5).size(), is(3));
     }
 
 }
