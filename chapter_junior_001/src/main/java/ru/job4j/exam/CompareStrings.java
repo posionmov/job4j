@@ -7,7 +7,7 @@ import java.util.Map;
  * Класс для сравнения двух строк при помощи HashMap
  * @author Galanov Sergey
  * @since 21.08.2018
- * @version 1.0
+ * @version 1.1
  */
 public class CompareStrings {
 
@@ -31,19 +31,13 @@ public class CompareStrings {
         boolean result = false;
         if (one.length() == two.length()) {
             Map<Character, Integer> mapOne = new HashMap<>();
+            Map<Character, Integer> mapTwo = new HashMap<>();
             for (int i = 0; i < one.length(); i++) {
-                if (!mapOne.containsKey(one.charAt(i))) {
-                    mapOne.put(one.charAt(i), 1);
-                } else {
+                if (mapOne.putIfAbsent(one.charAt(i), 0) != null) {
                     mapOne.put(one.charAt(i), mapOne.get(one.charAt(i)) + 1);
                 }
-            }
-            Map<Character, Integer> mapTwo = new HashMap<>();
-            for (int i = 0; i < two.length(); i++) {
-                if (!mapTwo.containsKey(two.charAt(i))) {
-                    mapTwo.put(two.charAt(i), 1);
-                } else {
-                    mapTwo.put(one.charAt(i), mapTwo.get(one.charAt(i)) + 1);
+                if (mapTwo.putIfAbsent(two.charAt(i), 0) != null) {
+                    mapTwo.put(two.charAt(i), mapTwo.get(two.charAt(i)) + 1);
                 }
             }
             for (int i = 0; i < mapOne.size(); i++) {
