@@ -1,13 +1,12 @@
 package ru.job4j.tracker;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Класс для работы с меню
  * @author Galanov Sergey
- * @since 06.08.2018
- * @version 1.3
+ * @since 22.08.2018
+ * @version 1.4
  */
 public class MenuTracker {
 
@@ -16,7 +15,8 @@ public class MenuTracker {
      */
     private Input input; //Используемый ввод
     private Tracker tracker; //Используемый массив
-    private List<UserAction> actions = new ArrayList<UserAction>(); // Коллекция с действиями
+    private Map<Integer, BaseAction> newActions = new HashMap<>(); // Карта с действиями
+    private List<Integer> mapActions = new ArrayList<>();
     private int curKey = 0;
 
     /**
@@ -34,14 +34,23 @@ public class MenuTracker {
      */
     public List<Integer> fillActions(StartUI ui) {
         List<Integer> result;
-        this.actions.add(this.new AddItem(curKey++, "Создание заявки"));
-        this.actions.add(this.new ShowAll(curKey++, "Показать все заявки"));
-        this.actions.add(new MenuTracker.EditItem(curKey++, "Редактирование заявки"));
-        this.actions.add(new MenuTracker.DeleteItem(curKey++, "Удаление заявки"));
-        this.actions.add(new FindItemById(curKey++, "Поиск заявки по id"));
-        this.actions.add(new FindByName(curKey++, "Поиск заявки по имени"));
-        this.actions.add(new ExitProgram(curKey++, "Выйти из программы", ui));
-        result = this.appendInArray();
+        BaseAction addItem = this.new AddItem(curKey++, "Создание заявки");
+        BaseAction showAll = this.new ShowAll(curKey++, "Показать все заявки");
+        BaseAction editItem = new MenuTracker.EditItem(curKey++, "Редактирование заявки");
+        BaseAction deleteItem = new MenuTracker.DeleteItem(curKey++, "Удаление заявки");
+        BaseAction findItemById = new FindItemById(curKey++, "Поиск заявки по id");
+        BaseAction findItemByName = new FindByName(curKey++, "Поиск заявки по имени");
+        BaseAction exitProgram = new ExitProgram(curKey++, "Выйти из программы", ui);
+        this.newActions.put(addItem.key(), addItem);
+        this.newActions.put(showAll.key(), showAll);
+        this.newActions.put(editItem.key(), editItem);
+        this.newActions.put(deleteItem.key(), deleteItem);
+        this.newActions.put(findItemById.key(), findItemById);
+        this.newActions.put(findItemByName.key(), findItemByName);
+        this.newActions.put(exitProgram.key(), exitProgram);
+        result = this.appendFromMap();
+        result.sort((o1, o2) -> o1 > o2 ? 1 : o1 == o2 ? 0 : -1);
+        this.mapActions = result;
         return result;
     }
 
@@ -49,22 +58,16 @@ public class MenuTracker {
      * Функция по добавлению в массив элементов меню
      * @return массив, который содержит все элементы меню
      */
-    private List<Integer> appendInArray() {
-        List<Integer> result = new ArrayList<Integer>();
-        for (UserAction userAction : this.actions) {
-            result.add(userAction.key());
-        }
-        return result;
+    private List<Integer> appendFromMap() {
+        return new ArrayList<>(this.newActions.keySet());
     }
 
     /**
      * Функция для вывода в консоль всех пункторв меню (и еще дополнительного пункта, отвечающего за выход из программы)
      */
     public void show() {
-        for (UserAction action : this.actions) {
-            if (action != null) {
-                System.out.println(action.info());
-            }
+        for (int i = 0; i < this.newActions.size(); i++) {
+            System.out.println(this.newActions.get(this.mapActions.get(i)).info());
         }
         System.out.println("----------------------------------------------------------");
     }
@@ -74,9 +77,8 @@ public class MenuTracker {
      * @param key - ключ конкретного действия
      */
     public int select(int key) {
-
-       if (key < this.actions.size()) {
-           this.actions.get(key).execute(this.input, this.tracker);
+       if (key < this.newActions.size()) {
+           this.newActions.get(key).execute(this.input, this.tracker);
            return key;
        } else {
            return 6;
