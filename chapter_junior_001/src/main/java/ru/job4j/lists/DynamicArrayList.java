@@ -5,18 +5,23 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+
 /**
  * Класс-обертка массива, придающий ему динамичность
  * @author Galanov Sergey
- * @since 15.08.2018
- * @version 1.2
+ * @since 23.08.2018
+ * @version 1.3
  * @param <E> - любой класс
  */
+@ThreadSafe
 public class DynamicArrayList<E> implements Iterable<E> {
 
     /**
      * Содержит внутренние поля класса
      */
+    @GuardedBy("this")
     private Object[] container = new Object[10]; // Массив. По дефолту имеет размер в 10 элементов. В дальнейшем изменяется
     private int curLeght = 0; // Текущее количество элементов в массиве
     private int curMod = 0; // Текущее количество изменений в массиве
@@ -26,13 +31,14 @@ public class DynamicArrayList<E> implements Iterable<E> {
      * Так же при добавлении элемента в полный массив создает новый массив с длиной на 1 больше
      * @param object обьект класса E, который необходимо поместить в массив
      */
-    public void add(E object) {
+    public synchronized void add(E object) {
         if (curLeght == this.container.length) {
             this.growLength();
         }
         this.container[curLeght++] = object;
         this.curMod++;
     }
+
     public int getSize() {
         return this.curLeght;
     }
@@ -41,10 +47,18 @@ public class DynamicArrayList<E> implements Iterable<E> {
      * Метод, который увеличивает длину текущего массива
      */
     private void growLength() {
-        this.container = Arrays.copyOf(this.container, (int) (curLeght * 1.5));
+        synchronized (this) {
+            this.container = Arrays.copyOf(this.container, (int) (curLeght * 1.5));
+        }
     }
 
-
+    public void delete(int index) {
+        for (int i = index; i < this.container.length - 1; i++) {
+            this.container[i] = this.container[i + 1];
+        }
+        this.container[this.container.length - 1] = null;
+        this.curLeght--;
+    }
 
     /**
      * Метод получения значения элемента из массива по индексу

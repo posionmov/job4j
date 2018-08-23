@@ -10,10 +10,47 @@ import java.util.Iterator;
 /**
  * Класс для тестирования класса DynamicArrayLinkedList.java
  * @author Galanov Sergey
- * @since 15.08.2018
- * @version 1.2
+ * @since 23.08.2018
+ * @version 1.3
  */
 public class DynamicArrayLinkedListTest {
+
+    /**
+     * Приватный класс, наледующий класс Thread
+     * будет использоваться как поток
+     * @param <E> любой класс
+     */
+    private class ThreadClass<E> extends Thread {
+
+        /**
+         * Содержит приватные поля:
+         * - ссылка на массив
+         * - значение потока (его имя)
+         */
+        private final DynamicArrayLinkedList<E> array;
+        private final int value;
+
+        /**
+         * Конструктор класса
+         * @param array - ссылка на массив
+         * @param value - значение (имя) потока
+         */
+        private ThreadClass(DynamicArrayLinkedList<E> array, int value) {
+            this.array = array;
+            this.value = value;
+        }
+
+        /**
+         * Переопределенный метод класса Thread
+         * Работает как поток
+         */
+        @Override
+        public void run() {
+            System.out.println("Thread " + this.value + "get - " + this.array.get(this.array.getLength() - 1));
+            this.array.delete(array.getLength() - 1);
+            System.out.println("Thread " + this.value + "was do delete, now Length is " + this.array.getLength());
+        }
+    }
 
     /**
      * Внутреннее поле теста
@@ -94,4 +131,16 @@ public class DynamicArrayLinkedListTest {
         assertThat(this.array.getLength(), is(0));
     }
 
+    /**
+     * Тест на проверку многопоточности
+     */
+    @Test
+    public void whenStart3ThreadsThenDeleteAllItems() throws InterruptedException {
+        for (int i = 1; i < 4; i++) {
+            ThreadClass<String> thread = new ThreadClass<>(this.array, i);
+            thread.start();
+        }
+        Thread.sleep(1000);
+        assertThat(this.array.getLength(), is(0));
+    }
 }

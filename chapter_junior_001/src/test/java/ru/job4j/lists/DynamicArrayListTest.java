@@ -11,10 +11,47 @@ import java.util.Iterator;
 /**
  * Класс для тестирования задания по созданию обертки над массивом и придания ему динамичности
  * @author Galanov Sergey
- * @since 14.08.2018
- * @version 1.0
+ * @since 23.08.2018
+ * @version 1.1
  */
 public class DynamicArrayListTest {
+
+    /**
+     * Приватный класс, наледующий класс Thread
+     * будет использоваться как поток
+     * @param <E> любой класс
+     */
+    private class ThreadClass<E> extends Thread {
+
+        /**
+         * Содержит приватные поля:
+         * - ссылка на массив
+         * - значение потока (его имя)
+         */
+        private final DynamicArrayList<E> array;
+        private final int value;
+
+        /**
+         * Конструктор класса
+         * @param array - ссылка на массив
+         * @param value - значение (имя) потока
+         */
+        private ThreadClass(DynamicArrayList<E> array, int value) {
+            this.array = array;
+            this.value = value;
+        }
+
+        /**
+         * Переопределенный метод класса Thread
+         * Работает как поток
+         */
+        @Override
+        public void run() {
+            System.out.println("Thread " + this.value + "get - " + this.array.get(this.array.getSize() - 1));
+            this.array.delete(array.getSize() - 1);
+            System.out.println("Thread " + this.value + "was do delete, now Length is " + this.array.getSize());
+        }
+    }
 
     /**
      * Поле теста
@@ -79,6 +116,19 @@ public class DynamicArrayListTest {
         this.testArray.add("test8");
         this.testArray.add("test9");
         assertThat(this.testArray.get(11), is("test9"));
+    }
+
+    /**
+     * Тест многопоточности
+     */
+    @Test
+    public void whenRunThreeThreadsThenDeleteAll() throws InterruptedException {
+        for (int i = 1; i < 4; i++) {
+            ThreadClass<String> thread = new ThreadClass<>(this.testArray, i);
+            thread.start();
+        }
+        Thread.sleep(1000);
+        assertThat(this.testArray.getSize(), is(0));
     }
 
 }
