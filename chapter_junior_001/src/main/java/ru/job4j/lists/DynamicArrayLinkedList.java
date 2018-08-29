@@ -3,9 +3,6 @@ package ru.job4j.lists;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
 /**
  * Класс для реализации связанного списка
  * @author Galanov Sergey
@@ -13,14 +10,12 @@ import net.jcip.annotations.ThreadSafe;
  * @version 1.5
  * @param <E> любой обьект класса E
  */
-@ThreadSafe
 public class DynamicArrayLinkedList<E> implements Iterable<E> {
 
     /**
      * Содержит внутренние поля класса
      */
     private int mods = 0; // Счеткик изменений в связанном списке
-    @GuardedBy("this")
     private LinkedObject<E> previous; // Ссылка на текущий обьект
     private int size = 0; // Текущий размер последовательности
 
@@ -30,12 +25,10 @@ public class DynamicArrayLinkedList<E> implements Iterable<E> {
      */
     public void add(E data) {
         LinkedObject<E> newLink = new LinkedObject<>(data);
-        synchronized (this) {
-            newLink.nextObject = this.previous;
-            this.previous = newLink;
-            this.mods++;
-            this.size++;
-        }
+        newLink.nextObject = this.previous;
+        this.previous = newLink;
+        this.mods++;
+        this.size++;
     }
 
     /**
@@ -45,10 +38,8 @@ public class DynamicArrayLinkedList<E> implements Iterable<E> {
      */
     public E get(int index) {
         LinkedObject<E> result = this.previous;
-        synchronized (this) {
-            for (int i = this.size; i > index + 1; i--) {
-                result = result.nextObject;
-            }
+        for (int i = this.size; i > index + 1; i--) {
+            result = result.nextObject;
         }
         return result.data;
     }
@@ -63,16 +54,14 @@ public class DynamicArrayLinkedList<E> implements Iterable<E> {
             for (int i = this.size; i > index + 2; i--) {
                 result = result.nextObject;
             }
-            synchronized (this) {
-                if (this.size != 1) {
-                    if (this.size - 1 == index) {
-                        this.previous = this.previous.nextObject;
-                    } else {
-                        result.nextObject = result.nextObject.nextObject;
-                    }
+            if (this.size != 1) {
+                if (this.size - 1 == index) {
+                    this.previous = this.previous.nextObject;
+                } else {
+                    result.nextObject = result.nextObject.nextObject;
                 }
-                this.size--;
             }
+            this.size--;
         }
 
     }
