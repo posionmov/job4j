@@ -1,6 +1,10 @@
 package ru.job4j.notify;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Класс для хранения в частично блокирующей хэш мапе
@@ -33,11 +37,14 @@ public class CashBase {
      * @param model - обьект класса Base, который необходимо обновить
      */
     public void update(Base model) {
-        if (!this.checkBase(model)) {
-            throw new OptimisticException("Обьект не актуальный");
-        }
-        model.version++;
-        this.map.replace(model.id, model);
+        this.map.computeIfPresent(model.id, (x, y) -> {
+            if (!this.checkBase(model)) {
+                throw new OptimisticException("Обьект не актуальный");
+            }
+            y.version++;
+            System.out.println("new version - " + y.version);
+            return y;
+        });
     }
 
     /**

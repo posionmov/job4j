@@ -55,7 +55,7 @@ public class CashBaseTest {
      * В результате не выскакивают сключительные ситуации
      */
     @Test
-    public void whenbalblaThenBla() {
+    public void whenbalblaThenBla() throws InterruptedException {
         AtomicReference<Exception> ex = new AtomicReference<>();
         CashBase base = new CashBase();
         Base base1 = new Base(1, 1, "Michail");
@@ -66,6 +66,7 @@ public class CashBaseTest {
         one.start();
         two.start();
         three.start();
-        assertThat(base.findById(1).version, is(3));
+        Thread.sleep(500);
+        assertThat(base.findById(1).version, is(4));
     }
 }
