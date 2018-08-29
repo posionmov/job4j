@@ -9,13 +9,12 @@ import java.util.Map;
 /**
  * Класс для хранения данных о пользователях и их счетах
  * @author Galanov Sergey
- * @since 23.08.2018
- * @version 1.0
+ * @since 29.08.2018
+ * @version 1.1
  */
 @ThreadSafe
 public class UserStorage {
 
-    @GuardedBy("this")
     private Map<Integer, User> map = new HashMap<>();
 
     /**
@@ -24,7 +23,11 @@ public class UserStorage {
      * @return
      */
     public boolean add(User user) {
-        return this.map.putIfAbsent(user.getId(), user) != null;
+        boolean result;
+        synchronized (this) {
+            result = this.map.putIfAbsent(user.getId(), user) != null;
+        }
+        return result;
     }
 
     /**
@@ -61,7 +64,11 @@ public class UserStorage {
      * Вспомогательный метод, который возращает текущую длину мапы
      */
     public int getSize() {
-        return this.map.size();
+        int result;
+        synchronized (this) {
+            result = this.map.size();
+        }
+        return result;
     }
 
     /**
@@ -83,7 +90,11 @@ public class UserStorage {
     }
 
     public int getValue(int id) {
-        return this.map.get(id).getAmount();
+        int result;
+        synchronized (this) {
+            result = this.map.get(id).getAmount();
+        }
+        return result;
     }
 
 }
