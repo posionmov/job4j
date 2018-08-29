@@ -22,16 +22,14 @@ public class ParallelSearch {
      */
     public static void main(String[] args) {
         SimplyBlockingQuene<Integer> queue = new SimplyBlockingQuene<Integer>();
-        final boolean[] res = new boolean[] {false};
-        final Thread consumer = new Thread(
+        Thread consumer = new Thread(
                 () -> {
-                    while (!res[0]) {
-                        try {
+                    try {
+                        while (!Thread.currentThread().isInterrupted()) {
                             System.out.println(queue.poll());
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            Thread.currentThread().interrupt();
                         }
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
                 }
         );
@@ -40,13 +38,13 @@ public class ParallelSearch {
                 () -> {
                     for (int index = 0; index != 3; index++) {
                         queue.offer(index);
-                        res[0] = (index == 2);
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
+                    consumer.interrupt();
                 }
 
         ).start();
