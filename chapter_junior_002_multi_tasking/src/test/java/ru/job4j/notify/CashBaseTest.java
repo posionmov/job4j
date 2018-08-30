@@ -9,8 +9,8 @@ import static org.junit.Assert.*;
 /**
  * Класс для тестирования частично блокирующей работу хэш мапы
  * @author Galanov Sergey
- * @since 24.08.2018
- * @version 1.0
+ * @since 30.08.2018
+ * @version 1.1
  */
 public class CashBaseTest {
 
@@ -66,7 +66,7 @@ public class CashBaseTest {
         one.start();
         two.start();
         three.start();
-        Thread.sleep(500);
+        Thread.sleep(600);
         assertThat(base.findById(1).version, is(4));
     }
 }
