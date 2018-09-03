@@ -7,70 +7,64 @@ import static org.junit.Assert.*;
 /**
  * Класс для проверки игры в бомбермена
  * @author Galanov Sergey
- * @since 30.08.2018
- * @version 1.0
+ * @since 03.09.2018
+ * @version 1.1
  */
 public class BoardTest {
 
     /**
-     * Тест, проверящий что если юзер попытался встать на залоченную ячейку, то он выбирал другую
-     * Так же проверяет что пользователь должен корретно дойти только до определенной точки определенным путем:
-     *   0 1 2 3 4
-     * 0|0 0 - - -
-     * 1|- 0 0 - -
-     * 2|- - 0 - -
-     * 3|- 0 0 - -
-     * 4|0 0 - - -
-     * Нули - не залоченные ячейки
-     * Тире - залоченные ячейки
-     * Игрок должен пройти по определенному маршруту и выйти в позицию [4][4]
-     *
-     * @throws InterruptedException
+     * Тест, проверяющий как работает передвижение персонажа
      */
     @Test
-    public void whenBoardHaveLockElementsThenCantStandOnThisCell() throws InterruptedException {
+    public void whenThen() throws InterruptedException {
         Board board = new Board(5);
-        for (int i = 0; i < board.board.length; i++) {
-            for (int j = 0; j < board.board.length; j++) {
-                board.board[i][j].lock();
-            }
-        }
-        board.board[0][0].unlock();
-        board.board[1][0].unlock();
-        board.board[1][1].unlock();
-        board.board[2][1].unlock();
-        board.board[2][2].unlock();
-        board.board[2][3].unlock();
-        board.board[1][3].unlock();
-        board.board[1][4].unlock();
-        board.board[0][4].unlock();
-        User user = new User(0, 0, board.board);
-
-        Thread first = new Thread(() -> {
-            while (!(user.position.curX == 0 && user.position.curY == 4)) {
-                final Cell cell = user.checkDirection(user.position);
-                user.move(user.position, cell);
+        User user1 = new User(0, 0, board.board);
+        Thread userOne = new Thread(() -> {
+            for (int i = 0; i < board.board.length - 1; i++) {
+                if (!board.move(new Cell(user1.getCurX(), user1.getCurY()), new Cell(user1.getAndIncrementCurX(), user1.getAndIncrementCurY()))) {
+                    user1.setCurX(board.calculateChanges(user1.getCurX()));
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 try {
                     Thread.sleep(1000);
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         });
-        first.start();
-        first.join();
-    }
 
-    /**
-     * Тест проверки игрока и чудовища
-     * Игрок идет по заранее заданному направлению
-     * На полу есть недоступные участки (куда наступать нельзя)
-     * Так же на поле есть чудовища. Чудовище не может встать на клетку, где есть другое чудовище.
-     * Если игрок натыкается на чудовище, он умирает
-     * Количество чудовищ и закрытых участков растет в зависимости от размера поля
-     */
-    @Test
-    public void whenBoardHaveFiveOnFiveCellsThenTwoMonstersAndNineBlockingCells() {
 
+        User user2 = new User(board.board.length - 1, board.board.length - 1, board.board);
+        Thread userTwo = new Thread(() -> {
+            for (int i = 0; i < board.board.length - 1; i++) {
+                if (!board.move(new Cell(user2.getCurX(), user2.getCurY()), new Cell(user2.getAndDecrementCurX(), user2.getAndDecrementCurY()))) {
+                    user2.setCurX(board.calculateChanges(user2.getCurX()));
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        userOne.start();
+        userTwo.start();
+        userOne.join();
+        userTwo.join();
+        System.out.println(user1.getCurX() + " " + user1.getCurY());
+        System.out.println(user2.getCurX() + " " + user2.getCurY());
+        assertThat(user1.getCurX(), is(3));
+        assertThat(user1.getCurY(), is(4));
+        assertThat(user2.getCurX(), is(1));
+        assertThat(user2.getCurY(), is(0));
     }
 }

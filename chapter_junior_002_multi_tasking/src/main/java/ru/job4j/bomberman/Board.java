@@ -6,8 +6,8 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Класс, описывающий игральную доску, по которой передвигаются игроки
  * @author Galanov Sergey
- * @since 30.08.2018
- * @version 1.0
+ * @since 03.09.2018
+ * @version 1.1
  */
 public class Board {
     /**
@@ -21,7 +21,7 @@ public class Board {
      * Создает поле в зависимости от указанных размеров
      * Затем создает непроходимые области на карте. Количество непроходимых полей: размер полня / 2
      * Затем создает некоторое количество монстров на карте. Количество монстров на карте: размер карты / 3 * 2
-     * todo сделать генерацию понстров и закрытых участков поля
+     * todo сделать генерацию монстров и закрытых участков поля
      * todo так же сделть скрипт рандомных передвижений монстров и проверки других монстров на клетках
      * @param size размер поля
      */
@@ -32,6 +32,41 @@ public class Board {
                 this.board[i][j] = new ReentrantLock();
             }
         }
+    }
+
+    /**
+     * Метод, обеспечивающий передвижение по доске
+     * Проверяет возможность встать на новую клетку (т.е. проверяет замок на клетке). Если замка нет, то блокирует эту ячейку.
+     * После блокировки ячейки пытается разблокировать ячейку, на которой был. Это произойдет только в том случае, если
+     *  этот же поток блокировал данную ячейку
+     * @param source - исходная ячейка
+     * @param dist - следующая ячейка
+     * @return - true если удалось встать на новую ячейку
+     */
+    public boolean move(Cell source, Cell dist) {
+        boolean result = false;
+        if (this.board[dist.curX][dist.curY].tryLock()) {
+            System.out.printf("Игрок %s пошел на ячейку X:%s Y:%s%s", Thread.currentThread().getName(), dist.curX, dist.curY, System.lineSeparator());
+            this.board[dist.curX][dist.curY].tryLock();
+            System.out.printf("%s - Ячейка X:%s Y:%s освобождена%s", Thread.currentThread().getName(), source.curX, source.curY, System.lineSeparator());
+            if (this.board[source.curX][source.curY].isHeldByCurrentThread()) {
+                this.board[source.curX][source.curY].unlock();
+            }
+            result = true;
+        } else {
+            System.out.printf("%s - Ячейка X:%s Y%s ЗАНЯТА%s", Thread.currentThread().getName(), dist.curX, dist.curY, System.lineSeparator());
+        }
+        return result;
+    }
+
+    /**
+     * Вспомогательный метод калькуляции смещения игрока относительно оси Х при попытке встать на залоченную ячейку.
+     * вычисляет смещение, учитывая выход за пределы
+     * @param x - изначальная позиция по Х
+     * @return
+     */
+    public int calculateChanges(int x) {
+        return ((x + 1) > this.board.length - 1) ? (x + 1) : ((x - 1) <= 0) ? (x + 1) : (x - 1);
     }
 }
 
@@ -60,97 +95,75 @@ class User {
      */
     public User(int curX, int curY, ReentrantLock[][] board) {
         this.board = board;
+        this.curX = curX;
+        this.curY = curY;
         this.position = new Cell(curX, curY);
-    }
-
-    public boolean move(Cell source, Cell dist) {
-        boolean result = false;
-        if (!board[dist.curX][dist.curY].tryLock() && source.curX != dist.curX && source.curY != dist.curY) {
-            board[position.curX][position.curY].unlock();
-            board[dist.curX][dist.curY].lock();
-            this.position = dist;
-        }
-        return result;
+        this.board[curX][curY].lock();
     }
 
     /**
-     * Вспомогательный приватный метод, проверяющий ячейку
-     * Если передаваемая ячейка не мб залочена текущим обьектом, то передаваемая в функцию ячейка не изменится
-     * @param x - значение Х проверяемой клетки
-     * @param y - значение У проверяемой клетки
-     * @param cell - клетка
-     * @return новую клетку на основе старой. Так как если не выполняются условия, то ссылка будет не изменна для ячейки,
-     *         то их в итоге можно сравнивать методом equals
+     * Метод, возращающий значение числа Х, перед этим увеличив его на 1
+     * @return проинкрементированное значение Х
      */
-    private Cell checkCell(int x, int y, Cell cell) {
-        if (this.board[x][y].tryLock()) {
-            cell.curX = x;
-            cell.curY = y;
-            board[cell.curX][cell.curY].lock();
-            System.out.printf("Позиция X:%s  Y:%s ПОДОШЛА!%s", cell.curX, cell.curY, System.lineSeparator());
-        }
-        return cell;
+    public int getAndIncrementCurX() {
+        return ++this.curX;
     }
 
     /**
-     * Приватный метод проверки возможности направления движения
-     * Изменяет текущее положение игрока
-     * Сперва определяет возможность пойти в 4 стороны в зависимости от положения игрока и краев доски
-     * Затем запускается цикл, в котором производится перестановка игрока
+     * Метод, производящий инкремент числа Х и возраащющий его
+     * @return инкремент числа Х
      */
-    public Cell checkDirection(Cell userPosition) {
-        Cell cell = userPosition;
-        boolean ex = false;
-        // Блок проверки возможности передвижения по сторонам
-        boolean canUp = this.position.curY - 1 >= 0;
-        boolean canDown = this.position.curY + 1 < this.board.length;
-        boolean canLeft = this.position.curX - 1 >= 0;
-        boolean canRight = this.position.curX + 1 < this.board.length;
-        while (!ex) {
-            int rand = this.getRand();
-            if (rand == 0 && canUp) {
-                Cell newCell = this.checkCell(this.position.curX, this.position.curY - 1, cell);
-                if (newCell.equals(cell)) {
-                    ex = true;
-                }
-            } else if (rand == 1 && canDown) {
-                Cell newCell = this.checkCell(this.position.curX, this.position.curY + 1, cell);
-                if (newCell.equals(cell)) {
-                    ex = true;
-                }
-            } else if (rand == 2 && canLeft) {
-                Cell newCell = this.checkCell(this.position.curX - 1, this.position.curY, cell);
-                if (newCell.equals(cell)) {
-                    ex = true;
-                }
-            } else if (rand == 3 && canRight) {
-                Cell newCell = this.checkCell(this.position.curX + 1, this.position.curY, cell);
-                if (newCell.equals(cell)) {
-                    ex = true;
-                }
-            }
-            try {
-                String msg = rand == 0 ? "Вверх" : rand == 1 ? "Вниз" : rand == 2 ? "На лево" : rand == 3 ? "На право" : "default";
-                System.out.printf("%s не получилось, жду пол секунды %s", msg, System.lineSeparator());
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return cell;
+    public int getAndIncrementCurY() {
+        return ++this.curY;
     }
 
     /**
-     * Метод, выдащий случайное направление.
-     * Возможные варианты:
-     *  0 - вверх
-     *  1 - вниз
-     *  2 - влево
-     *  3 - вправо
+     * Метод, производящий декремент числа Х и возращающий результат
+     * @return декремент числа Х
+     */
+    public int getAndDecrementCurX() {
+        return --this.curX;
+    }
+
+    /**
+     * Метод, производящий декремент числа У и возращающий результат
+     * @return декремент числа У
+     */
+    public int getAndDecrementCurY() {
+        return --this.curY;
+    }
+
+    /**
+     * Сеттер значения числа Х
+     * @param curX
+     */
+    public void setCurX(int curX) {
+        this.curX = curX;
+    }
+
+    /**
+     * Геттер значения числа Х
      * @return
      */
-    public int getRand() {
-        return new Random().nextInt(4);
+    public int getCurX() {
+        return curX;
+    }
+
+    /**
+     * Геттер значения числа У
+     * @return
+     */
+    public int getCurY() {
+        return curY;
+    }
+
+    /**
+     * Сеттер значения числа У
+     * @param curY
+     */
+    public void setCurY(int curY) {
+        this.curY = curY;
+
     }
 }
 
