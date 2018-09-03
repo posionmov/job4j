@@ -11,8 +11,8 @@ import static org.hamcrest.core.Is.is;
 /**
  * Класс для тестирования пулов потоков
  * @author Galanov Sergey
- * @since 29.08.2018
- * @version 1.0
+ * @since 03.09.2018
+ * @version 1.1
  */
 public class ThreadPoolTest {
 
@@ -44,7 +44,7 @@ public class ThreadPoolTest {
     }
 
     /**
-     * Метод, добаляющий в очередь одно задание и проверяющий корректность вывода на экран
+     * Тест, добаляющий в очередь одно задание и проверяющий корректность вывода на экран
      * @throws InterruptedException
      */
     @Test
@@ -56,5 +56,16 @@ public class ThreadPoolTest {
                 + "run" + System.lineSeparator()
                 + "run" + System.lineSeparator()
                 + "run" + System.lineSeparator()));
+    }
+
+    /**
+     * Тест на корректную остановку тредов
+     */
+    @Test
+    public void whenCreateThreadsAndStopTheThenSizeInNull() throws InterruptedException {
+        ThreadPool threadPool = new ThreadPool();
+        threadPool.work(() -> System.out.printf("-- Thread %s do something --%s", Thread.currentThread().getName(), System.lineSeparator()));
+        threadPool.shutdown();
+        assertThat(threadPool.getSizeOfCurrentThreads(), is(0));
     }
 }
