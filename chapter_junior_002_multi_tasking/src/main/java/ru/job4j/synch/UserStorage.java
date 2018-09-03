@@ -9,8 +9,8 @@ import java.util.Map;
 /**
  * Класс для хранения данных о пользователях и их счетах
  * @author Galanov Sergey
- * @since 29.08.2018
- * @version 1.1
+ * @since 03.09.2018
+ * @version 1.2
  */
 @ThreadSafe
 public class UserStorage {
@@ -23,11 +23,9 @@ public class UserStorage {
      * @return
      */
     public boolean add(User user) {
-        boolean result;
         synchronized (this) {
-            result = this.map.putIfAbsent(user.getId(), user) != null;
+            return this.map.putIfAbsent(user.getId(), user) != null;
         }
-        return result;
     }
 
     /**
@@ -36,14 +34,14 @@ public class UserStorage {
      * @return
      */
     public boolean update(User user) {
-        boolean result = false;
         synchronized (this) {
+            boolean result = false;
             if (this.map.containsKey(user.getId())) {
                 this.map.get(user.getId()).setAmount(user.getAmount());
                 result = true;
             }
+            return result;
         }
-        return result;
     }
 
     /**
@@ -64,11 +62,9 @@ public class UserStorage {
      * Вспомогательный метод, который возращает текущую длину мапы
      */
     public int getSize() {
-        int result;
         synchronized (this) {
-            result = this.map.size();
+            return this.map.size();
         }
-        return result;
     }
 
     /**
@@ -90,11 +86,9 @@ public class UserStorage {
     }
 
     public int getValue(int id) {
-        int result;
         synchronized (this) {
-            result = this.map.get(id).getAmount();
+            return this.map.get(id).getAmount();
         }
-        return result;
     }
 
 }
