@@ -5,8 +5,8 @@ import java.util.List;
 /**
  * Class for placing, editing and deleting bids
  * @author Galanov Sergey
- * @since 06.08.2018
- * @version 1.7
+ * @since 06.09.2018
+ * @version 1.8
  */
 public class StartUI {
 
@@ -45,7 +45,7 @@ public class StartUI {
         System.out.println("Выключение");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException {
         new StartUI(new ValidateInput(new ConsoleInput()), new Tracker()).init();
     }
 
