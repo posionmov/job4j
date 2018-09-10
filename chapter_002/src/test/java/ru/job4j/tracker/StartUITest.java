@@ -52,7 +52,7 @@ public class StartUITest {
     * Test for add item in array
     */
     @Test
-    public void whenUserAddNewItemThenTrackerHaveNewItemWithSameName() {
+    public void whenUserAddNewItemThenTrackerHaveNewItemWithSameName() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         ValidateInput input = new ValidateInput(new StubInput(new String[] {"0", "test name", "test desc", "6"}));
         new StartUI(input, tracker).init();
@@ -63,7 +63,7 @@ public class StartUITest {
      * Test for find all items in array
      */
     @Test
-    public void whenUserAddTwoNewItemsThenTrackerHaveTwoItems() {
+    public void whenUserAddTwoNewItemsThenTrackerHaveTwoItems() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         Item item1 = new Item("name1", "desc1", System.nanoTime());
         Item item2 = new Item("name2", "desc2", System.nanoTime());
@@ -86,7 +86,7 @@ public class StartUITest {
      * Test for edit some item in array
      */
     @Test
-    public void whenUpdateItemThenTrackerHaveUpdatedItem() {
+    public void whenUpdateItemThenTrackerHaveUpdatedItem() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         Item item = new Item("name1", "desc1", System.nanoTime());
         tracker.add(item);
@@ -99,7 +99,7 @@ public class StartUITest {
      * Test for deleting item in array
      */
     @Test
-    public void whenDeleteItemThenTrackerDontHaveThisItem() {
+    public void whenDeleteItemThenTrackerDontHaveThisItem() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         Item item = new Item("name1", "desc1", System.nanoTime());
         tracker.add(item);
@@ -112,7 +112,7 @@ public class StartUITest {
      * Test for func finding item by id
      */
     @Test
-    public void whenAddItemThenTrackerCanFindByID() {
+    public void whenAddItemThenTrackerCanFindByID() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         Item item1 = new Item("name1", "desc1", System.nanoTime());
         Item item2 = new Item("name2", "desc2", System.nanoTime());
@@ -137,7 +137,7 @@ public class StartUITest {
      * Test for func finding all items by name
      */
     @Test
-    public void whenAddingTwoItemsWithSameNameThenTrackerReturnTwoItems() {
+    public void whenAddingTwoItemsWithSameNameThenTrackerReturnTwoItems() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         Item item1 = new Item("name1", "desc1", System.nanoTime());
         Item item2 = new Item("name2", "desc2", System.nanoTime());

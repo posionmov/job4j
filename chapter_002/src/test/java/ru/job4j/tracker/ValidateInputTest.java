@@ -33,7 +33,7 @@ public class ValidateInputTest {
     }
 
     @Test
-    public void whenInvalidInputThenException() {
+    public void whenInvalidInputThenException() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         ValidateInput input = new ValidateInput(new StubInput(new String[] {"qwe", "6"}));
         new StartUI(input, tracker).init();

@@ -1,0 +1,178 @@
+package ru.job4j.xml_example;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Класс для сохранения данных из БД в xml файл
+ * @author Galanov Sergey
+ * @since 10.09.2018
+ * @version 1.0
+ */
+public class StoreXml {
+
+    /**
+     * Приватные поля класса:
+     * Обьект класса File
+     * Количество создаваемых записей в БД
+     */
+    private File file;
+    private int count;
+    private int timeLeft;
+    private Date date;
+
+    /**
+     * Класс, описывающий коллекцию List, содержащую обьекты класса Entry
+     */
+    @XmlRootElement
+    public static class Entries {
+
+        /**
+         * Приватное поле класса
+         * Содержит коллекцию List, содержащую в себе обьекты класса Entry
+         */
+        private List<Entry> values;
+
+        /**
+         * Конструктор класса
+         */
+        public Entries() {
+        }
+
+        /**
+         * Не дефолтный конструктор класса
+         * Задает дефолтные значения приватной коллекции
+         * @param values
+         */
+        public Entries(List<Entry> values) {
+            this.values = values;
+        }
+
+        /**
+         * Метод получения приватной коллекции
+         * @return коллекцию обьектов Entry
+         */
+        public List<Entry> getValues() {
+            return values;
+        }
+
+        /**
+         * Метод, задающий всю коллекцию
+         * @param values - коллекция List с обьектами класса Entry
+         */
+        public void setValues(List<Entry> values) {
+            this.values = values;
+        }
+    }
+
+    /**
+     * Класс, описывающий обьекты, которые будт раниться в коллекции
+     */
+    @XmlRootElement
+    public static class Entry {
+
+        /**
+         * Приватное поле
+         * Содержит число
+         */
+        private int value;
+
+        /**
+         * Конструктор класса
+         */
+        public Entry() {
+        }
+
+        /**
+         * Колнструктор класса, задающий дефолтное значение числу данного обьекта
+         * @param value - значение данного обьекта
+         */
+        public Entry(int value) {
+            this.value = value;
+        }
+
+        /**
+         * Геттер значения данного обьекта
+         * @return значение данного обьекта
+         */
+        public int getValue() {
+            return value;
+        }
+
+        /**
+         * Сеттер значения данного обьекта
+         * @param value значение для данного обьекта
+         */
+        public void setValue(int value) {
+            this.value = value;
+        }
+    }
+
+    /**
+     * Метод, производящий наполнение БД (посредством создания обьекта класса StoreSQL
+     *      с параметрами количества элементов), а так же сохранения данных из БД в коллекцию.
+     * @return объект класса Entries, который уже содержит все данные из БД
+     */
+    private Entries getEntries() throws ClassNotFoundException {
+        StoreSQL store = new StoreSQL("sqllite.properties", this.date);
+        store.generate(count);
+        this.timeLeft = store.getWorkTime();
+        List<Integer> res = store.getValuesFromBD();
+        List<Entry> list = new ArrayList<>();
+        for (Integer integer : res) {
+            list.add(new Entry(integer));
+            Date date = new Date();
+            System.out.println(date.getTime() - this.date.getTime() + " - время выполнения операции добавления в коллекцию");
+            this.timeLeft -= date.getTime() - this.date.getTime();
+            if (this.timeLeft < 0) {
+                System.out.println("Время вставки значений из БД слишком велико");
+                break;
+            }
+        }
+        Entries result = new Entries(list);
+        return result;
+    }
+
+    /**
+     * Конструктор данного класса
+     * Принимает в качестве аргументов следующие значения:
+     * @param file - файл, в который необходимо сохранить созданную XML схему
+     * @param count - количество значений, которые будут сохранены в БД и в последующем сохранены в XML
+     * После этого Вызывает методы наполнения БД знаениями и сохранение данных значений в обьект класса Entries
+     *              После этого данный обьект парсится и сохраняется в файл
+     * @throws Exception
+     */
+    public StoreXml(File file, int count, Date date) throws Exception {
+        this.date = date;
+        this.count = count;
+        this.file = file;
+        this.save(this.getEntries(), this.file);
+    }
+
+    /**
+     * Метод сохранения в файл данных из коллекции (обьекта класса Entries)
+     * @param list обьект класса Entries
+     * @param file относительный путь файла
+     * @throws JAXBException
+     */
+    private void save(Entries list, File file) throws JAXBException {
+        Date date = new Date();
+        JAXBContext jaxbContext = JAXBContext.newInstance(list.getClass());
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        jaxbMarshaller.marshal(list, file);
+        System.out.println(date.getTime() - this.date.getTime() + " - время выполнения операции сохранения нового xml");
+        this.timeLeft -= date.getTime() - this.date.getTime();
+    }
+
+    public int getWorkTime() {
+        System.out.println("Оставшееся время работы в StoreXML - " + this.timeLeft);
+        return this.timeLeft;
+    }
+}

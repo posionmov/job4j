@@ -11,32 +11,34 @@ import static org.hamcrest.core.Is.is;
 /**
  * Class for testing Tracker.java
  * @author Galanov Sergey
- * @since 06.08.2018
- * @version 1.4
+ * @since 06.09.2018
+ * @version 1.5
  */
 public class TrackerTest {
 
     /**
-     * Test for func "add"
+     * Тест функции добавления в БД новой заявки
      */
     @Test
-    public void whenAddNewItemThenTrackerHasSomeItem() {
+    public void whenAddNewItemThenTrackerHasSomeItem() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         Item item = new Item("test1", "testDescription", 123L);
         tracker.add(item);
-        assertThat(tracker.findAll().get(0), is(item));
+        assertThat(tracker.findAll().get(0).getName(), is(item.getName()));
+        assertThat(tracker.findAll().get(0).getDescription(), is(item.getDescription()));
+        assertThat(tracker.findAll().get(0).getCreated(), is(item.getCreated()));
     }
 
     /**
-     * Test for func "replace"
+     * Тест функции изменения заявки
      */
     @Test
-    public void whenReplaceNameThenReturnNewName() {
+    public void whenReplaceNameThenReturnNewName() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         Item previous = new Item("test1", "testDescription", 123L);
         tracker.add(previous);
         Item nextItem = new Item("test2", "testDescription2", 12345L);
-        nextItem.setID(previous.getId());
+        //nextItem.setID(previous.getId());
         tracker.replace(previous.getId(), nextItem);
         assertThat(tracker.findById(previous.getId()).getName(), is("test2"));
     }
@@ -45,7 +47,7 @@ public class TrackerTest {
      * Test for func "delete"
      */
     @Test
-    public void whenDeleteThenReturnNewArray() {
+    public void whenDeleteThenReturnNewArray() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         List<Item> expect = new ArrayList<>();
         Item one = new Item("one", "oneDescription", 123L);
@@ -65,7 +67,7 @@ public class TrackerTest {
      * Test for func "find all"
      */
     @Test
-    public void whenCreateArrayThenFindAll() {
+    public void whenCreateArrayThenFindAll() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         List<Item> expect = new ArrayList<>();
         Item one = new Item("one", "oneDescription", 123L);
@@ -84,7 +86,7 @@ public class TrackerTest {
      * Test for func "findByName"
      */
     @Test
-    public void whenSendNameThenFindAll() {
+    public void whenSendNameThenFindAll() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         List<Item> expect = new ArrayList<>();
         Item one = new Item("one", "oneDescription", 123L);
@@ -102,7 +104,7 @@ public class TrackerTest {
      * Test for func "findById"
      */
     @Test
-    public void whenSendIdThenFindOneObject() {
+    public void whenSendIdThenFindOneObject() throws ClassNotFoundException {
         Tracker tracker = new Tracker();
         Item one = new Item("one", "oneDescription", 123L);
         tracker.add(one);
