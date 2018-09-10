@@ -1,4 +1,4 @@
-package ru.job4j.xml_example;
+package ru.job4j.xml;
 
 import java.io.InputStream;
 import java.sql.*;
@@ -42,7 +42,7 @@ public class StoreSQL {
      */
     public StoreSQL(String str, Date date) throws ClassNotFoundException {
         this.date = date;
-        Class cls = Class.forName("ru.job4j.xml_example.StoreSQL");
+        Class cls = Class.forName("ru.job4j.xml.StoreSQL");
         ClassLoader loader = cls.getClassLoader();
         try (InputStream io = loader.getResourceAsStream(str)) {
             this.prop.load(io);

@@ -1,4 +1,4 @@
-package ru.job4j.xml_example;
+package ru.job4j.xml;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -26,9 +26,9 @@ public class ResultSumm extends DefaultHandler {
      */
     private double result; // Итоговая сумма
     private int timeLeft;
-    private final static File source = new File("./src/main/java/ru/job4j/xml_example/XML.xml");
-    private final static File dest = new File("./src/main/java/ru/job4j/xml_example/XLS_result.xml");
-    private final static File scheme = new File("./src/main/java/ru/job4j/xml_example/XLS_scheme.xml");
+    private final static File SOURCE = new File(".//src//main//resources//XML.xml");
+    private final static File DEST = new File(".//src//main//resources//XLS_result.xml");
+    private final static File SCHEME = new File(".//src//main//resources//XLS_scheme.xml");
 
     /**
      * Конструктор класса
@@ -40,7 +40,7 @@ public class ResultSumm extends DefaultHandler {
      */
     public ResultSumm(int n) throws Exception {
         Date date = new Date();
-        ConvertXSQT convertXSQT = new ConvertXSQT(source, dest, scheme, n, date);
+        ConvertXSQT convertXSQT = new ConvertXSQT(SOURCE, DEST, SCHEME, n, date);
         this.timeLeft = convertXSQT.getWorkTime();
         System.out.println(this.timeLeft + " - оставшееся время после всех пераций перед парсингом");
         Helper helper = new Helper();
@@ -54,10 +54,10 @@ public class ResultSumm extends DefaultHandler {
      * @param helper
      * @throws Exception
      */
-    private void doParse(Helper helper) throws Exception{
+    private void doParse(Helper helper) throws Exception {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser parser = factory.newSAXParser();
-        parser.parse(dest, helper); // данный метод начинает парсить файл при помощи класса, наследующего класс DefaultHandler
+        parser.parse(DEST, helper); // данный метод начинает парсить файл при помощи класса, наследующего класс DefaultHandler
     }
 
     /**

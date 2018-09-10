@@ -104,7 +104,7 @@ public class Tracker {
             st.setString(1, item.getId());
             st.setString(2, item.getName());
             st.setString(3, item.getDescription());
-            st.setLong(4,item.getCreated());
+            st.setLong(4, item.getCreated());
             st.executeUpdate();
             //ResultSet rs = st.executeQuery(add);
         } catch (SQLException e) {
@@ -220,7 +220,7 @@ public class Tracker {
             ResultSet res = ps.executeQuery();
 
             while (res.next()) {
-                result = new Item(  res.getString("name"),
+                result = new Item(res.getString("name"),
                                     res.getString("description"),
                                     res.getLong("create_date"));
                 result.setID(res.getString("id"));

@@ -1,4 +1,4 @@
-package ru.job4j.xml_example;
+package ru.job4j.xml;
 
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamSource;
@@ -56,7 +56,7 @@ public class ConvertXSQT {
      * @throws TransformerException
      * @throws UnsupportedEncodingException
      */
-    public void convert (File source, File dest, File scheme) throws TransformerException, UnsupportedEncodingException {
+    public void convert(File source, File dest, File scheme) throws TransformerException, UnsupportedEncodingException {
         Date date = new Date();
         String before = this.convertFileToString(source);
         String rule = this.convertFileToString(scheme);
@@ -66,7 +66,7 @@ public class ConvertXSQT {
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        transformer.transform(new StreamSource( new ByteArrayInputStream(before.getBytes("UTF-8"))),
+        transformer.transform(new StreamSource(new ByteArrayInputStream(before.getBytes("UTF-8"))),
                                                 new StreamResult(new File(dest.getPath())));
         System.out.println(date.getTime() - this.date.getTime() + " - время выполнения операции конвертирования XML файла по маске");
         this.timeLeft -= date.getTime() - this.date.getTime();
