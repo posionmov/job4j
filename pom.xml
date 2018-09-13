@@ -20,7 +20,8 @@
         <module>chapter_junior_001</module>
         <module>chapter_junior_002_multi_tasking</module>
 		<module>chapter_junior_003_sql</module>
-	</modules>
+        <module>chapter_junior_004_servlets</module>
+    </modules>
 	 
 	<build>
 		<plugins>
