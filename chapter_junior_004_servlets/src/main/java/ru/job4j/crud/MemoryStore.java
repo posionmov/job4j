@@ -7,36 +7,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * Класс, реализующий интерфейс Store
  * Реализует хранение пользователей внутри своей потокобезопасной коллекции
  * @author Galanov Sergey
- * @since 13.09.2018
- * @version 1.0
+ * @since 18.09.2018
+ * @version 1.1
  */
-public class MemoryStore implements Store {
+public enum  MemoryStore implements Store {
 
     /**
      * Приватное поле класса
      * Содержит:
-     *  - обьект данного класса, который создается при инициализации программы
-     *  - потокобезопасный List
-     *
+     *  - инстанс
+     *  - потокобезопасная мапа
      */
-    private static MemoryStore memoryStore = new MemoryStore();
-    private ConcurrentHashMap<Integer, User> users;
-
-    /**
-     * Дефолтный конструктор данного класса
-     * Имеет приватный уровень доступа - это необходимо для предотвращения создания обьектов данного класса
-     */
-    private MemoryStore() {
-        users = new ConcurrentHashMap<>();
-    }
-
-    /**
-     * Метод, возращающий обьект данного класса
-     * @return - обьект данного класса
-     */
-    public static MemoryStore getInstance() {
-        return memoryStore;
-    }
+    INSTANCE;
+    private ConcurrentHashMap<Integer, User> users = new ConcurrentHashMap<>();
 
     /**
      * Метод добавления в потокобезопасную коллекцию пользователя
@@ -48,9 +31,8 @@ public class MemoryStore implements Store {
     @Override
     public boolean add(User user) {
         boolean result = false;
-        if (!this.users.contains(user)) {
+        if (this.users.putIfAbsent(user.getId(), user) == null) {
             System.out.println("Добавляю пользователя с именем " + user.getName());
-            this.users.putIfAbsent(user.getId(), user);
             result = true;
         }
         return result;
@@ -62,14 +44,14 @@ public class MemoryStore implements Store {
      * @return true если пользователь обновлен
      */
     @Override
-    public boolean update(int userId, String name, String login, String email) {
+    public boolean update(int id, User newUser) {
         boolean result = false;
-        User user = this.findById(userId);
+        User user = this.findById(id);
         if (!(user == null)) {
             System.out.println("Начинаю обновлять данные пользователя");
-            user.setName(name);
-            user.setLogin(login);
-            user.setEmail(email);
+            user.setName(newUser.getName());
+            user.setLogin(newUser.getLogin());
+            user.setEmail(newUser.getEmail());
             result = true;
         }
         return result;
@@ -93,7 +75,7 @@ public class MemoryStore implements Store {
      */
     @Override
     public HashMap<Integer, User> findAll() {
-        return new HashMap<Integer, User>(this.users);
+        return new HashMap<>(this.users);
     }
 
     /**

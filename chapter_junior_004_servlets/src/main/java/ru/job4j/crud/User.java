@@ -5,19 +5,14 @@ import java.util.Date;
 /**
  * Класс, описывающий модель данных
  * @author Galanov Sergey
- * @since 13.09.2018
- * @version 1.0
+ * @since 18.09.2018
+ * @version 1.1
  */
 public class User {
 
     /**
      * Приватные поля класса
-     * Содержат информацию о пользователе:
-     *  - id (int)
-     *  - name (String)
-     *  - login (String)
-     *  - email (String)
-     *  - createDate (Date)
+     * Содержат информацию о пользователе
      */
     private int id;
     private String name, login, email;
@@ -34,7 +29,7 @@ public class User {
         this.login = login;
         this.email = email;
         this.createDate = new Date().toString();
-        this.id = (int) -System.currentTimeMillis();
+        this.id = this.hashCode();
     }
 
     /**
@@ -63,16 +58,7 @@ public class User {
         int result = (this.name != null) ? this.name.hashCode() : 0;
         result = 31 * result + this.login.hashCode();
         result = 31 * result + this.email.hashCode();
-        result = 31 * result + this.getCreateDate().hashCode();
         return result;
-    }
-
-    /**
-     * Приватный метод, генерирующий id нового пользователя на основе текущего времени в миллисекундах
-     * @return id пользователя
-     */
-    private int generatorIdForUsers() {
-        return (int) System.currentTimeMillis();
     }
 
     /**
@@ -99,10 +85,6 @@ public class User {
         return createDate;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -113,10 +95,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
     }
 
 }

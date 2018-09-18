@@ -11,8 +11,8 @@ import java.util.Iterator;
 /**
  * Класс-сервлет
  * @author Galanov Sergey
- * @since 13.09.2018
- * @version 1.0
+ * @since 18.09.2018
+ * @version 1.1
  */
 public class UserServlet extends HttpServlet {
 
@@ -29,7 +29,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/plain; charset=utf-8");
-        ValidateService validateService = ValidateService.getInstance();
+        ValidateService validateService = ValidateService.INSTANCE;
         resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
         for (User user : validateService.findAll().values()) {
@@ -50,7 +50,7 @@ public class UserServlet extends HttpServlet {
      */
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ValidateService validateService = ValidateService.getInstance();
+        ValidateService validateService = ValidateService.INSTANCE;
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
         req.setCharacterEncoding("UTF-8");
         if (validateService.delete(Integer.valueOf(req.getParameter("id")))) {
@@ -74,12 +74,13 @@ public class UserServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ValidateService validateService = ValidateService.getInstance();
+        ValidateService validateService = ValidateService.INSTANCE;
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
         req.setCharacterEncoding("UTF-8");
         String action = req.getParameter("action");
         if (action.equals("add")) {
-            if (validateService.add(req.getParameter("name"), req.getParameter("login"), req.getParameter("email"))) {
+            User user = new User(req.getParameter("name"), req.getParameter("login"), req.getParameter("email"));
+            if (validateService.add(user)) {
                 System.out.println("Пользователь создан");
                 writer.append("User " + req.getParameter("name") + " was created!");
             } else {
@@ -90,7 +91,8 @@ public class UserServlet extends HttpServlet {
             String newName = req.getParameter("name");
             String newLogin = req.getParameter("login");
             String newEmail = req.getParameter("email");
-            if (validateService.update(oldId, newName, newLogin, newEmail)) {
+            User newUser = new User(newName, newLogin, newEmail);
+            if (validateService.update(oldId, newUser)) {
                 System.out.println("Пользователь обновлен");
                 writer.append("User " + oldId + " was updated!");
             } else {
