@@ -6,8 +6,8 @@ import java.util.*;
 /**
  * Class for working with List of items
  * @author Galanov Sergey
- * @since 06.09.2018
- * @version 1.7
+ * @since 18.09.2018
+ * @version 1.8
  */
 public class Tracker {
 
@@ -59,24 +59,21 @@ public class Tracker {
     /**
      * Вспомогательный метод, создающий таблицу в Бд при условии, что ее там нет
      */
-    private void createDatabase(Connection connection) {
+    private void createDatabase(Connection connection) throws SQLException {
         String createTable = this.prop.getProperty("create.database");
-        try {
-            Statement st = connection.createStatement();
-            st.executeQuery(createTable);
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
+        Statement st = connection.createStatement();
+        st.executeQuery(createTable);
     }
 
-    private void createTable(Connection connection) {
+    /**
+     * Вспомогательный метод создания таблицы
+     * @param connection - соединение с БД
+     * @throws SQLException
+     */
+    private void createTable(Connection connection) throws SQLException {
         String createTable = this.prop.getProperty("create.table");
-        try {
-            Statement st = connection.createStatement();
-            st.executeQuery(createTable);
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
+        Statement st = connection.createStatement();
+        st.executeQuery(createTable);
     }
 
     /**
@@ -86,7 +83,6 @@ public class Tracker {
     private String generateId() {
         return String.valueOf(System.currentTimeMillis() + RANDOM.nextInt());
     }
-
 
     /**
      * Метод добавления в БД нового обьекта
@@ -106,7 +102,6 @@ public class Tracker {
             st.setString(3, item.getDescription());
             st.setLong(4, item.getCreated());
             st.executeUpdate();
-            //ResultSet rs = st.executeQuery(add);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -169,8 +164,8 @@ public class Tracker {
             ResultSet res = st.executeQuery(getAllItems);
             while (res.next()) {
                 Item tmp = new Item(res.getString("name"),
-                        res.getString("description"),
-                        res.getLong("create_date"));
+                                    res.getString("description"),
+                                    res.getLong("create_date"));
                 tmp.setID(res.getString("id"));
                 result.add(tmp);
             }
@@ -194,8 +189,8 @@ public class Tracker {
             ResultSet res = st.executeQuery();
             while (res.next()) {
                 Item tmp = new Item(res.getString("name"),
-                        res.getString("description"),
-                        res.getLong("create_date"));
+                                    res.getString("description"),
+                                    res.getLong("create_date"));
                 tmp.setID(res.getString("id"));
                 result.add(tmp);
             }
@@ -230,4 +225,6 @@ public class Tracker {
         }
         return result;
     }
+
+
 }
