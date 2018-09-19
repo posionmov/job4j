@@ -5,6 +5,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.*;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,8 +14,8 @@ import java.util.List;
 /**
  * Класс для сохранения данных из БД в xml файл
  * @author Galanov Sergey
- * @since 10.09.2018
- * @version 1.0
+ * @since 19.09.2018
+ * @version 1.1
  */
 public class StoreXml {
 
@@ -22,8 +24,8 @@ public class StoreXml {
      * Обьект класса File
      * Количество создаваемых записей в БД
      */
-    private File file;
-    private int count;
+//    private File file;
+//    private int count;
     private int timeLeft;
     private Date date;
 
@@ -115,31 +117,6 @@ public class StoreXml {
     }
 
     /**
-     * Метод, производящий наполнение БД (посредством создания обьекта класса StoreSQL
-     *      с параметрами количества элементов), а так же сохранения данных из БД в коллекцию.
-     * @return объект класса Entries, который уже содержит все данные из БД
-     */
-    private Entries getEntries() throws ClassNotFoundException {
-        StoreSQL store = new StoreSQL("sqllite.properties", this.date);
-        store.generate(count);
-        this.timeLeft = store.getWorkTime();
-        List<Integer> res = store.getValuesFromBD();
-        List<Entry> list = new ArrayList<>();
-        for (Integer integer : res) {
-            list.add(new Entry(integer));
-            Date date = new Date();
-            System.out.println(date.getTime() - this.date.getTime() + " - время выполнения операции добавления в коллекцию");
-            this.timeLeft -= date.getTime() - this.date.getTime();
-            if (this.timeLeft < 0) {
-                System.out.println("Время вставки значений из БД слишком велико");
-                break;
-            }
-        }
-        Entries result = new Entries(list);
-        return result;
-    }
-
-    /**
      * Конструктор данного класса
      * Принимает в качестве аргументов следующие значения:
      * @param file - файл, в который необходимо сохранить созданную XML схему
@@ -148,11 +125,13 @@ public class StoreXml {
      *              После этого данный обьект парсится и сохраняется в файл
      * @throws Exception
      */
-    public StoreXml(File file, int count, Date date) throws Exception {
-        this.date = date;
-        this.count = count;
-        this.file = file;
-        this.save(this.getEntries(), this.file);
+    public StoreXml(File file, int count,int timeLeft) throws Exception {
+        //this.timeLeft = timeLeft;
+        this.start(file, count, timeLeft);
+    }
+
+    private void start(File file, int count, int timeLeft) throws Exception {
+        this.save(this.getEntries(count, timeLeft), file);
     }
 
     /**
@@ -163,12 +142,31 @@ public class StoreXml {
      */
     private void save(Entries list, File file) throws JAXBException {
         Date date = new Date();
-        JAXBContext jaxbContext = JAXBContext.newInstance(list.getClass());
+        System.out.println("SAVE ---- " + file.getPath());
+        JAXBContext jaxbContext = JAXBContext.newInstance(Entries.class);
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         jaxbMarshaller.marshal(list, file);
-        System.out.println(date.getTime() - this.date.getTime() + " - время выполнения операции сохранения нового xml");
-        this.timeLeft -= date.getTime() - this.date.getTime();
+        System.out.println((new Date().getTime() - date.getTime()) + " - время выполнения операции сохранения нового xml");
+    }
+
+    /**
+     * Метод, производящий наполнение БД (посредством создания обьекта класса StoreSQL
+     *      с параметрами количества элементов), а так же сохранения данных из БД в коллекцию.
+     * @return объект класса Entries, который уже содержит все данные из БД
+     */
+    private Entries getEntries(int count, int timeLeft) throws ClassNotFoundException {
+        StoreSQL store = new StoreSQL("sqllite.properties", timeLeft);
+        store.generate(count);
+        this.timeLeft = store.getWorkTime();
+        List<Integer> res = store.getValuesFromBD();
+        List<Entry> list = new ArrayList<>();
+        for (Integer integer : res) {
+            list.add(new Entry(integer));
+        }
+        Entries result = new Entries(list);
+        this.timeLeft = store.getWorkTime();
+        return result;
     }
 
     public int getWorkTime() {

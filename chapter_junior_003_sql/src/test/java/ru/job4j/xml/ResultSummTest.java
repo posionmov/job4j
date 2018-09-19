@@ -8,8 +8,8 @@ import static org.hamcrest.core.Is.is;
 /**
  * Класс для тестирования работы парсера XML файлов
  * @author Galanov Sergey
- * @since 10.09.2018
- * @version 1.0
+ * @since 19.09.2018
+ * @version 1.1
  */
 public class ResultSummTest {
 
@@ -18,10 +18,10 @@ public class ResultSummTest {
      */
     @Test
     public void whenCreate10ItemsThenResultIs55() {
-        //final String dir = System.getProperty("user.dir");
         ResultSumm res = null;
         try {
-            res = new ResultSumm(10);
+            res = new ResultSumm();
+            res.start(10);
         } catch (Exception e) {
             e.printStackTrace();
         }

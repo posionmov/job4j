@@ -10,41 +10,54 @@ import org.xml.sax.*;
 /**
  * Класс для парсинга данных из XSTL файла
  * @author Galanov Sergey
- * @since 10.09.2018
- * @version 1.0
+ * @since 19.09.2018
+ * @version 1.1
  */
 public class ResultSumm extends DefaultHandler {
 
     /**
      * Приватные поля класса
      * Содержит:
-     *  - Итоговую сумму всех чисел
-     *  - Ссылки на файлы:
-     *      а) Файла XML
-     *      б) файла XSTL
-     *      в) файла, содержащего маску перевода XML в XSTL
+     *  - обьекты класса File, читаемые через classloader
+     *  - итоговая сумма
+     *  оставшееся время
+     *  - текущую дату
      */
+    private File source, dest, scheme;
     private double result; // Итоговая сумма
     private int timeLeft;
-    private final static File SOURCE = new File(".//src//main//resources//XML.xml");
-    private final static File DEST = new File(".//src//main//resources//XLS_result.xml");
-    private final static File SCHEME = new File(".//src//main//resources//XLS_scheme.xml");
+    private Date date;
+
 
     /**
      * Конструктор класса
-     * Создает обьект класса Date, ConvertXSQT, Helper
+     * Задает значения ссылок на файлы (которые должны лежить в той же папке), а также
+     */
+    public ResultSumm() {
+        this.date = new Date();
+        this.timeLeft = 300_000; // эквивалентно 5 минутам
+        ClassLoader classLoader = getClass().getClassLoader();
+        try {
+            this.source = new File(classLoader.getResource("XML.xml").getFile());
+            this.dest = new File(classLoader.getResource("XLS_result.xml").getFile());
+            this.scheme = new File(classLoader.getResource("XLS_scheme.xml").getFile());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Метод, запускающий работу всей программы
+     * Создает обьект ConvertXSQT, Helper
      * Затем вызывает приватный метод doParse
-     * После этого получает из обьекта класса Helper итоговое значение и задает его у себя
+     * После этого получает из обьекта класса Helper итоговое значение и задает его в приватное поле
      * @param n - количество обьектов, создаваемых в БД
      * @throws Exception
      */
-    public ResultSumm(int n) throws Exception {
-        Date date = new Date();
-        ConvertXSQT convertXSQT = new ConvertXSQT(SOURCE, DEST, SCHEME, n, date);
-        this.timeLeft = convertXSQT.getWorkTime();
-        System.out.println(this.timeLeft + " - оставшееся время после всех пераций перед парсингом");
+    public void start(int n) throws Exception {
+        ConvertXSQT convertXSQT = new ConvertXSQT(source, dest, scheme, n, this.timeLeft);
         Helper helper = new Helper();
-        helper.timeLeft = this.timeLeft;
+        helper.timeLeft = convertXSQT.getWorkTime();
         this.doParse(helper);
         this.result = helper.getResult();
     }
@@ -57,7 +70,7 @@ public class ResultSumm extends DefaultHandler {
     private void doParse(Helper helper) throws Exception {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser parser = factory.newSAXParser();
-        parser.parse(DEST, helper); // данный метод начинает парсить файл при помощи класса, наследующего класс DefaultHandler
+        parser.parse(this.dest, helper); // данный метод начинает парсить файл при помощи класса, наследующего класс DefaultHandler
     }
 
     /**

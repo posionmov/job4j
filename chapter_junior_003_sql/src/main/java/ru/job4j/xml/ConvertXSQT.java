@@ -12,8 +12,8 @@ import java.util.Date;
 /**
  * Класс, производящий перевод XML файла в файл XSTL
  * @author Galanov Sergey
- * @since 10.09.2018
- * @version 1.0
+ * @since 19.09.2018
+ * @version 1.1
  */
 public class ConvertXSQT {
 
@@ -21,8 +21,6 @@ public class ConvertXSQT {
      * Приватное поле
      * Отражает количество строк, которыми необходимо наполнить файл
      */
-    private int count;
-    private Date date;
     private int timeLeft;
 
     /**
@@ -38,10 +36,8 @@ public class ConvertXSQT {
      * @param count - количество записей, которые необходимо создать в БД
      * @throws Exception
      */
-    public ConvertXSQT(File source, File dest, File scheme, int count, Date date) throws Exception {
-        this.date = date;
-        this.count = count;
-        StoreXml store = new StoreXml(source, this.count, this.date);
+    public ConvertXSQT(File source, File dest, File scheme, int count, int timeLeft) throws Exception {
+        StoreXml store = new StoreXml(source, count, timeLeft);
         this.timeLeft = store.getWorkTime();
         this.convert(source, dest, scheme);
     }
@@ -68,8 +64,7 @@ public class ConvertXSQT {
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
         transformer.transform(new StreamSource(new ByteArrayInputStream(before.getBytes("UTF-8"))),
                                                 new StreamResult(new File(dest.getPath())));
-        System.out.println(date.getTime() - this.date.getTime() + " - время выполнения операции конвертирования XML файла по маске");
-        this.timeLeft -= date.getTime() - this.date.getTime();
+        this.timeLeft -= (new Date().getTime() - date.getTime());
     }
 
     /**
@@ -83,8 +78,7 @@ public class ConvertXSQT {
             Date date = new Date();
             byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
             result = new String(encoded, Charset.defaultCharset());
-            System.out.println(date.getTime() - this.date.getTime() + " - время выполнения операции перевода файла в строку");
-            this.timeLeft -= date.getTime() - this.date.getTime();
+//            this.timeLeft -= (new Date().getTime() - date.getTime());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,7 +86,6 @@ public class ConvertXSQT {
     }
 
     public int getWorkTime() {
-        System.out.println("Оставшееся время работы в ConvertXSQT - " + this.timeLeft);
         return this.timeLeft;
     }
 }

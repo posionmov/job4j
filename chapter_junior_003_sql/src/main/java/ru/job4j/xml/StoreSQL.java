@@ -10,8 +10,8 @@ import java.util.Date;
 /**
  * Класс для создания таблицы в Базе данных
  * @author Galanov Sergey
- * @since 10.09.2018
- * @version 1.0
+ * @since 19.09.2018
+ * @version 1.1
  */
 public class StoreSQL {
 
@@ -31,8 +31,7 @@ public class StoreSQL {
     private String url;
     private String createTable, cleanTable, fillTable, getAll;
     private final Properties prop = new Properties();
-    private Date date;
-    private int timeLeft = 300000;
+    private int timeLeft;
 
     /**
      * Конструктор класса
@@ -40,8 +39,8 @@ public class StoreSQL {
      * Создает подключение к БД
      * @param str - название файла, который используется в качестве проперти (по умолчанию "sqllite.properties")
      */
-    public StoreSQL(String str, Date date) throws ClassNotFoundException {
-        this.date = date;
+    public StoreSQL(String str, int timeLeft) throws ClassNotFoundException {
+        this.timeLeft = timeLeft;
         Class cls = Class.forName("ru.job4j.xml.StoreSQL");
         ClassLoader loader = cls.getClassLoader();
         try (InputStream io = loader.getResourceAsStream(str)) {
@@ -70,8 +69,8 @@ public class StoreSQL {
                 st.executeUpdate(this.createTable);
                 st.executeUpdate(this.cleanTable);
                 connection.commit();
-                System.out.println(date.getTime() - this.date.getTime() + " - Время подключения к БД");
-                this.timeLeft -= date.getTime() - this.date.getTime(); // Уменьшение общей времени работы
+                this.timeLeft = (int) (timeLeft - (new Date().getTime() - date.getTime()));
+                System.out.println("Оставшееся время работы после создания  таблицы в БД - " + this.timeLeft);
             }
             connection.setAutoCommit(true);
         } catch (SQLException e) {
@@ -86,26 +85,23 @@ public class StoreSQL {
      * @param n - количество записей, которые необходимо создать в БД
      */
     public void generate(int n) {
+        Date date = new Date();
         try (Connection connection = DriverManager.getConnection(this.url)) {
-            connection.setAutoCommit(false);
             if (connection != null) {
+                connection.setAutoCommit(false);
                 for (int i = 0; i < n; i++) {
-                    Date date = new Date();
-                    if (this.timeLeft < 0) {
-                        System.out.println("Время заполнения Бд слишком велико");
-                        break;
-                    }
                     PreparedStatement st = connection.prepareStatement(this.fillTable);
                     st.setInt(1, i + 1);
                     st.executeUpdate();
-                    System.out.println(date.getTime() - this.date.getTime() + " - время создания обьекта " + i);
-                    this.timeLeft -= date.getTime() - this.date.getTime(); // Уменьшение общей времени работы
                 }
                 connection.commit();
+                connection.setAutoCommit(true);
             }
-            connection.setAutoCommit(true);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            this.timeLeft = (int) (timeLeft - (new Date().getTime() - date.getTime()));
+            System.out.println("Оставшееся время работы после наполнения таблицы в БД - " + this.timeLeft);
         }
     }
 
@@ -115,23 +111,20 @@ public class StoreSQL {
      */
     public List<Integer> getValuesFromBD() {
         List<Integer> result = new ArrayList<>();
+        Date date = new Date();
         try (Connection connection = DriverManager.getConnection(this.url)) {
             if (connection != null) {
                 Statement st = connection.createStatement();
                 ResultSet res = st.executeQuery(this.getAll);
                 while (res.next()) {
-                    Date date = new Date();
                     result.add(res.getInt(1));
-                    System.out.println(date.getTime() - this.date.getTime() + " - время получения обьекта");
-                    this.timeLeft -= date.getTime() - this.date.getTime(); // Уменьшение общей времени работы
-                    if (this.timeLeft < 0) {
-                        System.out.println("Время получения значений из Бд слишком велико");
-                        break;
-                    }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            this.timeLeft = (int) (timeLeft - (new Date().getTime() - date.getTime()));
+            System.out.println("Оставшееся время работы после заполнения массива записями из БД - " + this.timeLeft);
         }
         return result;
     }
@@ -141,7 +134,6 @@ public class StoreSQL {
      * @return
      */
     public int getWorkTime() {
-        System.out.println("Оставшееся время работы в StoreSQL - " + this.timeLeft);
         return this.timeLeft;
     }
 }
