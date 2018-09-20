@@ -29,6 +29,7 @@ public enum ValidateService {
      * @return true если пользователь с таким id существует и он был обновлен
      */
     public final boolean update(int idOldUser, User user) {
+        System.out.println("пользователь обновлен");
         return MemoryStore.INSTANCE.update(idOldUser, user);
     }
 
