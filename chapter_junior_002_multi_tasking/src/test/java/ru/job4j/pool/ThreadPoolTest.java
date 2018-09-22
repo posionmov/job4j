@@ -51,11 +51,12 @@ public class ThreadPoolTest {
     public void when() throws InterruptedException {
         ThreadPool pool = new ThreadPool();
         pool.work(() -> System.out.println("run"));
-        Thread.sleep(500);
+        Thread.sleep(1000);
         assertThat(new String(this.out.toByteArray()), is("run" + System.lineSeparator()
                 + "run" + System.lineSeparator()
                 + "run" + System.lineSeparator()
                 + "run" + System.lineSeparator()));
+        pool.shutdown();
     }
 
     /**
@@ -64,6 +65,7 @@ public class ThreadPoolTest {
     @Test
     public void whenCreateThreadsAndStopTheThenSizeInNull() throws InterruptedException {
         ThreadPool threadPool = new ThreadPool();
+        Thread.sleep(1000);
         threadPool.work(() -> System.out.printf("-- Thread %s do something --%s", Thread.currentThread().getName(), System.lineSeparator()));
         threadPool.shutdown();
         assertThat(threadPool.getSizeOfCurrentThreads(), is(0));

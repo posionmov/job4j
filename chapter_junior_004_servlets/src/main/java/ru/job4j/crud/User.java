@@ -69,6 +69,7 @@ public class User {
         return id;
     }
 
+
     public String getName() {
         return name;
     }
@@ -85,6 +86,10 @@ public class User {
         return createDate;
     }
 
+    public void setId(int newId) {
+        this.id = newId;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -95,6 +100,10 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 
 }

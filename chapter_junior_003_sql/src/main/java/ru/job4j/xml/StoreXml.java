@@ -125,7 +125,7 @@ public class StoreXml {
      *              После этого данный обьект парсится и сохраняется в файл
      * @throws Exception
      */
-    public StoreXml(File file, int count,int timeLeft) throws Exception {
+    public StoreXml(File file, int count, int timeLeft) throws Exception {
         //this.timeLeft = timeLeft;
         this.start(file, count, timeLeft);
     }
