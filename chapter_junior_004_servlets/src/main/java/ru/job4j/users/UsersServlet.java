@@ -1,6 +1,5 @@
 package ru.job4j.users;
 
-import com.sun.javafx.fxml.builder.URLBuilder;
 import ru.job4j.crud.User;
 import ru.job4j.crud.ValidateService;
 
@@ -9,8 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Collection;
 
 /**
@@ -20,16 +17,18 @@ import java.util.Collection;
  * Около каждого пользователя должны быть кнопки: - редактировать
  *                                                - удалить
  * @author Galanov Sergey
- * @since 14.09.2018
- * @version 1.0
+ * @since 22.09.2018
+ * @version 1.1
  */
 public class UsersServlet extends HttpServlet {
 
     /**
      * Переопределенный метод класса HttpServlet
      * Вызывается когда от клиента приходит запрос методом Get
-     * Данный метод отображает таблицу всех пользователей
-     * Около каждого пользователя (строки) должны быть 2 кнопки (редактировать и удалить)
+     * Получает коллекцию всех пользователей из хранилища и направлет их в jsp страницу в качестве аттрибута с ключем "Users"
+     * Так же задает в запросе аттрибут Operation со значением show, который говорит jsp странице что нужно показать таблицу всех
+     *      пользователей
+     * После этого направляет запрос и ответ в jsp атрницу
      * @param req - запрос от пользователя
      * @param resp - ответ пользователю
      * @throws ServletException
@@ -37,92 +36,47 @@ public class UsersServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter writer = new PrintWriter(resp.getOutputStream());
         ValidateService validateService = ValidateService.INSTANCE;
-        resp.setCharacterEncoding("UTF-8");
-        StringBuilder stringBuilder = new StringBuilder("<table border=\"1\" cellpadding=\"6\">");
-        stringBuilder.append("<tr>");
-        stringBuilder.append("<td colspan=\"6\" align=\"center\">" +
-                                "<form action=" + req.getContextPath() + "/create method=\"get\">" +
-                                "<input type=\"submit\" value=\"Созать пользователя\"/></form></td>");
-        stringBuilder.append("</tr>");
         Collection<User> usersInStore = validateService.findAll().values();
-        if (usersInStore.size() > 0) {
-
-            stringBuilder.append("<tr>");
-            stringBuilder.append("<td>" + "Id пользователя" + "</td>");
-            stringBuilder.append("<td>" + "Имя пользователя" + "</td>");
-            stringBuilder.append("<td>" + "Логин пользователя" + "</td>");
-            stringBuilder.append("<td>" + "Почта пользователя" + "</td>");
-            stringBuilder.append("<td>" + "Дата создания пользователя"+ "</td>");
-            stringBuilder.append("<td>" + "Методы над пользователем"+ "</td>");
-
-            for (User user : validateService.findAll().values()) {
-                stringBuilder.append("<tr>");
-                stringBuilder.append("<td>" + user.getId() + "</td>");
-                stringBuilder.append("<td>" + user.getName() + "</td>");
-                stringBuilder.append("<td>" + user.getLogin() + "</td>");
-                stringBuilder.append("<td>" + user.getEmail() + "</td>");
-                stringBuilder.append("<td>" + user.getCreateDate() + "</td>");
-
-                stringBuilder.append("<td><form action=" + req.getContextPath() + "/edit method=\"get\">" +
-                        "<input type=\"hidden\" name=\"id\" value=" + user.getId() + ">" +
-                        "<input type=\"submit\" value=\"Редактировать пользователя\"/></form>");
-
-                stringBuilder.append("<form action=" + req.getContextPath() + "/list method=\"post\">" +
-                        "<input type=\"hidden\" name=\"id\" value=" + user.getId() + ">" +
-                        "<input type=\"hidden\" name=\"type\" value=\"delete\">" +
-                        "<input type=\"submit\" value=\"Удалить пользователя\"/></form></td>");
-
-                stringBuilder.append("</tr>");
-            }
-        }
-
-        stringBuilder.append("</table>");
-        writer.append("<!DOCTYPE html>\n" +
-                "<html lang=\"en\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <title>Список всех пользователей</title>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                stringBuilder + "\n" +
-                "</body>\n" +
-                "</html>");
-        writer.flush();
+        req.setAttribute("Users", usersInStore);
+        req.setAttribute("Operation", "show");
+        req.getRequestDispatcher("WEB-INF/views/UsersList.jsp").forward(req, resp);
     }
 
+    /**
+     * Переопределенный метод класса HttpServlet
+     * Вызывается когда от пользователя приходит запрос типа Post
+     * При этом если в запросе пост значение параметра type ровняется delete, то вызывает метод doDelete
+     * @param req - запрос пользователя
+     * @param resp - ответ пользователю
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (req.getParameter("type").equals("delete")) {
+            req.setAttribute("Operation", "show");
             this.doDelete(req, resp);
         }
     }
 
-    //todo - DELETE - метод HTTP
-    //todo - В HTML его нет (есть только get и post)
+    /**
+     * Переопределенный метод класса HttpServlet
+     * Вызывается когда от пользователя приходит запрос типа Post
+     * Получает из параметров запроса значение id пользователя
+     * Затем производит удаление пользователя с таким id из хранилища пользователей
+     * После этого задает в запросе аттрибут Operation со значением delete и направляет в jsp страницу запрос и ответ пользователю
+     * @param req - запрос пользователя
+     * @param resp - ответ пользователю
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter writer = new PrintWriter(resp.getOutputStream());
         ValidateService validateService = ValidateService.INSTANCE;
         int id = Integer.valueOf(req.getParameter("id"));
-        System.out.println("id для удаления - " + id);
-        StringBuilder stringBuilder = new StringBuilder("<table border=\"1\" cellpadding=\"6\">");
         validateService.delete(id);
-        stringBuilder.append("<tr><td align=\"center\">Пользователь с id:" + id + " удален." + "</td></tr>");
-        stringBuilder.append("<tr><td align=\"center\"><form action=" + req.getContextPath() + "/list method=\"get\">");
-        stringBuilder.append("<input type=\"submit\" value=\"Вернуться назад\"/></form></td></tr>");
-        stringBuilder.append("</table>");
-        writer.append("<!DOCTYPE html>\n" +
-                "<html lang=\"en\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <title>Список всех пользователей</title>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                stringBuilder + "\n" +
-                "</body>\n" +
-                "</html>");
-        writer.flush();
+        req.setAttribute("Operation", "delete");
+        req.getRequestDispatcher("WEB-INF/views/UsersList.jsp").forward(req, resp);
     }
 }
