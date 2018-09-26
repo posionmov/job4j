@@ -11,16 +11,15 @@ import java.util.Iterator;
 /**
  * Класс-сервлет
  * @author Galanov Sergey
- * @since 18.09.2018
- * @version 1.1
+ * @since 26.09.2018
+ * @version 1.2
  */
 public class UserServlet extends HttpServlet {
 
     /**
      * Переопределенный метод класса HttpServlet
      * Вызывается тогда, когда клиент посылает запрос типа Get на сервер
-     * Возращает в браузер текстовой поток (при помощи класса PrintWriter), каждая строка которго
-     *                  является полной информацией о пользователе.
+     *
      * @param req - запрос от пользователя, никакие поля не обрабатываются
      * @param resp - ответ пользователю, содержит в себе набор строк (текстовый поток)
      * @throws ServletException
@@ -79,7 +78,7 @@ public class UserServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String action = req.getParameter("action");
         if (action.equals("add")) {
-            User user = new User(req.getParameter("name"), req.getParameter("login"), req.getParameter("email"));
+            User user = new User(req.getParameter("name"), req.getParameter("login"), req.getParameter("email"), Integer.valueOf(req.getParameter("right")), req.getParameter("password"));
             if (validateService.add(user)) {
                 System.out.println("Пользователь создан");
                 writer.append("User " + req.getParameter("name") + " was created!");
@@ -91,7 +90,9 @@ public class UserServlet extends HttpServlet {
             String newName = req.getParameter("name");
             String newLogin = req.getParameter("login");
             String newEmail = req.getParameter("email");
-            User newUser = new User(newName, newLogin, newEmail);
+            int newRight = Integer.valueOf(req.getParameter("right"));
+            String newPassword = req.getParameter("password");
+            User newUser = new User(newName, newLogin, newEmail, newRight, newPassword);
             if (validateService.update(oldId, newUser)) {
                 System.out.println("Пользователь обновлен");
                 writer.append("User " + oldId + " was updated!");

@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html; UTF-8" pageEncoding="UTF-8"%>
 
 <html>
 <head>
@@ -41,6 +42,22 @@
             <tr>
                 <td align="right">Почта: <input type="text" name="email" value="${email}"></td>
             </tr>
+            <tr>
+                <td align="right">Пароль: <input type="text" name="password" value="${password}"></td>
+            </tr>
+            <%----%>
+            <c:if test="${sessionScope.right == 'admin'}">
+            <tr>
+                <td>
+                    <select name="right">
+                        <c:forEach items="${rights}" var="right">
+                            <option value="${right.key}"><c:out value="${right.value}"></c:out></option>
+                        </c:forEach>
+                    </select>
+                </td>
+            </tr>
+            </c:if>
+            <%----%>
             <tr>
                 <td align="center"><input type="submit" value="Сохранить изменения пользователя"></td>
             </tr>

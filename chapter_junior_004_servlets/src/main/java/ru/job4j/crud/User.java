@@ -5,8 +5,8 @@ import java.util.Date;
 /**
  * Класс, описывающий модель данных
  * @author Galanov Sergey
- * @since 18.09.2018
- * @version 1.1
+ * @since 26.09.2018
+ * @version 1.2
  */
 public class User {
 
@@ -14,22 +14,25 @@ public class User {
      * Приватные поля класса
      * Содержат информацию о пользователе
      */
-    private int id;
-    private String name, login, email;
-    private String createDate;
+    private int id, right;
+    private String name, login, email, password, createDate;
 
     /**
      * Конструктор класса
      * @param name - имя нового пользователя
      * @param login - логин нового пользователя
      * @param email - пароль нового пользователя
+     * @param right - права доступа у пользователя
+     * @param password - пароль пользователя
      */
-    public User(String name, String login, String email) {
+    public User(String name, String login, String email, int right, String password) {
         this.name = name;
         this.login = login;
         this.email = email;
         this.createDate = new Date().toString();
         this.id = this.hashCode();
+        this.right = right;
+        this.password = password;
     }
 
     /**
@@ -43,7 +46,9 @@ public class User {
         if (this.getId() == ((User) otherUser).getId()
                 && this.getName().equals(((User) otherUser).getName())
                 && this.getLogin().equals(((User) otherUser).getLogin())
-                && this.getEmail().equals(((User) otherUser).getEmail())) {
+                && this.getEmail().equals(((User) otherUser).getEmail())
+                && this.getRight() == ((User) otherUser).getRight()
+        ) {
             result = true;
         }
         return result;
@@ -58,6 +63,7 @@ public class User {
         int result = (this.name != null) ? this.name.hashCode() : 0;
         result = 31 * result + this.login.hashCode();
         result = 31 * result + this.email.hashCode();
+//        result = 31 * result + this.right.hashCode();
         return result;
     }
 
@@ -68,7 +74,6 @@ public class User {
     public int getId() {
         return id;
     }
-
 
     public String getName() {
         return name;
@@ -84,6 +89,10 @@ public class User {
 
     public String getCreateDate() {
         return createDate;
+    }
+
+    public int getRight() {
+        return right;
     }
 
     public void setId(int newId) {
@@ -106,4 +115,15 @@ public class User {
         this.createDate = createDate;
     }
 
+    public void setRight(int right) {
+        this.right = right;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

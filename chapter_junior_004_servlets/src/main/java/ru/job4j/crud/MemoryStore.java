@@ -1,6 +1,8 @@
 package ru.job4j.crud;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -87,5 +89,20 @@ public enum  MemoryStore implements Store {
     public User findById(int id) {
         System.out.println("Ищу пользователя с id = " + id);
         return this.users.get(id);
+    }
+
+    @Override
+    public boolean checkCorrect(String username, String password) {
+        return false;
+    }
+
+    @Override
+    public Map<Integer, String> getAllRights() {
+        return null;
+    }
+
+    @Override
+    public User checkUser(String userName, String userPassword) {
+        return null;
     }
 }
