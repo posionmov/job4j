@@ -42,9 +42,9 @@ public class UsersServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ValidateService validateService = ValidateService.INSTANCE;
-        Collection<User> usersInStore = validateService.findAll().values();
-        Map<Integer, String> rights = validateService.getRights();
+        ValidateService validateOut = ValidateService.INSTANCE;
+        Collection<User> usersInStore = validateOut.findAll().values();
+        Map<Integer, String> rights = validateOut.getRights();
         req.setAttribute("Users", usersInStore);
         req.setAttribute("Rights", rights);
         req.setAttribute("Operation", "show");
@@ -88,9 +88,9 @@ public class UsersServlet extends HttpServlet {
      */
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ValidateService validateService = ValidateService.INSTANCE;
+        ValidateService validateOut = ValidateService.INSTANCE;
         int id = Integer.valueOf(req.getParameter("id"));
-        validateService.delete(id);
+        validateOut.delete(id);
         req.setAttribute("Operation", "delete");
         req.getRequestDispatcher("WEB-INF/views/UsersList.jsp").forward(req, resp);
         return;

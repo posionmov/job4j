@@ -28,10 +28,10 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/plain; charset=utf-8");
-        ValidateService validateService = ValidateService.INSTANCE;
+        ValidateService validateOut = ValidateService.INSTANCE;
         resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
-        for (User user : validateService.findAll().values()) {
+        for (User user : validateOut.findAll().values()) {
             writer.append("id = " + user.getId() + " ,name = " + user.getName()
                     + " ,login = " + user.getLogin() + " ,email = " + user.getEmail()
                     + " creating date = " + user.getCreateDate() + System.lineSeparator());
@@ -49,10 +49,10 @@ public class UserServlet extends HttpServlet {
      */
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ValidateService validateService = ValidateService.INSTANCE;
+        ValidateService validateOut = ValidateService.INSTANCE;
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
         req.setCharacterEncoding("UTF-8");
-        if (validateService.delete(Integer.valueOf(req.getParameter("id")))) {
+        if (validateOut.delete(Integer.valueOf(req.getParameter("id")))) {
             System.out.println("Пользователь удален");
             writer.append("User " + req.getParameter("id") + " was deleted!");
         } else {

@@ -34,13 +34,13 @@ public class UserUpdateServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ValidateService validateService = ValidateService.INSTANCE;
-        User user = validateService.findById(Integer.parseInt(req.getParameter("id")));
+        ValidateService validateOut = ValidateService.INSTANCE;
+        User user = validateOut.findById(Integer.parseInt(req.getParameter("id")));
         req.setAttribute("name", user.getName());
         req.setAttribute("password", user.getPassword());
         req.setAttribute("login", user.getLogin());
         req.setAttribute("email", user.getEmail());
-        req.setAttribute("rights", validateService.getRights());
+        req.setAttribute("rights", validateOut.getRights());
         req.setAttribute("Operation", "show");
         req.getRequestDispatcher("WEB-INF/views/UserUpdate.jsp").forward(req, resp);
     }
@@ -57,11 +57,11 @@ public class UserUpdateServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ValidateService validateService = ValidateService.INSTANCE;
+        ValidateService validateOut = ValidateService.INSTANCE;
         HttpSession session = req.getSession();
-        Map<Integer, String> rights = validateService.getRights();
+        Map<Integer, String> rights = validateOut.getRights();
         int id = Integer.valueOf(req.getParameter("id"));
-        User user = validateService.findById(id);
+        User user = validateOut.findById(id);
         user.setName(req.getParameter("name"));
         user.setLogin(req.getParameter("login"));
         user.setEmail(req.getParameter("email"));
@@ -72,7 +72,7 @@ public class UserUpdateServlet extends HttpServlet {
                 session.setAttribute("right", rights.get(Integer.valueOf(req.getParameter("right"))));
             }
         }
-        validateService.update(id, user);
+        validateOut.update(id, user);
         req.setAttribute("Operation", "updating");
         req.setAttribute("id", user.getId());
         req.getRequestDispatcher("WEB-INF/views/UserUpdate.jsp").forward(req, resp);

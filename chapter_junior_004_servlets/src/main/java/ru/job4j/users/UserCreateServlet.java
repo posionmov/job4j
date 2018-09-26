@@ -33,9 +33,9 @@ public class UserCreateServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ValidateService validateService = ValidateService.INSTANCE;
+        ValidateService validateOut = ValidateService.INSTANCE;
         req.setAttribute("Operation", "show");
-        req.setAttribute("rights", validateService.getRights());
+        req.setAttribute("rights", validateOut.getRights());
         req.getRequestDispatcher("WEB-INF/views/UsersCreate.jsp").forward(req, resp);
     }
 
@@ -56,10 +56,10 @@ public class UserCreateServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ValidateService validateService = ValidateService.INSTANCE;
+        ValidateService validateOut = ValidateService.INSTANCE;
         User user = new User(req.getParameter("name"), req.getParameter("login"), req.getParameter("email"), Integer.valueOf(req.getParameter("right")), req.getParameter("password"));
         req.setAttribute("Operation", "add");
-        if (validateService.add(user)) {
+        if (validateOut.add(user)) {
             req.setAttribute("adding", "success");
             req.setAttribute("id", user.getId());
         } else {

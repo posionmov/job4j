@@ -57,11 +57,11 @@ public class UserAuthorization extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (req.getParameter("operation").equals("signIn")) {
-            ValidateService validateService = ValidateService.INSTANCE;
+            ValidateService validateOut = ValidateService.INSTANCE;
             String login = req.getParameter("login");
             String password = req.getParameter("password");
-            User user = validateService.checkUser(login, password);
-            Map<Integer, String> rights = validateService.getRights();
+            User user = validateOut.checkUser(login, password);
+            Map<Integer, String> rights = validateOut.getRights();
             if (user != null) {
                 HttpSession session = req.getSession();
                 session.setAttribute("login", user.getLogin());
