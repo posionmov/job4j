@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Пример Bootstrap</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!--Имя, фамилия, пол, описание-->
+
+<form action="/list">
+    <!--Имя -->
+    <div class="form-group">
+        <label for="name">Имя:</label>
+        <input type="name" class="form-control" id="name">
+    </div>
+
+    <!--Фамилия-->
+    <div class="form-group">
+        <label for="surname">Фамилия:</label>
+        <input type="text" class="form-control" id="surname">
+    </div>
+
+    <!--Пол-->
+    <div class="dropdown open">
+        <label>Пол:</label>
+        <select class="form-control">
+            <option>Мужской</option>
+            <option>Женский</option>
+        </select>
+    </div>
+
+    <!--Описание-->
+    <div class="form-group">
+        <label for="description">Описание:</label>
+        <textarea class="form-control" id="description" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-default">Отправить</button>
+</form>
+
+<!--Таблица-->
+<div class="container">
+    <h2>Таблица пользователей</h2>
+    <p>Полный список пользователей в БД на данный момент:</p>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Пол</th>
+            <th>Описание</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Иван</td>
+            <td>Иванов</td>
+            <td>Мужской</td>
+            <td>Работник савхоза</td>
+        </tr>
+        <tr>
+            <td>Анна</td>
+            <td>Михайловна</td>
+            <td>Женский</td>
+            <td>Преподаватель</td>
+        </tr>
+        <tr>
+            <td>Антон</td>
+            <td>Николаевич</td>
+            <td>Мужской</td>
+            <td>Инженер</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
