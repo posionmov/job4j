@@ -78,7 +78,6 @@ public class ConvertXSQT {
             Date date = new Date();
             byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
             result = new String(encoded, Charset.defaultCharset());
-//            this.timeLeft -= (new Date().getTime() - date.getTime());
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -3,7 +3,10 @@ package ru.job4j.xml;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.net.URL;
 import java.util.Date;
+import java.util.Objects;
+
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.*;
 
@@ -36,11 +39,21 @@ public class ResultSumm extends DefaultHandler {
     public ResultSumm() {
         this.date = new Date();
         this.timeLeft = 300_000; // эквивалентно 5 минутам
-        ClassLoader classLoader = getClass().getClassLoader();
+        ClassLoader classLoader = this.getClass().getClassLoader();
         try {
-            this.source = new File(classLoader.getResource("XML.xml").getFile());
-            this.dest = new File(classLoader.getResource("XLS_result.xml").getFile());
-            this.scheme = new File(classLoader.getResource("XLS_scheme.xml").getFile());
+//            this.source = new File(Objects.requireNonNull(classLoader.getResource("XML.xml")).getFile());
+//            this.dest = new File(classLoader.getResource("XLS_result.xml").getFile());
+//            this.scheme = new File(classLoader.getResource("XLS_scheme.xml").getFile());
+
+            URL location = getClass().getProtectionDomain().getCodeSource().getLocation();
+            System.out.println("path  ------   " + location.getPath());
+            this.source = new File(location.getPath() + "/XML.xml");
+            this.dest = new File(location.getPath() + "/XLS_result.xml");
+            this.scheme = new File(location.getPath() + "/XLS_scheme.xml");
+
+            System.out.println("source " + this.source.isFile());
+            System.out.println("dest " + this.dest.isFile());
+            System.out.println("scheme " + this.scheme.isFile());
         } catch (NullPointerException e) {
             e.printStackTrace();
         }

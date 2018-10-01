@@ -67,6 +67,7 @@ public class ThreadPoolTest {
         ThreadPool threadPool = new ThreadPool();
         Thread.sleep(1000);
         threadPool.work(() -> System.out.printf("-- Thread %s do something --%s", Thread.currentThread().getName(), System.lineSeparator()));
+        Thread.sleep(1000);
         threadPool.shutdown();
         assertThat(threadPool.getSizeOfCurrentThreads(), is(0));
     }

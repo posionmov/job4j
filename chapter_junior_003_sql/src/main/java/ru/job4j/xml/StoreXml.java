@@ -142,7 +142,7 @@ public class StoreXml {
      */
     private void save(Entries list, File file) throws JAXBException {
         Date date = new Date();
-        System.out.println("SAVE ---- " + file.getPath());
+        System.out.println("StoreXML, func SAVE ---- " + file.getPath());
         JAXBContext jaxbContext = JAXBContext.newInstance(Entries.class);
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

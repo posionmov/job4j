@@ -18,7 +18,7 @@ public class CashBaseTest {
      * Тестировнаие на выкидывание исключений, когда каждый поток пытается изменить обьект, у которого он не совпадает
      */
     @Test
-    public void whenBlaThenBla() {
+    public void whenBlaThenBla() throws InterruptedException {
         AtomicReference<Exception> ex = new AtomicReference<>();
         CashBase base = new CashBase();
         Base base1 = new Base(1, 1, "Michail");
@@ -47,6 +47,7 @@ public class CashBaseTest {
         one.start();
         two.start();
         three.start();
+        Thread.sleep(1000);
         Assert.assertThat(ex.get().getMessage(), is("Обьект не актуальный"));
     }
 
@@ -66,7 +67,7 @@ public class CashBaseTest {
         one.start();
         two.start();
         three.start();
-        Thread.sleep(600);
+        Thread.sleep(1000);
         assertThat(base.findById(1).version, is(4));
     }
 }

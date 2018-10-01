@@ -11,5 +11,26 @@
 
     <artifactId>chapter_junior_003_sql</artifactId>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/java/ru/job4j/xml</directory><!-- откуда копировать файлы -->
+                <targetPath>${project.build.directory}/classes</targetPath><!-- куда копировать файлы -->
+                <includes><!-- какие файлы копировать -->
+                    <include>XML.xml</include>
+                    <include>XLS_result.xml</include>
+                    <include>XLS_scheme.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory><!-- откуда копировать файлы -->
+                <targetPath>${project.build.directory}/classes</targetPath><!-- куда копировать файлы -->
+                <includes><!-- какие файлы копировать -->
+                    <include>psql.sql</include>
+                    <include>sqllite.properties</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 
 </project>
