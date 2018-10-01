@@ -233,6 +233,7 @@ public class DbStore implements Store {
             ResultSet rset = st.executeQuery();
             if (rset.next()) {
                 result = new User(rset.getString("u_name"), rset.getString("u_login"), rset.getString("u_email"), rset.getInt("u_right"), rset.getString("u_password"));
+                result.setId(rset.getInt("id"));
             }
             rset.close();
         } catch (Exception e) {
