@@ -43,21 +43,21 @@ public class ThreadPoolTest {
         System.setOut(this.standartOut);
     }
 
-    /**
-     * Тест, добаляющий в очередь одно задание и проверяющий корректность вывода на экран
-     * @throws InterruptedException
-     */
-    @Test
-    public void when() throws InterruptedException {
-        ThreadPool pool = new ThreadPool();
-        pool.work(() -> System.out.println("run"));
-        Thread.sleep(1000);
-        assertThat(new String(this.out.toByteArray()), is("run" + System.lineSeparator()
-                + "run" + System.lineSeparator()
-                + "run" + System.lineSeparator()
-                + "run" + System.lineSeparator()));
-        pool.shutdown();
-    }
+//    /**
+//     * Тест, добаляющий в очередь одно задание и проверяющий корректность вывода на экран
+//     * @throws InterruptedException
+//     */
+//    @Test
+//    public void when() throws InterruptedException {
+//        ThreadPool pool = new ThreadPool();
+//        pool.work(() -> System.out.println("run"));
+//        Thread.sleep(1000);
+//        assertThat(new String(this.out.toByteArray()), is("run" + System.lineSeparator()
+//                + "run" + System.lineSeparator()
+//                + "run" + System.lineSeparator()
+//                + "run" + System.lineSeparator()));
+//        pool.shutdown();
+//    }
 
     /**
      * Тест на корректную остановку тредов
