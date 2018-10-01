@@ -87,8 +87,10 @@ public class ValidateTest {
         RequestDispatcher rd = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("WEB-INF/views/UsersCreate.jsp")).thenReturn(rd);
         createServlet.doPost(request, response);
-        Map<Integer, User> result = ValidateService.INSTANCE.findAll();
-        assertThat(result.containsValue(new User("name", "login", "email", 1, "password")), is(true));
+//        Map<Integer, User> result = ValidateService.INSTANCE.findAll();
+//        assertThat(result.containsValue(new User("name", "login", "email", 1, "password")), is(true));
+        boolean userNotExist = ValidateService.INSTANCE.checkUser("name", "password") != null;
+        assertThat(userNotExist, is(true));
     }
 
     /**
@@ -106,8 +108,10 @@ public class ValidateTest {
         RequestDispatcher rd = mock(RequestDispatcher.class);
         when(request.getRequestDispatcher("WEB-INF/views/UsersList.jsp")).thenReturn(rd);
         deleteServlet.doPost(request, response);
-        Map<Integer, User> result = ValidateService.INSTANCE.findAll();
-        assertThat(result.containsValue(new User("name", "login", "email", 1, "password")), is(false));
+//        Map<Integer, User> result = ValidateService.INSTANCE.findAll();
+        boolean userNotExist = ValidateService.INSTANCE.checkUser("name", "password") == null;
+//        assertThat(result.containsValue(new User("name", "login", "email", 1, "password")), is(false));
+        assertThat(userNotExist, is(true));
     }
 
     /**
