@@ -89,8 +89,9 @@ public class ValidateTest {
         createServlet.doPost(request, response);
 //        Map<Integer, User> result = ValidateService.INSTANCE.findAll();
 //        assertThat(result.containsValue(new User("name", "login", "email", 1, "password")), is(true));
-        boolean userNotExist = ValidateService.INSTANCE.checkUser("name", "password") != null;
-        assertThat(userNotExist, is(true));
+        boolean userExist = ValidateService.INSTANCE.checkUser("name", "password") != null;
+        System.out.println("add user = " + userExist);
+        assertThat(userExist, is(true));
     }
 
     /**
@@ -111,6 +112,7 @@ public class ValidateTest {
 //        Map<Integer, User> result = ValidateService.INSTANCE.findAll();
         boolean userNotExist = ValidateService.INSTANCE.checkUser("name", "password") == null;
 //        assertThat(result.containsValue(new User("name", "login", "email", 1, "password")), is(false));
+        System.out.println("delete user = " + userNotExist);
         assertThat(userNotExist, is(true));
     }
 
