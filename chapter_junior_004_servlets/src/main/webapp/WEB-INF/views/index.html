@@ -15,9 +15,29 @@
          * Затем проверяет есть ли в данных незаполненные поля
          *      1) если есть, то добавляет ключи пустых полей в простой массив, а затем в alert пишет какие поля не заполнены
          *      2) если нет, то выводит в alert все введеные поля
-         * @returns {boolean}
          */
         function validate() {
+            var result = checkFields();
+            if (result[0] === true) {
+                alert("Имя: " + result[1]["Имя"] + "\n"
+                    + "Фамилия: " + result[1]["Фамилия"] + "\n"
+                    + "Пол: " + result[1]["Пол"] + "\n"
+                    + "Описание: " + result[1]["Описание"]);
+            }
+        }
+    </script>
+    
+    <script>
+        /**
+         * Метод проверки вводимых данных
+         * Сперва считывает данные из полей ввода и записывает их в ассоциативный массив
+         * Затем проверяет есть ли в данных незаполненные поля
+         *      1) если есть, то добавляет ключи пустых полей в простой массив, а затем в alert пишет какие поля не заполнены
+         *      2) если нет, то задает значение локальной переменной isCorrect -> true
+         * После этого возращает массив, содержащий значение переменной isCorrect и массив введеных данных
+         */
+        function checkFields() {
+            var isCorrect = false;
             var name = $('#name').val(); <!-- Получение знаения из поля с id="name" -->
             var surname = $('#surname').val(); <!-- Получение знаения из поля с id="surname" -->
             var gender = $('#gender').val(); <!-- Получение знаения из поля с id="gender" -->
@@ -36,12 +56,27 @@
                 }
                 alert(forgotten);
             } else {
-                alert("Имя: " + name + "\n"
-                    + "Фамилия: " + surname + "\n"
-                    + "Пол: " + gender + "\n"
-                    + "Описание: " + description);
+                isCorrect = true;
             }
-            return false;
+            return [isCorrect, enteredFields];
+        }
+    </script>
+
+    <script>
+        /**
+         * Метод добавления пользователя в таблицу
+         * Сперва вызывает метод checkFields(): который возращает массив
+         * Если значение первого (нулевого) элемента массива === true (что значит, что все поля были заполнены),
+         *                                                  то добавляет данные поля в таблицу последней строчкой
+         */
+        function addRow() {
+            var result = checkFields();
+            if (result[0] === true) {
+                $('#usersTable tr:last').after('<tr><td>' + result[1]["Имя"] +'</td><td>'
+                                                            + result[1]["Фамилия"] +'</td><td>'
+                                                            + result[1]["Пол"] +'</td><td>'
+                                                            + result[1]["Описание"] +'</td></tr>');
+            }
         }
     </script>
 
@@ -78,14 +113,18 @@
         <textarea class="form-control" id="description" rows="3"></textarea>
     </div>
 
-    <button type="submit" class="btn btn-default" onclick="return validate();">Отправить</button>
+    <button type="submit" class="btn btn-default" onclick="validate();">Отправить</button>
 </form>
 
 <!--Таблица-->
+<br>
+<div>
+    <button class="btn btn-default" onclick="addRow();">Добавить в таблицу</button>
+</div>
 <div class="container">
     <h2>Таблица пользователей</h2>
     <p>Полный список пользователей в БД на данный момент:</p>
-    <table class="table table-bordered">
+    <table class="table table-bordered" id="usersTable">
         <thead>
         <tr>
             <th>Имя</th>
