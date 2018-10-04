@@ -25,9 +25,7 @@
                     + "Описание: " + result[1]["Описание"]);
             }
         }
-    </script>
-    
-    <script>
+
         /**
          * Метод проверки вводимых данных
          * Сперва считывает данные из полей ввода и записывает их в ассоциативный массив
@@ -60,9 +58,7 @@
             }
             return [isCorrect, enteredFields];
         }
-    </script>
 
-    <script>
         /**
          * Метод добавления пользователя в таблицу
          * Сперва вызывает метод checkFields(): который возращает массив
@@ -72,12 +68,48 @@
         function addRow() {
             var result = checkFields();
             if (result[0] === true) {
-                $('#usersTable tr:last').after('<tr><td>' + result[1]["Имя"] +'</td><td>'
-                                                            + result[1]["Фамилия"] +'</td><td>'
-                                                            + result[1]["Пол"] +'</td><td>'
-                                                            + result[1]["Описание"] +'</td></tr>');
+                $('#usersTable tr:last').after('<tr><td>' + result[1]["Имя"] + '</td><td>'
+                    + result[1]["Фамилия"] + '</td><td>'
+                    + result[1]["Пол"] + '</td><td>'
+                    + result[1]["Описание"] + '</td></tr>');
             }
         }
+
+        /**
+         * Метод получения всех пользователей
+         */
+        $.ajax({
+            url: "./json",
+            method: 'get',
+            complete: function (data) {
+                var obj = JSON.parse(data.responseText);
+                for (var i = 0; i < obj.length; i++) {
+                    $('#usersTable tr:last').after('<tr><td>' + obj[i].name + '</td><td>'
+                        + obj[i].surname + '</td><td>'
+                        + obj[i].gender + '</td><td>'
+                        + obj[i].description + '</td></tr>');
+                }
+            }
+        });
+
+        /**
+         * Метод отправки пользователя на сервер
+         */
+        function sendUser() {
+            // var contextPath = this.request.url;
+            var result = checkFields();
+            $.ajax({
+                url: "./json",
+                method: 'post',
+                data: {
+                    name: result[1]["Имя"],
+                    surname: result[1]["Фамилия"],
+                    gender: result[1]["Пол"],
+                    description: result[1]["Описание"]
+                }
+            });
+        }
+
     </script>
 
 </head>
@@ -85,7 +117,7 @@
 
 <!--Имя, фамилия, пол, описание-->
 
-<form action="/list">
+<form>
     <!--Имя -->
     <div class="form-group">
         <label for="name">Имя:</label>
@@ -112,8 +144,12 @@
         <label for="description">Описание:</label>
         <textarea class="form-control" id="description" rows="3"></textarea>
     </div>
-
-    <button type="submit" class="btn btn-default" onclick="validate();">Отправить</button>
+    <div>
+        <button type="submit" class="btn btn-default" onclick="validate();">Отправить</button>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-default" onclick="sendUser();">AJAX обновление</button>
+    </div>
 </form>
 
 <!--Таблица-->
