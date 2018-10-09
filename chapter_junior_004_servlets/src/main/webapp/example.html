@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>EXAMPLE</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <script>
+
+        $.ajax({
+           url : "./example",
+           method : 'get',
+           complete : function (data) {
+               console.log(data);
+               var res = JSON.parse(data.responseText);
+               console.log("method get");
+               console.log(res);
+               console.log(res.method);
+           }
+        });
+
+        function postFromServlet() {
+            $.ajax({
+                url : "./example",
+                method : 'post',
+                complete : function (data) {
+                    console.log(data);
+                    var res = JSON.parse(data.responseText);
+                    console.log("method post");
+                    console.log(res);
+                    console.log(res.method);
+                },
+                async : false
+            })
+        }
+
+
+    </script>
+
+</head>
+<body>
+
+<button type="button" onclick="postFromServlet()">Click</button>
+
+
+</body>
+</html>

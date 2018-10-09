@@ -52,7 +52,7 @@
             var password = $('#password').val();
             var email = $('#email').val();
             var right = $('#userRight').val();
-            // alert(name + login + password + email + right);  //все верно
+
 
             $.ajax({
                 url: "./create",
@@ -78,6 +78,7 @@
                     console.log(success);
                 }
             });
+
 
         }
 

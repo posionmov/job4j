@@ -70,6 +70,7 @@ public class UserCreateServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("post");
+        req.setAttribute("Operation", "add");
         ValidateService validateOut = ValidateService.INSTANCE;
         User user = new User(req.getParameter("name"),
                             req.getParameter("login"),
@@ -77,7 +78,7 @@ public class UserCreateServlet extends HttpServlet {
                             Integer.valueOf(req.getParameter("right")),
                             req.getParameter("password"));
 
-        req.setAttribute("Operation", "add");
+
 
         if (validateOut.add(user)) {
             req.setAttribute("adding", "success");

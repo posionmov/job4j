@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <web-app>
 
-    <filter>
-        <filter-name>AuthFilter</filter-name>
-        <filter-class>ru.job4j.users.AuthFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <url-pattern>*</url-pattern>
-    </filter-mapping>
+    <!--<filter>-->
+        <!--<filter-name>AuthFilter</filter-name>-->
+        <!--<filter-class>ru.job4j.users.AuthFilter</filter-class>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>AuthFilter</filter-name>-->
+        <!--<url-pattern>*</url-pattern>-->
+    <!--</filter-mapping>-->
 
     <!-- ???????? ??????? -->
     <servlet>
@@ -96,4 +96,20 @@
         <servlet-name>JsonServlet</servlet-name>
         <url-pattern>/json</url-pattern>
     </servlet-mapping>
+
+
+    <!--EXAMPLE-->
+    <servlet>
+        <servlet-name>ExampleServlet</servlet-name>
+        <servlet-class>ru.job4j.users.ExampleServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ExampleServlet</servlet-name>
+        <url-pattern>/example</url-pattern>
+    </servlet-mapping>
+
+
+
 </web-app>
