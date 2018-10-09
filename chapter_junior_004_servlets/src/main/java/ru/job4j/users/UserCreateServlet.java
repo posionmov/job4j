@@ -1,5 +1,7 @@
 package ru.job4j.users;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import ru.job4j.crud.User;
 import ru.job4j.crud.ValidateService;
 
@@ -8,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * Класс-сервлет, отвечающий за создание пользователя
@@ -34,6 +38,15 @@ public class UserCreateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ValidateService validateOut = ValidateService.INSTANCE;
+
+        Map<Integer, String> bdRights = validateOut.getRights();
+        Gson gsonForRights = new Gson();
+        String rights = gsonForRights.toJson(bdRights);
+        System.out.println(rights);
+        req.setAttribute("rgh", rights);
+
+        System.out.println("get");
+
         req.setAttribute("Operation", "show");
         req.setAttribute("rights", validateOut.getRights());
         req.getRequestDispatcher("WEB-INF/views/UsersCreate.jsp").forward(req, resp);
@@ -56,15 +69,25 @@ public class UserCreateServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("post");
         ValidateService validateOut = ValidateService.INSTANCE;
-        User user = new User(req.getParameter("name"), req.getParameter("login"), req.getParameter("email"), Integer.valueOf(req.getParameter("right")), req.getParameter("password"));
+        User user = new User(req.getParameter("name"),
+                            req.getParameter("login"),
+                            req.getParameter("email"),
+                            Integer.valueOf(req.getParameter("right")),
+                            req.getParameter("password"));
+
         req.setAttribute("Operation", "add");
+
         if (validateOut.add(user)) {
             req.setAttribute("adding", "success");
             req.setAttribute("id", user.getId());
         } else {
-            req.setAttribute("adding", "fail");
+            System.out.println("cand add user");
+            req.setAttribute("Adding", "fail");
+            req.setAttribute("id", user.getId());
         }
+        req.setAttribute("adding", "success");
         req.getRequestDispatcher("WEB-INF/views/UsersCreate.jsp").forward(req, resp);
     }
 }

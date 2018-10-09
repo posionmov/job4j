@@ -1,5 +1,6 @@
 package ru.job4j.users;
 
+import com.google.gson.Gson;
 import ru.job4j.crud.User;
 import ru.job4j.crud.ValidateService;
 
@@ -44,9 +45,19 @@ public class UsersServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ValidateService validateOut = ValidateService.INSTANCE;
         Collection<User> usersInStore = validateOut.findAll().values();
-        Map<Integer, String> rights = validateOut.getRights();
+        Map<Integer, String> rgh = validateOut.getRights();
+
+
+        // Создание обьекта из класса JSON обьект
+        Gson usr = new Gson();
+        Gson right = new Gson();
+        String users = usr.toJson(usersInStore);
+        String rights = right.toJson(rgh);
+        req.setAttribute("usr", users);
+        req.setAttribute("rgh", rights);
+
         req.setAttribute("Users", usersInStore);
-        req.setAttribute("Rights", rights);
+        req.setAttribute("Rights", rgh);
         req.setAttribute("Operation", "show");
         RequestDispatcher rd = req.getRequestDispatcher("WEB-INF/views/UsersList.jsp");
         rd.forward(req, resp);
