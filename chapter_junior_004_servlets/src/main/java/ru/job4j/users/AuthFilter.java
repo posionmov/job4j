@@ -44,11 +44,11 @@ public class AuthFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = ((HttpServletRequest) servletRequest).getSession();
-        if (request.getRequestURI().contains("/signIn") || request.getRequestURI().contains("/create")) {
+        if (request.getRequestURI().contains("/index.html") || request.getRequestURI().contains("/create.html") || request.getRequestURI().contains("/auth")|| request.getRequestURI().contains("/create")) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
             if (session.getAttribute("login") == null) {
-                response.sendRedirect(String.format("%s/signIn", request.getContextPath()));
+                response.sendRedirect(String.format("%s/index.html", request.getContextPath()));
                 return;
             }
             filterChain.doFilter(servletRequest, servletResponse);

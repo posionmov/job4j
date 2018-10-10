@@ -27,13 +27,9 @@
                 url : "./example",
                 method : 'post',
                 complete : function (data) {
-                    console.log(data);
-                    var res = JSON.parse(data.responseText);
-                    console.log("method post");
-                    console.log(res);
-                    console.log(res.method);
-                },
-                async : false
+                    console.log(JSON.parse(data.responseText));
+                    console.log(JSON.parse(data.responseText)[112209]);
+                }
             })
         }
 

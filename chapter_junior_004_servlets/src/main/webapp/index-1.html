@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Пример Bootstrap</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script>
+        /**
+         * Метод проверки ввода данных от пользователя
+         * Сперва считывает данные из полей ввода и записывает их в ассоциативный массив
+         * Затем проверяет есть ли в данных незаполненные поля
+         *      1) если есть, то добавляет ключи пустых полей в простой массив, а затем в alert пишет какие поля не заполнены
+         *      2) если нет, то выводит в alert все введеные поля
+         */
+        function validate() {
+            var result = checkFields();
+            if (result[0] === true) {
+                alert("Имя: " + result[1]["Имя"] + "\n"
+                    + "Фамилия: " + result[1]["Фамилия"] + "\n"
+                    + "Пол: " + result[1]["Пол"] + "\n"
+                    + "Описание: " + result[1]["Описание"]);
+            }
+        }
+
+        /**
+         * Метод проверки вводимых данных
+         * Сперва считывает данные из полей ввода и записывает их в ассоциативный массив
+         * Затем проверяет есть ли в данных незаполненные поля
+         *      1) если есть, то добавляет ключи пустых полей в простой массив, а затем в alert пишет какие поля не заполнены
+         *      2) если нет, то задает значение локальной переменной isCorrect -> true
+         * После этого возращает массив, содержащий значение переменной isCorrect и массив введеных данных
+         */
+        function checkFields() {
+            var isCorrect = false;
+            var name = $('#name').val(); <!-- Получение знаения из поля с id="name" -->
+            var surname = $('#surname').val(); <!-- Получение знаения из поля с id="surname" -->
+            var gender = $('#gender').val(); <!-- Получение знаения из поля с id="gender" -->
+            var description = $('#description').val(); <!-- Получение знаения из поля с id="description" -->
+            var emptyFields = []; <!-- Создание пустого простого массива, который будет содержать в себе ключи неаполненных полей -->
+            var enteredFields = {"Имя": name, "Фамилия" : surname, "Пол" : gender, "Описание" : description}; <!-- Ассоциативный массив ключей и значений-->
+            for (var value in enteredFields) {                  <!-- value - ключ && array[value] - значение -->
+                if (enteredFields[value] === '') { <!-- Если значение по ключу равно нулю (пустой строке) -->
+                    emptyFields.push(value); <!-- Добавление в простой массив ключа -->
+                }
+            }
+            if (emptyFields.length > 0) {
+                var forgotten = "Вы забыли ввести данные:\n";
+                for (var i = 0; i < emptyFields.length; i++) {
+                    forgotten += (i + 1) + ": " + emptyFields[i] + "\n";
+                }
+                alert(forgotten);
+            } else {
+                isCorrect = true;
+            }
+            return [isCorrect, enteredFields];
+        }
+
+        /**
+         * Метод добавления пользователя в таблицу
+         * Сперва вызывает метод checkFields(): который возращает массив
+         * Если значение первого (нулевого) элемента массива === true (что значит, что все поля были заполнены),
+         *                                                  то добавляет данные поля в таблицу последней строчкой
+         */
+        function addRow() {
+            var result = checkFields();
+            if (result[0] === true) {
+                $('#usersTable tr:last').after('<tr><td>' + result[1]["Имя"] + '</td><td>'
+                    + result[1]["Фамилия"] + '</td><td>'
+                    + result[1]["Пол"] + '</td><td>'
+                    + result[1]["Описание"] + '</td></tr>');
+            }
+        }
+
+        /**
+         * Метод получения всех пользователей
+         */
+        $.ajax({
+            url: "./json",
+            method: 'get',
+            complete: function (data) {
+                var obj = JSON.parse(data.responseText);
+                for (var i = 0; i < obj.length; i++) {
+                    $('#usersTable tr:last').after('<tr><td>' + obj[i].name + '</td><td>'
+                        + obj[i].surname + '</td><td>'
+                        + obj[i].gender + '</td><td>'
+                        + obj[i].description + '</td></tr>');
+                }
+            }
+        });
+
+        /**
+         * Метод отправки пользователя на сервер
+         */
+        function sendUser() {
+            // var contextPath = this.request.url;
+            var result = checkFields();
+            $.ajax({
+                url: "./json",
+                method: 'post',
+                data: {
+                    name: result[1]["Имя"],
+                    surname: result[1]["Фамилия"],
+                    gender: result[1]["Пол"],
+                    description: result[1]["Описание"]
+                }
+            });
+        }
+
+    </script>
+
+</head>
+<body>
+
+<!--Имя, фамилия, пол, описание-->
+
+<form>
+    <!--Имя -->
+    <div class="form-group">
+        <label for="name">Имя:</label>
+        <input type="text" class="form-control" id="name"> <!-- Метод "alert($('#name').val());" обращается к id, а не к label for="name"!-->
+    </div>
+
+    <!--Фамилия-->
+    <div class="form-group">
+        <label for="surname">Фамилия:</label>
+        <input type="text" class="form-control" id="surname">
+    </div>
+
+    <!--Пол-->
+    <div class="dropdown open">
+        <label>Пол:</label>
+        <select class="form-control" id="gender">
+            <option>Мужской</option>
+            <option>Женский</option>
+        </select>
+    </div>
+
+    <!--Описание-->
+    <div class="form-group">
+        <label for="description">Описание:</label>
+        <textarea class="form-control" id="description" rows="3"></textarea>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-default" onclick="validate();">Отправить</button>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-default" onclick="sendUser();">AJAX обновление</button>
+    </div>
+</form>
+
+<!--Таблица-->
+<br>
+<div>
+    <button class="btn btn-default" onclick="addRow();">Добавить в таблицу</button>
+</div>
+<div class="container">
+    <h2>Таблица пользователей</h2>
+    <p>Полный список пользователей в БД на данный момент:</p>
+    <table class="table table-bordered" id="usersTable">
+        <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Пол</th>
+            <th>Описание</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Иван</td>
+            <td>Иванов</td>
+            <td>Мужской</td>
+            <td>Работник савхоза</td>
+        </tr>
+        <tr>
+            <td>Анна</td>
+            <td>Михайловна</td>
+            <td>Женский</td>
+            <td>Преподаватель</td>
+        </tr>
+        <tr>
+            <td>Антон</td>
+            <td>Николаевич</td>
+            <td>Мужской</td>
+            <td>Инженер</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

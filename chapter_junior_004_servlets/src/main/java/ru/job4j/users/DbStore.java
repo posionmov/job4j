@@ -44,11 +44,21 @@ public class DbStore implements Store {
         SOURCE.setMaxIdle(10);
         SOURCE.setMaxOpenPreparedStatements(100);
         try (Connection connection = SOURCE.getConnection(); Statement st = connection.createStatement()) {
-            st.execute("create table if not exists user_rights (id serial primary key, rights varchar(200));");
-            st.execute("create table if not exists users (id integer primary key, u_name varchar(200) not null, u_login varchar(200) not null, u_password varchar(200) not null, u_email varchar(200) not null, u_create_date varchar(200) not null, u_password varchar(200) not null, u_right integer references user_rights(id));");
-            st.execute("create index idIndex on users(id, u_login, u_password, u_email)");
+            st.execute("create table if not exists user_rights (id serial primary key, rights varchar(200) unique);");
+            st.execute("create table if not exists users (id integer primary key, u_name varchar(200) not null, u_login varchar(200) not null, u_password varchar(200) not null, u_email varchar(200) not null, u_create_date varchar(200) not null, u_right integer references user_rights(id));");
+
+            st.execute("create table if not exists countries (id serial primary key, name varchar(200) not null unique);");
+            st.execute("create table if not exists cities (id serial primary key, name varchar(200) not null unique, country_id integer  references countries(id));");
+            st.execute("create index if not exists idIndex on users(id, u_login, u_password, u_email)");
             st.execute("insert into user_rights (rights) values ('admin');");
             st.execute("insert into user_rights (rights) values ('user');");
+
+
+            st.execute("insert into countries (name) values ('Russia');");
+            st.execute("insert into countries (name) values ('Украина');");
+
+
+//            st.execute("insert into countries (name) values ('Украина');");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -121,7 +131,7 @@ public class DbStore implements Store {
         boolean result = true;
         try (Connection connection = SOURCE.getConnection(); PreparedStatement st = connection.prepareStatement("delete from users where id = ?;")) {
             st.setInt(1, userId);
-            st.executeQuery();
+            st.executeUpdate();
         } catch (Exception e) {
             result = false;
             e.printStackTrace();

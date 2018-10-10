@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание нового пользователя</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        .create {
+            width: 45%;
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            margin-right: -35%;
+            transform: translate(-45%, -45%);
+        }
+    </style>
+
+    <script>
+
+        $.ajax({
+            url: "./create",
+            method: "get",
+            success: function (data) {
+                var rights = JSON.parse(data);
+                var select = document.getElementById("right");
+                for (var key in rights) {
+                    select.options[key - 1] = new Option(rights[key], key);
+                }
+            }
+        });
+
+        function goBack() {
+            document.location.replace("./list.html");
+        }
+
+        function createUser() {
+            var name = document.getElementById("name").value;
+            var login = document.getElementById("login").value;
+            var password = document.getElementById("password").value;
+            var email = document.getElementById("email").value;
+            var right = document.getElementById("right").value;
+            if (name == '' || login == '' || password == '' || email == '') {
+                document.getElementById("incorrect").innerHTML = '<p>Не заполнены <kbd>все поля</kbd></p>'
+            } else {
+                $.ajax({
+                    url: "./create",
+                    method: "post",
+                    data: {
+                        name: name,
+                        login: login,
+                        password: password,
+                        email: email,
+                        right: right
+                    },
+                    success: function (data) {
+                        var result = JSON.parse(data);
+                        if (result["add"]) {
+                            alert("Пользователь успешно создан");
+                            document.location.replace("./list.html");
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+
+</head>
+<body>
+
+
+<form class="form-horizontal create">
+    <div style="text-align: center;" id="incorrect"></div>
+
+    <h3 style="text-align: center">Форма создания нового пользователя</h3>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="name">Имя:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" placeholder="Введите имя" id="name">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="login">Логин:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" placeholder="Введите логин" id="login">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="password">Пароль:</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" placeholder="Введите пароль" id="password">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="email">Эл. почта:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" placeholder="Введите Вашу электронную почту" id="email">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="email">Права:</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="right" name="right"></select>
+        </div>
+    </div>
+
+    <div class="btn-group btn-group" style="
+                position: relative; top: 50%;
+                padding-top: 30px;
+                left: 50%;
+                margin-right: -50%;
+                transform: translate(-50%, -50%)">
+        <button type="button" class="btn btn-default" onclick="createUser();">Создать пользователя</button>
+        <button type="submit" class="btn btn-default" onclick="goBack();">Назад</button>
+    </div>
+
+
+</form>
+
+</body>
+</html>

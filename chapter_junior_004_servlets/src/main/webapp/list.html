@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список пользователей</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script>
+        $.ajax({
+            url : "./list",
+            method : "get",
+            success : function (data) {
+                var parsedUsers = JSON.parse(data)["users"];
+                var parsedRights = JSON.parse(data)["rights"];
+                var parsedCurUser = JSON.parse(data)["id"];
+                var parserCurRight = JSON.parse(data)["right"];
+
+                document.getElementById("currentUser").innerHTML = '<h4>Ваш id: ' + parsedCurUser + ' </h4>';
+
+                for (var user in parsedUsers) {
+                    $('#usersTable tbody').append('<tr>'
+                        + '<td>' + parsedUsers[user].id + '</td>'
+                        + '<td>' + parsedUsers[user].name + '</td>'
+                        + '<td>' + parsedUsers[user].login + '</td>'
+                        + '<td>' + parsedUsers[user].password + '</td>'
+                        + '<td>' + parsedUsers[user].email + '</td>'
+                        + '<td>' + parsedUsers[user].createDate + '</td>'
+                        + '<td>' + parsedRights[parsedUsers[user].right] + '</td>'
+                        + '<td>' + checkingUser(parsedCurUser, parserCurRight ,parsedUsers[user]) + '</td></tr>');
+                }
+            }
+        });
+
+        function checkingUser (id, right, userInList) {
+            var deleteUser = '<button type="button" class="btn btn-default" onclick="deleteUser(' + userInList.id + ');">Удалить пользователя</button>';
+            var editUser = '<button type="button" class="btn btn-default" onclick="editUser(' + userInList.id + ');">Редактировать пользователя</button>';
+            if (right == 1 || id == userInList.id) {
+                return  editUser + deleteUser;
+            } else {
+                return '<p>Нет прав</p>';
+            }
+        }
+
+        function editUser(id) {
+            document.location.replace("./edit.html?id=" + id);
+        }
+
+        function deleteUser(id) {
+            $.ajax({
+                url : "./list",
+                method : "delete",
+                headers : {
+                    id : id
+                },
+                success : function (data) {
+                    if (JSON.parse(data)["delete"] === "success") {
+                        alert("Пользователь успешно удален");
+                        window.location.reload();
+                    } else {
+                        alert("Ошибка при удалении пользователя");
+                    }
+                }
+            })
+        }
+
+        function logOut() {
+            $.ajax({
+                url : "./list",
+                method : "post",
+                data : {
+                    logout : true
+                },
+                success : function (data) {
+                    document.location.reload();
+                }
+            });
+        }
+
+        function createNewUser() {
+            document.location.replace("./create.html");
+        }
+
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+    <div id="currentUser"></div>
+    <div class="btn-group btn-group" style="padding-top: 10px;">
+        <button type="button" class="btn btn-default" onclick="logOut();">Выйти</button>
+        <button type="button" class="btn btn-default" onclick="createNewUser();">Создать нового пользователя</button>
+    </div>
+    <h2>Таблица всех пользователей</h2>
+    <p>Полный список пользователей <kbd>в базе данных</kbd> данный момент:</p>
+    <table class="table table-hover" id="usersTable">
+        <thead>
+        <tr>
+            <th>Id пользователя</th>
+            <th>Имя пользователя</th>
+            <th>Логин пользователя</th>
+            <th>Пароль пользователя</th>
+            <th>Почта пользователя</th>
+            <th>Дата создания пользователя</th>
+            <th>Права пользователя</th>
+            <th>Управление пользователем</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

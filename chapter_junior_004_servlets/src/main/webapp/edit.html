@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование пользователя</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        .edit {
+            width: 45%;
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            margin-right: -35%;
+            transform: translate(-45%, -45%);
+        }
+    </style>
+
+    <script>
+
+        // Получение параметров из адресной строки
+        var id = new URL(window.location.href).searchParams.get("id");
+
+        $.ajax({
+            url : "./edit",
+            data : {
+                id : id
+            },
+            method : "get",
+            success : function (data) {
+                var parsedData = JSON.parse(data);
+                var user = parsedData["user"];
+                var rights = parsedData["rights"];
+                var curRight = parsedData["curRight"];
+
+                if (curRight !== 1) {
+                    document.getElementById("rights-for-user").style.display = "none";
+                }
+
+                var select = document.getElementById("right");
+                for (var key in rights) {
+                    select.options[key - 1] = new Option(rights[key], key);
+                }
+
+                document.getElementById("name").value = user.name;
+                document.getElementById("login").value = user.login;
+                document.getElementById("password").value = user.password;
+                document.getElementById("email").value = user.email;
+                document.getElementById("right").value = user.right;
+            }
+        });
+
+        function editUser() {
+            var name = document.getElementById("name").value;
+            var login = document.getElementById("login").value;
+            var password = document.getElementById("password").value;
+            var email = document.getElementById("email").value;
+            var right = document.getElementById("right").value;
+
+            $.ajax({
+                url: "./edit",
+                method: "post",
+                data: {
+                    id : id,
+                    name: name,
+                    login: login,
+                    password: password,
+                    email: email,
+                    right: right
+                },
+                success: function (data) {
+                    if (JSON.parse(data)["update"] === "success") {
+                        alert("Пользователь успешо изменен");
+                        window.location.replace("./list.html");
+                    }
+                }
+            });
+        }
+    </script>
+
+</head>
+<body>
+
+<form class="form-horizontal edit">
+    <div style="text-align: center;" id="incorrect"></div>
+
+    <h3 style="text-align: center">Форма Редактирования пользователя</h3>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="name">Имя:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" placeholder="Введите имя" id="name">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="login">Логин:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" placeholder="Введите логин" id="login">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="password">Пароль:</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" placeholder="Введите пароль" id="password">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="email">Эл. почта:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" placeholder="Введите Вашу электронную почту" id="email">
+        </div>
+    </div>
+
+    <div class="form-group" id="rights-for-user">
+        <label class="control-label col-sm-2" for="right">Права:</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="right" name="right"></select>
+        </div>
+    </div>
+
+    <div class="btn-group btn-group" style="
+                position: relative; top: 50%;
+                padding-top: 30px;
+                left: 50%;
+                margin-right: -50%;
+                transform: translate(-50%, -50%)">
+        <button type="button" class="btn btn-default" onclick="editUser();">Сохранить изменения</button>
+        <button type="submit" class="btn btn-default" onclick="goBack();">Назад</button>
+    </div>
+
+
+</form>
+
+</body>
+</html>
