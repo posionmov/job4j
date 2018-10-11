@@ -1,7 +1,6 @@
 package ru.job4j.users;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import ru.job4j.crud.User;
 import ru.job4j.crud.ValidateService;
 
@@ -10,7 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 
 /**
@@ -76,7 +74,9 @@ public class UserCreateServlet extends HttpServlet {
                             req.getParameter("login"),
                             req.getParameter("email"),
                             Integer.valueOf(req.getParameter("right")),
-                            req.getParameter("password"));
+                            req.getParameter("password"),
+                            Integer.valueOf(req.getParameter(req.getParameter("city"))),
+                            req.getIntHeader("country"));
 
 
 

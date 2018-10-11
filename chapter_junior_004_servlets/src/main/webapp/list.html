@@ -8,6 +8,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <script>
+
+        var locations;
+
         $.ajax({
             url : "./list",
             method : "get",
@@ -16,6 +19,19 @@
                 var parsedRights = JSON.parse(data)["rights"];
                 var parsedCurUser = JSON.parse(data)["id"];
                 var parserCurRight = JSON.parse(data)["right"];
+                locations = JSON.parse(data)["locations"];
+
+                var countries = {};
+                var cities = {};
+
+                for (var key in locations) {
+                    for (var country in locations[key]) {
+                        countries[key] = country;
+                        for (var city in locations[key][country]) {
+                            cities[city] = locations[key][country][city];
+                        }
+                    }
+                }
 
                 document.getElementById("currentUser").innerHTML = '<h4>Ваш id: ' + parsedCurUser + ' </h4>';
 
@@ -27,6 +43,8 @@
                         + '<td>' + parsedUsers[user].password + '</td>'
                         + '<td>' + parsedUsers[user].email + '</td>'
                         + '<td>' + parsedUsers[user].createDate + '</td>'
+                        + '<td>' + countries[parsedUsers[user].country] + '</td>'
+                        + '<td>' + cities[parsedUsers[user].city] + '</td>'
                         + '<td>' + parsedRights[parsedUsers[user].right] + '</td>'
                         + '<td>' + checkingUser(parsedCurUser, parserCurRight ,parsedUsers[user]) + '</td></tr>');
                 }
@@ -104,6 +122,8 @@
             <th>Пароль пользователя</th>
             <th>Почта пользователя</th>
             <th>Дата создания пользователя</th>
+            <th>Страна</th>
+            <th>Город</th>
             <th>Права пользователя</th>
             <th>Управление пользователем</th>
         </tr>

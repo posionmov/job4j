@@ -15,7 +15,13 @@ public class User {
      * Содержат информацию о пользователе
      */
     private int id, right;
-    private String name, login, email, password, createDate;
+    private String name;
+    private String login;
+    private String email;
+    private String password;
+    private String createDate;
+    private int country;
+    private int city;
 
     /**
      * Конструктор класса
@@ -25,7 +31,7 @@ public class User {
      * @param right - права доступа у пользователя
      * @param password - пароль пользователя
      */
-    public User(String name, String login, String email, int right, String password) {
+    public User(String name, String login, String email, int right, String password, int city, int country) {
         this.name = name;
         this.login = login;
         this.email = email;
@@ -33,6 +39,8 @@ public class User {
         this.id = this.hashCode();
         this.right = right;
         this.password = password;
+        this.city = city;
+        this.country = country;
     }
 
     /**
@@ -125,5 +133,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getCity() {
+        return city;
+    }
+
+    public void setCity(int city) {
+        this.city = city;
+    }
+
+    public void setCountry(int country) {
+        this.country = country;
+    }
+
+    public int getCountry() {
+        return country;
     }
 }

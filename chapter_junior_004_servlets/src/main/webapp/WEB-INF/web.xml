@@ -98,21 +98,6 @@
     </servlet-mapping>
 
 
-    <!--EXAMPLE-->
-    <servlet>
-        <servlet-name>ExampleServlet</servlet-name>
-        <servlet-class>ru.job4j.users.ExampleServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>ExampleServlet</servlet-name>
-        <url-pattern>/example</url-pattern>
-    </servlet-mapping>
-
-
-
-
     <!--Final Servlets-->
     <!--Servlet For Authorization-->
     <servlet>

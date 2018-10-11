@@ -78,7 +78,13 @@ public class UserServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String action = req.getParameter("action");
         if (action.equals("add")) {
-            User user = new User(req.getParameter("name"), req.getParameter("login"), req.getParameter("email"), Integer.valueOf(req.getParameter("right")), req.getParameter("password"));
+            User user = new User(req.getParameter("name"),
+                    req.getParameter("login"),
+                    req.getParameter("email"),
+                    Integer.valueOf(req.getParameter("right")),
+                    req.getParameter("password"),
+                    Integer.valueOf(req.getParameter("city")),
+                    Integer.valueOf(req.getParameter("country")));
             if (validateService.add(user)) {
                 System.out.println("Пользователь создан");
                 writer.append("User " + req.getParameter("name") + " was created!");
@@ -90,9 +96,11 @@ public class UserServlet extends HttpServlet {
             String newName = req.getParameter("name");
             String newLogin = req.getParameter("login");
             String newEmail = req.getParameter("email");
+            int newCity = Integer.valueOf(req.getParameter("city"));
+            int newCountry = Integer.valueOf(req.getParameter("country"));
             int newRight = Integer.valueOf(req.getParameter("right"));
             String newPassword = req.getParameter("password");
-            User newUser = new User(newName, newLogin, newEmail, newRight, newPassword);
+            User newUser = new User(newName, newLogin, newEmail, newRight, newPassword, newCity, newCountry);
             if (validateService.update(oldId, newUser)) {
                 System.out.println("Пользователь обновлен");
                 writer.append("User " + oldId + " was updated!");

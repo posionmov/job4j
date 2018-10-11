@@ -22,6 +22,7 @@
 
         // Получение параметров из адресной строки
         var id = new URL(window.location.href).searchParams.get("id");
+        var result;
 
         $.ajax({
             url : "./edit",
@@ -34,6 +35,7 @@
                 var user = parsedData["user"];
                 var rights = parsedData["rights"];
                 var curRight = parsedData["curRight"];
+                result = JSON.parse(data)["locations"];
 
                 if (curRight !== 1) {
                     document.getElementById("rights-for-user").style.display = "none";
@@ -49,8 +51,47 @@
                 document.getElementById("password").value = user.password;
                 document.getElementById("email").value = user.email;
                 document.getElementById("right").value = user.right;
+
+                // Наполнение списк стран
+                var countries = document.getElementById("country");
+                for (var key in result) {
+                    for (var country in result[key]) { // key - имя страны
+                        countries.options[key - 1] = new Option(country, key);
+                    }
+                }
+
+                // Наполнение спика городов
+                var cities = document.getElementById("city");
+                var i = 0;
+                for (var key in result) {
+                    for (var country in result[key]) { // country - имя страны
+                        if (key === countries.value) {
+                            for (var city in result[key][country]) {
+                                cities.options[i] = new Option(result[key][country][city], city);
+                            }
+                        }
+                    }
+                }
             }
         });
+
+        function changeSelect() {
+            var cities = document.getElementById("city");
+            console.log(document.getElementById("country").value);
+            for (var i = 0; i < cities.options.length; i++) {
+                cities.options[i] = null;
+            }
+            var i = 0;
+            for (var key in result) {
+                for (var country in result[key]) { // country - имя страны
+                    if (key === document.getElementById("country").value) {
+                        for (var city in result[key][country]) {
+                            cities.options[i++] = new Option(result[key][country][city], city);
+                        }
+                    }
+                }
+            }
+        }
 
         function editUser() {
             var name = document.getElementById("name").value;
@@ -58,6 +99,8 @@
             var password = document.getElementById("password").value;
             var email = document.getElementById("email").value;
             var right = document.getElementById("right").value;
+            var city = document.getElementById("city").value;
+            var country = document.getElementById("country").value;
 
             $.ajax({
                 url: "./edit",
@@ -68,7 +111,9 @@
                     login: login,
                     password: password,
                     email: email,
-                    right: right
+                    right: right,
+                    country : country,
+                    city : city
                 },
                 success: function (data) {
                     if (JSON.parse(data)["update"] === "success") {
@@ -120,6 +165,20 @@
         <label class="control-label col-sm-2" for="right">Права:</label>
         <div class="col-sm-10">
             <select class="form-control" id="right" name="right"></select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="country">Страна:</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="country" name="country" onchange="changeSelect()"></select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="city">Город:</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="city" name="city"></select>
         </div>
     </div>
 

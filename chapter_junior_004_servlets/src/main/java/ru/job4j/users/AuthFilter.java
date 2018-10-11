@@ -44,7 +44,7 @@ public class AuthFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = ((HttpServletRequest) servletRequest).getSession();
-        if (request.getRequestURI().contains("/index.html") || request.getRequestURI().contains("/create.html") || request.getRequestURI().contains("/auth")|| request.getRequestURI().contains("/create")) {
+        if (request.getRequestURI().contains("/index.html") || request.getRequestURI().contains("/create.html") || request.getRequestURI().contains("/auth") || request.getRequestURI().contains("/create")) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
             if (session.getAttribute("login") == null) {

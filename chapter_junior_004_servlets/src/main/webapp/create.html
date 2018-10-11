@@ -19,18 +19,60 @@
     </style>
 
     <script>
+        var result;
 
         $.ajax({
             url: "./create",
             method: "get",
             success: function (data) {
-                var rights = JSON.parse(data);
+                var rights = JSON.parse(data)["rights"];
+                result = JSON.parse(data)["locations"];
+
+                // Наполнение прав пользователей
                 var select = document.getElementById("right");
                 for (var key in rights) {
                     select.options[key - 1] = new Option(rights[key], key);
                 }
+
+                // Наполнение списк стран
+                var countries = document.getElementById("country");
+                for (var key in result) {
+                    for (var country in result[key]) { // key - имя страны
+                        countries.options[key - 1] = new Option(country, key);
+                    }
+                }
+
+                // Наполнение спика городов
+                var cities = document.getElementById("city");
+                var i = 0;
+                for (var key in result) {
+                    for (var country in result[key]) { // country - имя страны
+                        if (key === countries.value) {
+                            for (var city in result[key][country]) {
+                                cities.options[i] = new Option(result[key][country][city], city);
+                            }
+                        }
+                    }
+                }
             }
         });
+
+        function changeSelect() {
+            var cities = document.getElementById("city");
+            for (var i = 0; i < cities.options.length; i++) {
+                cities.options[i] = null;
+            }
+            var i = 0;
+            for (var key in result) {
+                for (var country in result[key]) { // country - имя страны
+                    if (key === document.getElementById("country").value) {
+                        for (var city in result[key][country]) {
+                            cities.options[i++] = new Option(result[key][country][city], city);
+                        }
+                    }
+                }
+            }
+        }
 
         function goBack() {
             document.location.replace("./list.html");
@@ -42,8 +84,10 @@
             var password = document.getElementById("password").value;
             var email = document.getElementById("email").value;
             var right = document.getElementById("right").value;
+            var country = document.getElementById("country").value;
+            var city = document.getElementById("city").value;
             if (name == '' || login == '' || password == '' || email == '') {
-                document.getElementById("incorrect").innerHTML = '<p>Не заполнены <kbd>все поля</kbd></p>'
+                document.getElementById("incorrect").innerHTML = '<p>Не заполнены <kbd>все поля</kbd></p>';
             } else {
                 $.ajax({
                     url: "./create",
@@ -53,13 +97,17 @@
                         login: login,
                         password: password,
                         email: email,
-                        right: right
+                        right: right,
+                        country : country,
+                        city : city
                     },
                     success: function (data) {
                         var result = JSON.parse(data);
-                        if (result["add"]) {
+                        if (result["add"] == "success") {
                             alert("Пользователь успешно создан");
                             document.location.replace("./list.html");
+                        } else if (result["add"] == "fail") {
+                            document.getElementById("incorrect").innerHTML = '<p>Ошибка, <kbd>Такой пользователь уже существует</kbd></p>';
                         }
                     }
                 });
@@ -105,9 +153,23 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-2" for="email">Права:</label>
+        <label class="control-label col-sm-2" for="right">Права:</label>
         <div class="col-sm-10">
             <select class="form-control" id="right" name="right"></select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="country">Страна:</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="country" name="country" onchange="changeSelect()"></select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="city">Город:</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="city" name="city"></select>
         </div>
     </div>
 

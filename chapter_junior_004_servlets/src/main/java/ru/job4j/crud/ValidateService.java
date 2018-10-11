@@ -75,4 +75,12 @@ public enum ValidateService {
     public User checkUser(String login, String password) {
         return DbStore.getInstance().checkUser(login, password);
     }
+
+    /**
+     * Метод, возращающий мапу стран и принадлежащих им городов
+     * @return
+     */
+    public Map<Integer, Map<String, Map<Integer, String>>> getLocation() {
+        return DbStore.getInstance().getCountriesAndCities();
+    }
 }

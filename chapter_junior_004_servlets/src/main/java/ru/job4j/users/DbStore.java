@@ -1,6 +1,7 @@
 package ru.job4j.users;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.postgresql.util.PSQLException;
 import ru.job4j.crud.Store;
 import ru.job4j.crud.User;
 import java.sql.*;
@@ -44,21 +45,60 @@ public class DbStore implements Store {
         SOURCE.setMaxIdle(10);
         SOURCE.setMaxOpenPreparedStatements(100);
         try (Connection connection = SOURCE.getConnection(); Statement st = connection.createStatement()) {
-            st.execute("create table if not exists user_rights (id serial primary key, rights varchar(200) unique);");
-            st.execute("create table if not exists users (id integer primary key, u_name varchar(200) not null, u_login varchar(200) not null, u_password varchar(200) not null, u_email varchar(200) not null, u_create_date varchar(200) not null, u_right integer references user_rights(id));");
+            // Транзакция создания таблицы прав пользователей
+            connection.setAutoCommit(false);
+            try {
+                st.execute("create table user_rights (id serial primary key, rights varchar(200));");
+                st.execute("insert into user_rights (rights) values ('admin');");
+                st.execute("insert into user_rights (rights) values ('user');");
+            } catch (PSQLException e) {
+                connection.rollback();
+            } finally {
+                connection.setAutoCommit(true);
+            }
 
-            st.execute("create table if not exists countries (id serial primary key, name varchar(200) not null unique);");
-            st.execute("create table if not exists cities (id serial primary key, name varchar(200) not null unique, country_id integer  references countries(id));");
+            // Транзакция создания таблицы стран
+            connection.setAutoCommit(false);
+            try {
+                st.execute("create table countries (id serial primary key, name varchar(200) not null);");
+                st.execute("insert into countries (name) values ('Россия');");
+                st.execute("insert into countries (name) values ('Украина');");
+            } catch (PSQLException e) {
+                connection.rollback();
+            } finally {
+                connection.setAutoCommit(true);
+            }
+
+            // Транзакция создания таблицы городов
+            connection.setAutoCommit(false);
+            try {
+                st.execute("create table cities (id serial primary key, name varchar(200) not null, country_id integer references countries(id));");
+
+                st.execute("insert into cities (name, country_id) values ('Москва', 1);");
+                st.execute("insert into cities (name, country_id) values ('Санкт-Петербург', 1);");
+
+                st.execute("insert into cities (name, country_id) values ('Киев', 2);");
+                st.execute("insert into cities (name, country_id) values ('Харьков', 2);");
+            } catch (PSQLException e) {
+                connection.rollback();
+            } finally {
+                connection.setAutoCommit(true);
+            }
+
+            connection.setAutoCommit(true);
+            st.execute("create table if not exists users ("
+                            + "id integer primary key, "
+                            + "u_name varchar(200) not null, "
+                            + "u_login varchar(200) not null, "
+                            + "u_password varchar(200) not null, "
+                            + "u_email varchar(200) not null, "
+                            + "u_create_date varchar(200) not null, "
+                            + "u_right integer references user_rights(id), "
+                            + "u_country integer references countries(id), "
+                            + "u_city integer references cities(id));");
+
             st.execute("create index if not exists idIndex on users(id, u_login, u_password, u_email)");
-            st.execute("insert into user_rights (rights) values ('admin');");
-            st.execute("insert into user_rights (rights) values ('user');");
 
-
-            st.execute("insert into countries (name) values ('Russia');");
-            st.execute("insert into countries (name) values ('Украина');");
-
-
-//            st.execute("insert into countries (name) values ('Украина');");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -80,7 +120,9 @@ public class DbStore implements Store {
     @Override
     public boolean add(User model) {
         boolean result = true;
-        try (Connection connection = SOURCE.getConnection(); PreparedStatement st = connection.prepareStatement("insert into users (id, u_name, u_login, u_email, u_create_date, u_right, u_password) values (?, ?, ?, ?, ?, ?, ?);")) {
+        try (Connection connection = SOURCE.getConnection();
+             PreparedStatement st = connection.prepareStatement(
+                     "insert into users (id, u_name, u_login, u_email, u_create_date, u_right, u_password, u_city, u_country) values (?, ?, ?, ?, ?, ?, ?, ?, ?);")) {
             st.setInt(1, model.getId());
             st.setString(2, model.getName());
             st.setString(3, model.getLogin());
@@ -88,6 +130,8 @@ public class DbStore implements Store {
             st.setString(5, model.getCreateDate());
             st.setInt(6, model.getRight());
             st.setString(7, model.getPassword());
+            st.setInt(8, model.getCity());
+            st.setInt(9, model.getCountry());
             st.executeUpdate();
         } catch (Exception e) {
             result = false;
@@ -105,15 +149,18 @@ public class DbStore implements Store {
     @Override
     public boolean update(int idOldUser, User user) {
         boolean result = true;
-        try (Connection connection = SOURCE.getConnection(); PreparedStatement st = connection.prepareStatement("update users set u_name = ?, u_login = ?, u_email = ?, u_create_date = ?, u_password = ?, u_right = ?  where id = ?;")) {
+        try (Connection connection = SOURCE.getConnection(); PreparedStatement st = connection.prepareStatement("update users set u_name = ?, u_login = ?, u_email = ?, u_create_date = ?, u_password = ?, u_right = ?, u_city = ?, u_country = ? where id = ?;")) {
             st.setString(1, user.getName());
             st.setString(2, user.getLogin());
             st.setString(3, user.getEmail());
+
             st.setString(4, user.getCreateDate());
             st.setString(5, user.getPassword());
             st.setInt(6, user.getRight());
-            st.setInt(7, idOldUser);
-            st.executeQuery();
+            st.setInt(7, user.getCity());
+            st.setInt(8, user.getCountry());
+            st.setInt(9, idOldUser);
+            st.execute();
         } catch (Exception e) {
             result = false;
             e.printStackTrace();
@@ -149,7 +196,13 @@ public class DbStore implements Store {
         try (Connection connection = SOURCE.getConnection(); PreparedStatement st = connection.prepareStatement("select * from users;")) {
             ResultSet rset = st.executeQuery();
             while (rset.next()) {
-                User user = new User(rset.getString("u_name"), rset.getString("u_login"), rset.getString("u_email"), rset.getInt("u_right"), rset.getString("u_password"));
+                User user = new User(rset.getString("u_name"),
+                        rset.getString("u_login"),
+                        rset.getString("u_email"),
+                        rset.getInt("u_right"),
+                        rset.getString("u_password"),
+                        rset.getInt("u_city"),
+                        rset.getInt("u_country"));
                 user.setId(rset.getInt("id"));
                 user.setCreateDate(rset.getString("u_create_date"));
                 users.put(user.getId(), user);
@@ -174,7 +227,13 @@ public class DbStore implements Store {
             st.setInt(1, id);
             ResultSet rset = st.executeQuery();
             while (rset.next()) {
-                user = new User(rset.getString("u_name"), rset.getString("u_login"), rset.getString("u_email"), rset.getInt("u_right"), rset.getString("u_password"));
+                user = new User(rset.getString("u_name"),
+                        rset.getString("u_login"),
+                        rset.getString("u_email"),
+                        rset.getInt("u_right"),
+                        rset.getString("u_password"),
+                        rset.getInt("u_city"),
+                        rset.getInt("u_country"));
                 user.setId(rset.getInt("id"));
                 user.setCreateDate(rset.getString("u_create_date"));
             }
@@ -242,7 +301,13 @@ public class DbStore implements Store {
             st.setString(2, userPassword);
             ResultSet rset = st.executeQuery();
             if (rset.next()) {
-                result = new User(rset.getString("u_name"), rset.getString("u_login"), rset.getString("u_email"), rset.getInt("u_right"), rset.getString("u_password"));
+                result = new User(rset.getString("u_name"),
+                        rset.getString("u_login"),
+                        rset.getString("u_email"),
+                        rset.getInt("u_right"),
+                        rset.getString("u_password"),
+                        rset.getInt("u_city"),
+                        rset.getInt("u_country"));
                 result.setId(rset.getInt("id"));
             }
             rset.close();
@@ -251,5 +316,43 @@ public class DbStore implements Store {
         }
         return result;
     }
+
+    /**
+     * Метод, возращающий все страны и принадлежащие им города
+     * @return мапа, где ключ - страна, значение - список городов
+     */
+    public Map<Integer, Map<String, Map<Integer, String>>> getCountriesAndCities() {
+        Map<Integer, Map<String, Map<Integer, String>>> result = new HashMap<>();
+
+        try (Connection connection = SOURCE.getConnection(); PreparedStatement st = connection.prepareStatement("select * from cities as citi inner join countries as countries on citi.country_id = countries.id;")) {
+
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+
+                // Если в мапе еще нет такой страны еще нет, то добавляется страна с городом (который был в строке, на которой была новая страна)
+                if (result.get(Integer.valueOf(rs.getString(4))) == null) {
+                    Map<String, Map<Integer, String>> country = new HashMap<>();
+                    Map<Integer, String> city = new HashMap<>();
+                    city.put(rs.getInt(1), rs.getString(2));
+                    country.put(rs.getString(5), city);
+                    result.put(rs.getInt(4), country);
+                } else {
+                    //Если в мапе уже была такая страна, то проверяем был ли такой город и добавляем его в мапу
+                    Map<String, Map<Integer, String>> country = result.get(rs.getInt(4));
+                    Map<Integer, String> city = country.get(rs.getString(5));
+                    if (city.get(rs.getInt(1)) == null) {
+                        city.put(rs.getInt(1), rs.getString(2));
+                    }
+                    country.put(rs.getString(5), city);
+                    result.put(rs.getInt(4), country);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
 }
 
