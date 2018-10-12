@@ -1,9 +1,9 @@
 package ru.job4j.html;
 
 import com.google.gson.Gson;
+import org.json.JSONObject;
 import ru.job4j.crud.User;
 import ru.job4j.crud.ValidateService;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,12 +22,8 @@ public class UsersListServlet extends HttpServlet {
         int id = Integer.valueOf(new Gson().toJson(req.getSession().getAttribute("id")));
         int right = Integer.valueOf(new Gson().toJson(req.getSession().getAttribute("right")));
         Map<Integer, Map<String, Map<Integer, String>>> allLocations = ValidateService.INSTANCE.getLocation();
-
-        String users = new Gson().toJson(allUsers);
-        String rights = new Gson().toJson(allRights);
-        String locations = new Gson().toJson(allLocations);
-
-        resp.getWriter().append("{\"id\" : " + id + ", \"right\" : \"" + right + "\", \"users\" : " + users + ", \"rights\" : " + rights + ", \"locations\" : " + locations + "}").flush();
+        String result = new JSONObject().put("id", id).put("right", right).put("users", allUsers).put("rights", allRights).put("locations", allLocations).toString();
+        resp.getWriter().append(result).flush();
     }
 
     @Override
@@ -41,9 +37,9 @@ public class UsersListServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = req.getIntHeader("id");
         if (ValidateService.INSTANCE.delete(id)) {
-            resp.getWriter().append("{\"delete\" : \"success\"}").flush();
+            resp.getWriter().append(new JSONObject().put("delete", "success").toString()).flush();
         } else {
-            resp.getWriter().append("{\"delete\" : \"fail\"}").flush();
+            resp.getWriter().append(new JSONObject().put("delete", "fail").toString()).flush();
         }
 
     }

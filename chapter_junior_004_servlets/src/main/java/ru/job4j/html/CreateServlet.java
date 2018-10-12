@@ -1,9 +1,8 @@
 package ru.job4j.html;
 
-import com.google.gson.Gson;
+import org.json.JSONObject;
 import ru.job4j.crud.User;
 import ru.job4j.crud.ValidateService;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,9 +17,10 @@ public class CreateServlet extends HttpServlet {
         resp.setCharacterEncoding("utf-8");
         Map<Integer, String> allRights = ValidateService.INSTANCE.getRights();
         Map<Integer, Map<String, Map<Integer, String>>> allLocations = ValidateService.INSTANCE.getLocation();
-        String rights = new Gson().toJson(allRights);
-        String locations = new Gson().toJson(allLocations);
-        resp.getWriter().append("{\"rights\" : " + rights + ", \"locations\" : " + locations + "}").flush();
+        JSONObject result = new JSONObject().put("rights", allRights).put("locations", allLocations);
+        String json = result.toString();
+        System.out.println(json);
+        resp.getWriter().append(json).flush();
     }
 
     @Override
@@ -33,9 +33,9 @@ public class CreateServlet extends HttpServlet {
                 Integer.valueOf(req.getParameter("city")),
                 Integer.valueOf(req.getParameter("country")));
         if (ValidateService.INSTANCE.add(user)) {
-            resp.getWriter().append("{\"add\" : \"success\"}").flush();
+            resp.getWriter().append(new JSONObject().put("add", "success").toString()).flush();
         } else {
-            resp.getWriter().append("{\"add\" : \"error\"}").flush();
+            resp.getWriter().append(new JSONObject().put("add", "error").toString()).flush();
         }
     }
 }

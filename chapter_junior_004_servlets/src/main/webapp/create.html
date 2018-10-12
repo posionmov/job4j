@@ -49,7 +49,7 @@
                     for (var country in result[key]) { // country - имя страны
                         if (key === countries.value) {
                             for (var city in result[key][country]) {
-                                cities.options[i] = new Option(result[key][country][city], city);
+                                cities.options[i++] = new Option(result[key][country][city], city);
                             }
                         }
                     }
@@ -103,10 +103,10 @@
                     },
                     success: function (data) {
                         var result = JSON.parse(data);
-                        if (result["add"] == "success") {
+                        if (result["add"] === "success") {
                             alert("Пользователь успешно создан");
                             document.location.replace("./list.html");
-                        } else if (result["add"] == "fail") {
+                        } else if (result["add"] === "error") {
                             document.getElementById("incorrect").innerHTML = '<p>Ошибка, <kbd>Такой пользователь уже существует</kbd></p>';
                         }
                     }
@@ -180,7 +180,7 @@
                 margin-right: -50%;
                 transform: translate(-50%, -50%)">
         <button type="button" class="btn btn-default" onclick="createUser();">Создать пользователя</button>
-        <button type="submit" class="btn btn-default" onclick="goBack();">Назад</button>
+        <button type="button" class="btn btn-default" onclick="goBack();">Назад</button>
     </div>
 
 

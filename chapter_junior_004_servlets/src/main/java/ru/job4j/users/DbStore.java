@@ -133,8 +133,10 @@ public class DbStore implements Store {
             st.setInt(8, model.getCity());
             st.setInt(9, model.getCountry());
             st.executeUpdate();
-        } catch (Exception e) {
+        } catch (PSQLException e) {
             result = false;
+            e.printStackTrace();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;

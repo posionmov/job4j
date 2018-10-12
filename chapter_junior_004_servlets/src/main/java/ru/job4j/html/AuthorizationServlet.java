@@ -1,9 +1,9 @@
 package ru.job4j.html;
 
 import com.google.gson.Gson;
+import org.json.JSONObject;
 import ru.job4j.crud.User;
 import ru.job4j.crud.ValidateService;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +16,7 @@ public class AuthorizationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-
+        JSONObject result = new JSONObject();
         User checkedUser = ValidateService.INSTANCE.checkUser(login, password);
         if (checkedUser != null) {
             req.getSession().setAttribute("id", checkedUser.getId());
@@ -25,7 +25,7 @@ public class AuthorizationServlet extends HttpServlet {
             String jsonUser = new Gson().toJson(checkedUser);
             resp.getWriter().append(jsonUser).flush();
         } else {
-            resp.getWriter().append("{\"login\" : \"false\" }");
+            resp.getWriter().append(result.put("login", "false").toString()).flush();
         }
     }
 }

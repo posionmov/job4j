@@ -31,8 +31,8 @@
                         password: password
                     },
                     success: function (data) {
-                        console.log(data);
-                        if (JSON.parse(data)["login"] != "false") {
+                        console.log(JSON.parse(data)["login"]);
+                        if (JSON.parse(data)["login"] !== "false") {
                             document.location.replace("./list.html");
                         } else {
                             document.getElementById("incorrect").innerHTML = '<p>Не верно введен <kbd>логин или пароль</kbd>, пожалуйста повторите.</p>'
