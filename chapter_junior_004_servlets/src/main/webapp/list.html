@@ -7,6 +7,24 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <style>
+        body {
+            background-color: rgba(0, 255, 255, 0.1);
+        }
+
+        .usersTable {
+            background-color: rgba(0, 14, 255, 0.07);
+            position: relative;
+            width: 110%;
+            height: 80%;
+            margin-left: -50px;
+        }
+
+        .upperInfo {
+            text-align: center;
+        }
+    </style>
+
     <script>
 
         var locations;
@@ -106,32 +124,37 @@
 <body>
 
 <div class="container">
+<div class="upperInfo">
     <div id="currentUser"></div>
     <div class="btn-group btn-group" style="padding-top: 10px;">
         <button type="button" class="btn btn-default" onclick="logOut();">Выйти</button>
         <button type="button" class="btn btn-default" onclick="createNewUser();">Создать нового пользователя</button>
     </div>
+</div>
     <h2>Таблица всех пользователей</h2>
     <p>Полный список пользователей <kbd>в базе данных</kbd> данный момент:</p>
-    <table class="table table-hover" id="usersTable">
-        <thead>
-        <tr>
-            <th>Id пользователя</th>
-            <th>Имя пользователя</th>
-            <th>Логин пользователя</th>
-            <th>Пароль пользователя</th>
-            <th>Почта пользователя</th>
-            <th>Дата создания пользователя</th>
-            <th>Страна</th>
-            <th>Город</th>
-            <th>Права пользователя</th>
-            <th>Управление пользователем</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-    </table>
+    <div class="usersTable" style="border-radius: 30px;">
+        <div style="margin: 3%;">
+        <table class="table table-hover" id="usersTable">
+            <thead>
+            <tr>
+                <th>Id пользователя</th>
+                <th>Имя пользователя</th>
+                <th>Логин пользователя</th>
+                <th>Пароль пользователя</th>
+                <th>Почта пользователя</th>
+                <th>Дата регистрации</th>
+                <th>Страна</th>
+                <th>Город</th>
+                <th>Права пользователя</th>
+                <th>Управление пользователем</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        </div>
+    </div>
 </div>
 
 </body>

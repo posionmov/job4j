@@ -6,15 +6,22 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
     <style>
+        body {
+            background-color: rgba(0, 255, 255, 0.1);
+        }
+
         .create {
             width: 45%;
             position: absolute;
             top: 45%;
             left: 50%;
-            margin-right: -35%;
+            margin-right: -40%;
             transform: translate(-45%, -45%);
+            background-color: rgba(0, 14, 255, 0.07);
+            border-radius: 30px;
         }
     </style>
 
@@ -107,7 +114,7 @@
                             alert("Пользователь успешно создан");
                             document.location.replace("./list.html");
                         } else if (result["add"] === "error") {
-                            document.getElementById("incorrect").innerHTML = '<p>Ошибка, <kbd>Такой пользователь уже существует</kbd></p>';
+                            document.getElementById("incorrect").innerHTML = '<p>Ошибка, <kbd>такой пользователь уже существует</kbd></p>';
                         }
                     }
                 });
@@ -119,8 +126,10 @@
 <body>
 
 
-<form class="form-horizontal create">
-    <div style="text-align: center;" id="incorrect"></div>
+<form class="form-horizontal create w3-border">
+
+    <div style="text-align: center; margin: 5%;">
+        <div style="text-align: center; margin: 5%; " id="incorrect"></div>
 
     <h3 style="text-align: center">Форма создания нового пользователя</h3>
 
@@ -146,7 +155,7 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-2" for="email">Эл. почта:</label>
+        <label class="control-label col-sm-2" for="email">Эл.почта:</label>
         <div class="col-sm-10">
             <input type="text" class="form-control" placeholder="Введите Вашу электронную почту" id="email">
         </div>
@@ -173,17 +182,11 @@
         </div>
     </div>
 
-    <div class="btn-group btn-group" style="
-                position: relative; top: 50%;
-                padding-top: 30px;
-                left: 50%;
-                margin-right: -50%;
-                transform: translate(-50%, -50%)">
+    <div class="btn-group btn-group" >
         <button type="button" class="btn btn-default" onclick="createUser();">Создать пользователя</button>
         <button type="button" class="btn btn-default" onclick="goBack();">Назад</button>
     </div>
-
-
+    </div>
 </form>
 
 </body>
