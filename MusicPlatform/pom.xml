@@ -10,12 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
 
-    <artifactId>chapter_junior_004_servlets</artifactId>
-
-    <dependencies>
-
-
-    </dependencies>
+    <artifactId>MusicPlatform</artifactId>
 
 
 </project>

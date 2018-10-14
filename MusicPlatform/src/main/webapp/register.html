@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        .create {
+            background-color: blue;
+            width: 35%;
+            height: 35%;
+            padding: 10%; // отступы внутри блока
+            margin: 15%; // Отступы от внешнего блока
+        }
+    </style>
+
+    <script>
+
+        $.ajax({
+            url : "./create",
+            method : "get",
+            success : function (data) {
+                var selectRoles = document.getElementById("role");
+                var selectMusicTypes = document.getElementById("musicType");
+                selectMusicTypes.multiple = true;
+
+                var parsedData = JSON.parse(data);
+                var roles = parsedData["roles"];
+                var types = parsedData["types"];
+                console.log(roles);
+                for (var key in roles) {
+                    selectRoles.options[key - 1] = new Option(roles[key], key);
+                }
+
+                for (var key in types) {
+                    selectMusicTypes.options[key - 1] = new Option(types[key], key);
+                }
+            }
+        });
+
+        // todo Ручками дописать функцию, которая будет сохранять в массив выделенные в селекте позиции
+        function createUser() {
+            var name = document.getElementById("name").value;
+            var login = document.getElementById("login").value;
+            var password = document.getElementById("password").value;
+            var role = document.getElementById("role").value;
+            var address = document.getElementById("address").value;
+            var musicType = document.getElementById("musicType").value;
+
+            $.ajax({
+                url : "./create",
+                method : "post",
+                data : {
+                    name : name,
+                    login : login,
+                    password : password,
+                    role : role,
+                    address : address,
+                    musicType : musicType
+                },
+                success : function (data) {
+                    console.log(JSON.parse(data));
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+<div class="create">
+
+    <div>Имя: <input type="text" id="name"></div>
+    <div>Логин: <input type="text" id="login"></div>
+    <div>Пароль: <input type="text" id="password"></div>
+    <div>Права доступа: <select id="role"></select></div>
+    <div>Адрес: <input type="text" id="address"></div>
+    <div>Тип музыки: <select id="musicType"></select></div>
+
+    <input type="button" value="Зарегистрироваться" onclick="createUser()">
+</div>
+
+</body>
+</html>
