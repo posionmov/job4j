@@ -54,6 +54,7 @@ public class DbStorage {
                 st.execute("insert into music_type (name) values ('pop');");
                 st.execute("insert into music_type (name) values ('country');");
                 st.execute("insert into music_type (name) values ('metal');");
+                st.execute("insert into music_type (name) values ('jazz');");
             } catch (PSQLException e) {
                 connection.rollback();
             } finally {
