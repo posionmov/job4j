@@ -15,14 +15,11 @@
             padding: 3%; /*отступы внутри блока*/
             margin-top: 5%; /*Отступы от внешнего блока*/
             margin-left: 25%;
+            border-radius: 20px;
         }
     </style>
 
     <script>
-
-
-
-
         var addresses;
 
         $.ajax({
@@ -76,8 +73,8 @@
             var selectCountries = document.getElementById("country");
             var selectCity = document.getElementById("city");
             var selectStreet = document.getElementById("street");
-            for (var i = 0; i < selectCity.options.length; i++) {
-                selectCity.options[i] = null;
+            for (var c = 0; c < selectCity.options.length; c++) {
+                selectCity.options[c] = null;
             }
             var i = 0;
             var j = 0;
@@ -103,10 +100,9 @@
             var selectCountries = document.getElementById("country");
             var selectCity = document.getElementById("city");
             var selectStreet = document.getElementById("street");
-            for (var i = 0; i < selectCity.options.length; i++) {
-                selectCity.options[i] = null;
+            for (var i = 0; i < selectStreet.options.length; i++) {
+                selectStreet.options[i] = null;
             }
-            var i = 0;
             var j = 0;
 
             for (var countryKey in addresses) {
@@ -126,9 +122,6 @@
             }
         }
 
-
-
-        // todo Ручками дописать функцию, которая будет сохранять в массив выделенные в селекте позиции
         function createUser() {
             var name = document.getElementById("name").value;
             var login = document.getElementById("login").value;
@@ -153,10 +146,23 @@
                 }
             })
         }
+
+        //todo Метод воспринимает выбранные поля
+        //todo Сделать модель юзера более понятной
+        function getAllMusicTypes() {
+            var selectTypes = document.getElementById("musicType");
+            for (var i = 0; i < selectTypes.options.length; i++) {
+                if (selectTypes[i].selected === true) {
+                    console.log(selectTypes[i].value);
+                }
+            }
+        }
     </script>
 </head>
 <body>
 <div class="create">
+
+    <div style="text-align: center"><label>Регистрация</label></div>
 
     <div class="form-group">
         <label for="name">Имя:</label>
@@ -193,7 +199,7 @@
         <!--Тип музыки: <select id="musicType"></select>-->
     <!--</div>-->
 
-    <input type="button" value="Зарегистрироваться" onclick="createUser()">
+    <input type="button" value="Зарегистрироваться" onclick="getAllMusicTypes()">
 </div>
 
 </body>

@@ -6,7 +6,6 @@ import ru.job4j.model.User;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class DbStorage {
 
@@ -56,13 +55,11 @@ public class DbStorage {
                 st.execute("insert into music_type (name) values ('metal');");
                 st.execute("insert into music_type (name) values ('jazz');");
             } catch (PSQLException e) {
+                e.printStackTrace();
                 connection.rollback();
             } finally {
                 connection.setAutoCommit(true);
             }
-
-
-
 
             //Транзакция создания таблиц улиц, городов, стран
             try  {
@@ -179,7 +176,7 @@ public class DbStorage {
     public boolean addUser(User user, String address) {
         boolean result = false;
 
-        try (Connection connection = SOURCE.getConnection()){
+        try (Connection connection = SOURCE.getConnection()) {
             connection.setAutoCommit(false);
             try {
                 // Внесение данных во вспомогательную таблицу типов музыки
@@ -312,7 +309,6 @@ public class DbStorage {
                 }
 
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
