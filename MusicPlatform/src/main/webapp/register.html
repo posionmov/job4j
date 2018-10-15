@@ -9,20 +9,22 @@
 
     <style>
         .create {
-            background-color: blue;
-            width: 35%;
+            background-color: rgba(0, 0, 255, 0.24);
+            width: 45%;
             height: 35%;
-            padding: 10%; // отступы внутри блока
-            margin: 15%; // Отступы от внешнего блока
+            padding: 3%; /*отступы внутри блока*/
+            margin-top: 5%; /*Отступы от внешнего блока*/
+            margin-left: 25%;
         }
     </style>
 
     <script>
 
         $.ajax({
-            url : "./create",
-            method : "get",
-            success : function (data) {
+            url: "./create",
+            method: "get",
+            success: function (data) {
+                console.log(JSON.parse(data));
                 var selectRoles = document.getElementById("role");
                 var selectMusicTypes = document.getElementById("musicType");
                 selectMusicTypes.multiple = true;
@@ -51,17 +53,17 @@
             var musicType = document.getElementById("musicType").value;
 
             $.ajax({
-                url : "./create",
-                method : "post",
-                data : {
-                    name : name,
-                    login : login,
-                    password : password,
-                    role : role,
-                    address : address,
-                    musicType : musicType
+                url: "./create",
+                method: "post",
+                data: {
+                    name: name,
+                    login: login,
+                    password: password,
+                    role: role,
+                    address: address,
+                    musicType: musicType
                 },
-                success : function (data) {
+                success: function (data) {
                     console.log(JSON.parse(data));
                 }
             })
@@ -71,12 +73,36 @@
 <body>
 <div class="create">
 
-    <div>Имя: <input type="text" id="name"></div>
-    <div>Логин: <input type="text" id="login"></div>
-    <div>Пароль: <input type="text" id="password"></div>
-    <div>Права доступа: <select id="role"></select></div>
-    <div>Адрес: <input type="text" id="address"></div>
-    <div>Тип музыки: <select id="musicType"></select></div>
+    <div class="form-group">
+        <label for="name">Имя:</label>
+        <input type="text" class="form-control" id="name">
+    </div>
+
+    <div class="form-group">
+        <label for="login">Логин:</label>
+        <input type="text" class="form-control" id="login">
+    </div>
+
+    <div class="form-group">
+        <label for="password">Пароль:</label>
+        <input type="password" class="form-control" id="password">
+    </div>
+
+    <div class="form-group">
+        <label for="role">Права доступа:</label>
+        <select id="role"></select>
+
+        <label for="musicType">Тип музыки: </label>
+        <select id="musicType"></select>
+    </div>
+
+    <div class="form-group">
+        Адрес: <input type="text" id="address">
+    </div>
+
+    <!--<div class="form-group">-->
+        <!--Тип музыки: <select id="musicType"></select>-->
+    <!--</div>-->
 
     <input type="button" value="Зарегистрироваться" onclick="createUser()">
 </div>

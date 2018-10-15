@@ -15,9 +15,11 @@ public class UserCreateServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setCharacterEncoding("utf-8");
         Map<Integer, String> roles = DbStorage.INSTANCE.getAllRoles();
         Map<Integer, String> musicTypes = DbStorage.INSTANCE.getAllTypes();
-        resp.getWriter().append(new JSONObject().put("roles", roles).put("types", musicTypes) .toString()).flush();
+        Map<Integer, Map<String, Map<Integer, Map<String, Map<Integer, String>>>>> allAddresses = DbStorage.INSTANCE.getAllAddresses();
+        resp.getWriter().append(new JSONObject().put("roles", roles).put("types", musicTypes).put("addresses", allAddresses).toString()).flush();
     }
 
     @Override
