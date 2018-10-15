@@ -262,66 +262,13 @@ public class DbStorage {
         return result;
     }
 
-    public Map<Integer, String> getAllCountries() {
-        Map<Integer, String> result = new HashMap<>();
-
-        try (Connection connection = SOURCE.getConnection(); PreparedStatement st = connection.prepareStatement("select * from countries;")) {
-            ResultSet rs = st.executeQuery();
-
-            while (rs.next()) {
-                result.putIfAbsent(rs.getInt("id"), rs.getString("country_name"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public Map<Integer, String> getAllCitiesForCountry(int countryId)  {
-        Map<Integer, String> result = new HashMap<>();
-
-        try (Connection connection = SOURCE.getConnection(); PreparedStatement st = connection.prepareStatement("select * from cities where country_id = ?;")) {
-            st.setInt(1, countryId);
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                result.putIfAbsent(rs.getInt("id"), rs.getString("country_name"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public Map<Integer, String> getAllStreetsForCity(int cityId)  {
-        Map<Integer, String> result = new HashMap<>();
-        try (Connection connection = SOURCE.getConnection(); PreparedStatement st = connection.prepareStatement("select * from streets where city_id = ?;")) {
-            st.setInt(1, cityId);
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                result.putIfAbsent(rs.getInt("id"), rs.getString("country_name"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-
-//    public void addNewCityToCountry()
-
-
-
     public Map<Integer, Map<String, Map<Integer, Map<String, Map<Integer, String>>>>> getAllAddresses() {
-
         Map<Integer, Map<String, Map<Integer, Map<String, Map<Integer, String>>>>> result = new HashMap<>();
         try (Connection connection = SOURCE.getConnection(); PreparedStatement st = connection.prepareStatement(
                 "select * from streets as str inner join cities as ci on str.city_id=ci.id inner join countries as cou on ci.country_id=cou.id;")) {
-
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-
                 if (result.get(rs.getInt(7)) == null) {
-
                     Map<Integer, String> city = new HashMap<>();
                     Map<String, Map<Integer, String>> cityName = new HashMap<>();
                     Map<Integer, Map<String, Map<Integer, String>>> cityIndex = new HashMap<>();
@@ -342,16 +289,18 @@ public class DbStorage {
                         cityIndex = new HashMap<>();
                     } else {
                         cityIndex = countryName.get(rs.getString(8));
-                        if (cityIndex.get(rs.getInt(4)) == null) {
-                            cityName = new HashMap<>();
-                        } else {
-                            cityName = cityIndex.get(rs.getInt(4));
-                            if (cityName.get(rs.getInt(1)) == null) {
-                                city = new HashMap<>();
-                            } else {
-                                city = cityName.get(rs.getInt(1));
-                            }
-                        }
+                    }
+
+                    if (cityIndex.get(rs.getInt(4)) == null) {
+                        cityName = new HashMap<>();
+                    } else {
+                        cityName = cityIndex.get(rs.getInt(4));
+                    }
+
+                    if (cityName.get(rs.getString(5)) == null) {
+                        city = new HashMap<>();
+                    } else {
+                        city = cityName.get(rs.getString(5));
                     }
 
                     city.put(rs.getInt(1), rs.getString(2));
@@ -367,37 +316,5 @@ public class DbStorage {
             e.printStackTrace();
         }
         return result;
-    }
-
-    public static void main(String[] args) {
-        new DbStorage().getAllAddresses();
-//        Map<Integer, String> ex = new HashMap<>();
-////        System.out.println(ex.putIfAbsent(1, "one")); // Возращает null если такого обьекта еще небыло
-////        System.out.println(ex.putIfAbsent(1, "one"));
-////        System.out.println(ex.putIfAbsent(1, "one"));
-////        System.out.println(ex.putIfAbsent(1, "one"));
-////        System.out.println(ex.get(2)); // ВОзращает null если такого обьекта нету
-//        Map<Integer, Map<Integer, String>> example = new HashMap<>();
-//        Map<Integer, String> test = new HashMap<>();
-//        example.put(1, test);
-//
-//        Map<Integer, String> res = example.get(1);
-//        res.put(2, "test2");
-//
-//        System.out.println(test.size());
-
-//        Map<Integer, Map<Integer, String>> testMap = new HashMap<>();
-//        Map<Integer, String> mapInMap = new HashMap<>();
-//        mapInMap.put(123, "testtest");
-//        testMap.put(1, mapInMap);
-//
-//        Map<Integer, String> newMapInMap = testMap.get(1);
-//        newMapInMap.put(444, "qweasd");
-////        testMap.replace(1, newMapInMap);
-//        for (Map.Entry<Integer, Map<Integer, String>> entry : testMap.entrySet()) {
-//            for (Map.Entry<Integer, String> entryOne : entry.getValue().entrySet())  {
-//                System.out.println(entryOne.getValue());
-//            }
-//        }
     }
 }
