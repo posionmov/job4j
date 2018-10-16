@@ -235,28 +235,28 @@ public class DbStorage {
         return result;
     }
 
-    public List<User> getAllUsers () {
-        List<User> result = new ArrayList<>();
-        try (Connection connection = SOURCE.getConnection()) {
-
-            PreparedStatement st = connection.prepareStatement("select * from users as u inner join address as a on u.u_address = a.id;");
-            ResultSet users = st.executeQuery();
-            while (users.next()) {
-                User user = new User(users.getString(2), users.getString(3), users.getString(4), users.getInt(5));
-                user.setMusicTypes(this.getAllMusicTypesForUser(user.getId()));
-                List<Integer> adresses = new ArrayList<>();
-                adresses.add(users.getInt(10));
-                adresses.add(users.getInt(11));
-                adresses.add(users.getInt(12));
-                user.setAddress(adresses);
-                result.add(user);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+//    public List<User> getAllUsers () {
+//        List<User> result = new ArrayList<>();
+//        try (Connection connection = SOURCE.getConnection()) {
+//
+//            PreparedStatement st = connection.prepareStatement("select * from users as u inner join address as a on u.u_address = a.id;");
+//            ResultSet users = st.executeQuery();
+//            while (users.next()) {
+//                User user = new User(users.getString(2), users.getString(3), users.getString(4), users.getInt(5));
+//                user.setMusicTypes(this.getAllMusicTypesForUser(user.getId()));
+//                List<Integer> adresses = new ArrayList<>();
+//                adresses.add(users.getInt(10));
+//                adresses.add(users.getInt(11));
+//                adresses.add(users.getInt(12));
+//                user.setAddress(adresses);
+//                result.add(user);
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
 
 
     private List<Integer> getAllMusicTypesForUser(int userId) {
@@ -363,6 +363,72 @@ public class DbStorage {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean checkUsersMap(List<User> users, int userId) {
+        boolean result = false;
+            for (int i = 0; i < users.size(); i++) {
+                if (users.get(i).getId() == userId) {
+                    result = true;
+                    break;
+                }
+            }
+        return result;
+    }
+
+    public List<User> getUsers(String type, List<Integer> address, int role, List<Integer> types, String stringForSearch) {
+        List<User> result = new ArrayList<>();
+        try (Connection connection = SOURCE.getConnection()) {
+            PreparedStatement st = connection.prepareStatement("select * from users as u inner join address as a on u.u_address = a.id;");
+            if (type.equals("address")) {
+                st = connection.prepareStatement("select * from users as u inner join address as a on u.u_address = a.id where a.country_id = ? and a.city_id = ? and a.street_id = ?;");
+                st.setInt(1, address.get(0));
+                st.setInt(2, address.get(1));
+                st.setInt(3, address.get(2));
+            } else if (type.equals("role")) {
+                st = connection.prepareStatement("select * from users as u inner join address as a on u.u_address = a.id where u_role = ?;");
+                st.setInt(1, role);
+            } else if (type.equals("types")) {
+                String query = "select * from users as u inner join address as a on u.u_address = a.id inner join result_types as rt on u.id = rt.user_id where";
+                for (int i = 0; i < types.size(); i++) {
+                    if (i == 0) {
+                        query += " rt.type_id = ?";
+                    } else {
+                        query += " or rt.type_id = ?";
+                    }
+                }
+                query += ";";
+                st = connection.prepareStatement(query);
+                for (int i = 0; i < types.size(); i++)  {
+                    st.setInt(i+1, types.get(i));
+                    System.out.println(types.get(i));
+                }
+            } else if (type.equals("string")) {
+                st = connection.prepareStatement("select * from users as u inner join address as a on u.u_address = a.id inner join result_types as rt on u.id = rt.user_id;");
+            }
+                ResultSet rs = st.executeQuery();
+                while (rs.next()) {
+                    if (!checkUsersMap(result, rs.getInt(1))) {
+                        User user = new User(rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5));
+                        user.setMusicTypes(this.getAllMusicTypesForUser(user.getId()));
+                        List<Integer> adresses = new ArrayList<>();
+                        adresses.add(rs.getInt(10));
+                        adresses.add(rs.getInt(11));
+                        adresses.add(rs.getInt(12));
+                        user.setAddress(adresses);
+                        if (type.equals("string")) {
+                            if (user.getName().contains(stringForSearch) || user.getLogin().contains(stringForSearch)) {
+                                result.add(user);
+                            }
+                        } else {
+                            result.add(user);
+                        }
+                    }
+                }
+            } catch (SQLException e1) {
+            e1.printStackTrace();
         }
         return result;
     }

@@ -6,10 +6,330 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+
+        .usersTable {
+            background-color: rgba(0, 255, 8, 0.25);
+            margin-top: -20px;
+        }
+        .search-header {
+            background-color: rgba(0, 0, 255, 0.18);
+            text-align: center;
+            width: 60%;
+            height: 245px;
+            padding: 10px;
+            margin-left: 20%;
+            margin-top: 10px;
+            border-radius: 20px;
+        }
+        .search-type {
+            width: 32%;
+            height: auto;
+            background-color: rgba(255, 232, 0, 0.54);
+            padding: 10px;
+            border-radius: 20px;
+            margin: 5px;
+            float: left
+        }
+    </style>
+
+    <script>
+
+        var addresses;
+        var roles = {};
+        var types = {};
+
+        var listCounty = {};
+        var listCities = {};
+        var listStreets = {};
+
+
+        $.ajax({
+            url: "./create",
+            method: "get",
+            success: function (data) {
+                console.log(JSON.parse(data));
+                var selectMusicTypes = document.getElementById("musicType");
+                var selectRoles = document.getElementById("role");
+                var selectCountries = document.getElementById("country");
+                var selectCity = document.getElementById("city");
+                var selectStreet = document.getElementById("street");
+                selectMusicTypes.multiple = true;
+
+                var parsedData = JSON.parse(data);
+                roles = parsedData["roles"];
+                types = parsedData["types"];
+                addresses = parsedData["addresses"];
+                setCountries(addresses);
+                console.log(roles);
+                for (var key in roles) {
+                    selectRoles.options[key - 1] = new Option(roles[key], key);
+                }
+
+                for (var key in types) {
+                    selectMusicTypes.options[key - 1] = new Option(types[key], key);
+                }
+
+                var i = 0;
+
+                for (var countryKey in addresses) {
+                    for (var countryName in addresses[countryKey]) {
+                        selectCountries.options[countryKey - 1] = new Option(countryName, countryKey);
+                        for (var cityKey in addresses[countryKey][countryName]) {
+                            for (var cityName in addresses[countryKey][countryName][cityKey]) {
+                                if (selectCountries.value === countryKey) {
+                                    selectCity[cityKey - 1] = new Option(cityName, cityKey);
+                                    for (var streetKey in addresses[countryKey][countryName][cityKey][cityName]) {
+                                        if (selectCity.value === cityKey ) {
+                                            selectStreet[i++] = new Option(addresses[countryKey][countryName][cityKey][cityName][streetKey], streetKey);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        function changeCountry() {
+            var selectCountries = document.getElementById("country");
+            var selectCity = document.getElementById("city");
+            var selectStreet = document.getElementById("street");
+            for (var c = 0; c < selectCity.options.length; c++) {
+                selectCity.options[c] = null;
+            }
+            var i = 0;
+            var j = 0;
+            for (var countryKey in addresses) {
+                for (var countryName in addresses[countryKey]) {
+                    for (var cityKey in addresses[countryKey][countryName]) {
+                        for (var cityName in addresses[countryKey][countryName][cityKey]) {
+                            if (selectCountries.value === countryKey) {
+                                selectCity[i++] = new Option(cityName, cityKey);
+                                for (var streetKey in addresses[countryKey][countryName][cityKey][cityName]) {
+                                    if (selectCity.value === cityKey ) {
+                                        selectStreet[j++] = new Option(addresses[countryKey][countryName][cityKey][cityName][streetKey], streetKey);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function changeCity() {
+            var selectCountries = document.getElementById("country");
+            var selectCity = document.getElementById("city");
+            var selectStreet = document.getElementById("street");
+            for (var i = 0; i < selectStreet.options.length; i++) {
+                selectStreet.options[i] = null;
+            }
+            var j = 0;
+
+            for (var countryKey in addresses) {
+                for (var countryName in addresses[countryKey]) {
+                    for (var cityKey in addresses[countryKey][countryName]) {
+                        for (var cityName in addresses[countryKey][countryName][cityKey]) {
+                            if (selectCountries.value === countryKey) {
+                                for (var streetKey in addresses[countryKey][countryName][cityKey][cityName]) {
+                                    if (selectCity.value === cityKey ) {
+                                        selectStreet[j++] = new Option(addresses[countryKey][countryName][cityKey][cityName][streetKey], streetKey);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Метод, парсящий итоговые данные о странах, городах и улицах
+        // Полученные данные сохраняет в глобальные переменные страницы
+        function setCountries(listCountries) {
+            for (var countryKey in listCountries) {
+                for (var countryName in listCountries[countryKey]) {
+                    for (var cityId in listCountries[countryKey][countryName]) {
+                        for (var cityName in listCountries[countryKey][countryName][cityId]) {
+                            for (var streetId in listCountries[countryKey][countryName][cityId][cityName]) {
+                                listCounty[countryKey] = countryName;
+                                listCities[cityId] = cityName;
+                                listStreets[streetId] = listCountries[countryKey][countryName][cityId][cityName][streetId];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function getAllUsersByRole() {
+            $.ajax({
+                url: "./search",
+                method: "get",
+                data : {
+                    type : "role",
+                    role : document.getElementById("role").value
+                },
+                success: function (data) {
+                    console.log(JSON.parse(data));
+                    fillTable(data);
+                }
+            });
+        }
+
+        function fillTable(data) {
+            $('#usersTable tbody').empty();
+            var users = JSON.parse(data)["users"];
+            if (users.length !== 0) {
+                for (var user in users) {
+                    $('#usersTable tbody').append('<tr>'
+                        + '<td>' + users[user].id + '</td>'
+                        + '<td>' + users[user].name + '</td>'
+                        + '<td>' + roles[users[user].role] + '</td>'
+                        + '<td>' + getAllMusicTypesForUser(users[user]["musicTypes"]) + '</td>'
+                        + '<td>' + listCounty[users[user]["address"][0]] + '</td>'
+                        + '<td>' + listCities[users[user]["address"][1]] + '</td>'
+                        + '<td>' + listStreets[users[user]["address"][2]] + '</td>'
+                        + '<td>' + "сделать кнопку" + '</td></tr>');
+                }
+            }
+        }
+
+        function getAllUsersByAddress() {
+            $.ajax({
+                url: "./search",
+                method: "get",
+                data: {
+                    type : "address",
+                    country : document.getElementById("country").value,
+                    city : document.getElementById("city").value,
+                    street : document.getElementById("street").value
+                },
+                success: function (data) {
+                    fillTable(data);
+                }
+            });
+        }
+
+        function getAllMusicTypes() {
+            var selectTypes = document.getElementById("musicType");
+            var result = [];
+            var j = 0;
+            for (var i = 0; i < selectTypes.options.length; i++) {
+                if (selectTypes[i].selected === true) {
+                    console.log(selectTypes[i].value);
+                    result[j++] = selectTypes[i].value;
+                }
+            }
+            return result;
+        }
+
+        function getAllUsersByTypes() {
+            var musicTypeResult =  getAllMusicTypes().toString();
+            $.ajax({
+                url: "./search",
+                method: "get",
+                data: {
+                    type: "types",
+                    music: musicTypeResult
+                },
+                success: function (data) {
+                    console.log(data);
+                    fillTable(data);
+                }
+            });
+        }
+
+        function getAllMusicTypesForUser(musicTypes) {
+            console.log(musicTypes);
+            console.log(types);
+            var result = "";
+            for (var i = 0; i < musicTypes.length; i++) {
+                result += types[musicTypes[i]] + " ";
+            }
+            return result;
+        }
+
+        function getAllUsersByString() {
+            var searchString = document.getElementById("stringForSearch").value;
+            $.ajax({
+                url: "./search",
+                method: "get",
+                data : {
+                    type : "string",
+                    string : searchString
+                },
+                success : function (data) {
+                    console.log(data);
+                    fillTable(data);
+                }
+            });
+        }
+
+    </script>
+
 </head>
 <body>
+<div class="search-header">
+    <div class="form-group search-type">
+        <label>Поиск по адресу:</label>
+        <select id="country" onchange="changeCountry()" class="form-control"></select>
+        <select id="city" onchange="changeCity()" class="form-control"></select>
+        <select id="street" class="form-control"></select>
+        <div style="margin-top: 10px">
+            <button type="button" class="btn btn-default btn-sm" onclick="getAllUsersByAddress()">Посик по адресу</button>
+        </div>
+    </div>
 
-<input type="text" placeholder="">
+    <div class="form-group search-type">
+        <label>Поиск по правам доступа:</label>
+        <select id="role" onchange="changeCountry()" class="form-control"></select>
+        <div style="margin-top: 79px">
+            <button type="button" class="btn btn-default btn-sm" onclick="getAllUsersByRole()">Поиск по правам</button>
+        </div>
+    </div>
+
+    <div class="form-group search-type">
+        <label for="musicType">Тип музыки: </label>
+        <select id="musicType" class="form-control"></select>
+        <div style="margin-top: 28px">
+            <button type="button" class="btn btn-default btn-sm" onclick="getAllUsersByTypes()">Поиск по типу музыки</button>
+        </div>
+    </div>
+
+
+
+    <div class="form-group" style="margin-top: 200px">
+        <label for="stringForSearch">Поиск по <kbd>имени или слову:</kbd> </label>
+        <input type="text" style="width: 30%" id="stringForSearch">
+        <button type="button" class="btn btn-default btn-sm" onclick="getAllUsersByString()">Простой поиск</button>
+    </div>
+
+
+</div>
+
+<div class="usersTable" style="border-radius: 30px; width: 90%; margin-left: 5%">
+    <div style="margin: 3%;">
+        <table class="table table-hover" id="usersTable">
+            <thead>
+            <tr>
+                <th>Id пользователя</th>
+                <th>Имя пользователя</th>
+                <th>Права пользователя</th>
+                <th>Типы музыки</th>
+                <th>Страна</th>
+                <th>Город</th>
+                <th>Улица</th>
+                <th>Переход на страницу пользователя</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 </body>
 </html>

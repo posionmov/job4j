@@ -36,6 +36,18 @@
         <url-pattern>/list</url-pattern>
     </servlet-mapping>
 
+    <!--Servlet for search users-->
+    <servlet>
+        <servlet-name>SearchServlet</servlet-name>
+        <servlet-class>ru.job4j.platform.SearchServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SearchServlet</servlet-name>
+        <url-pattern>/search</url-pattern>
+    </servlet-mapping>
+
 
 
 </web-app>
