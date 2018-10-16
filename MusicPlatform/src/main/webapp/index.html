@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        .mainDiv {
+            margin-left: 33%;
+            margin-top: 10%;
+            padding: 1%;
+            width: 550px;
+            height: auto;
+            background-color: rgba(0, 0, 255, 0.24);
+            border-radius: 30px;
+        }
+
+        .btnGroup {
+            position: relative;
+            top: 50%;
+            padding-top: 20px;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
+        }
+    </style>
+
+    <script>
+        function register() {
+            window.location.replace("./register.html");
+        }
+    </script>
+
+</head>
+<body>
+
+<!--<div class="mainDiv">-->
+
+<form class="form-horizontal mainDiv w3-border">
+    <div style="text-align: center"><h3>Авторизация</h3></div>
+
+
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="login">Логин:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" placeholder="Введите логин" id="login">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="password">Пароль:</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" placeholder="Введите пароль" id="password">
+        </div>
+    </div>
+
+    <div class="btn-group btnGroup">
+        <button type="button" class="btn btn-default">Войти</button>
+        <button type="button" class="btn btn-default" onclick="register()">Зарегистрироваться</button>
+    </div>
+
+    <!--Hidden Field For Incorrect Input-->
+    <!--<div style="text-align: center;" id="incorrect"></div>-->
+    </form>
+
+<!--</div>-->
+
+</body>
+</html>

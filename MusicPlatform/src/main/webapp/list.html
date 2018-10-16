@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список пользователей</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <script>
+
+        var listCounty = {};
+        var listCities = {};
+        var listStreets = {};
+
+        $.ajax({
+            url: "./list",
+            method: "get",
+            success: function (data) {
+                var parsedData = JSON.parse(data);
+                var users = parsedData["users"];
+                var roles = parsedData["roles"];
+                var addresses = parsedData["addresses"];
+                setCountries(addresses);
+
+                for (var user in users) {
+                    $('#usersTable tbody').append('<tr>'
+                        + '<td>' + users[user].id + '</td>'
+                        + '<td>' + users[user].name + '</td>'
+                        + '<td>' + users[user].login + '</td>'
+                        + '<td>' + users[user].password + '</td>'
+                        + '<td>' + roles[users[user].role] + '</td>'
+                        + '<td>' + listCounty[users[user]["address"][0]] + '</td>'
+                        + '<td>' + listCities[users[user]["address"][1]] + '</td>'
+                        + '<td>' + listStreets[users[user]["address"][2]] + '</td>'
+                        + '<td>' + createButtons(users[user].id) + '</td></tr>');
+                }
+            }
+        });
+        
+        function createButtons(userId) {
+            var updateButton = '<button type="button" class="btn btn-default" onclick="updateUser(' + userId + ';")>Обновить пользователя</button>';
+            var deleteButton = '<button type="button" class="btn btn-default" onclick="deleteUser(' + userId + ';")>Удалить пользователя</button>';
+            return updateButton + deleteButton;
+        }
+
+        function deleteUser(id) {
+            $.ajax({
+                url: "./list",
+                method: "delete"
+            });
+        }
+
+        // Метод, парсящий итоговые данные о странах, городах и улицах
+        // Полученные данные сохраняет в глобальные переменные страницы
+        function setCountries(listCountries) {
+            for (var countryKey in listCountries) {
+                for (var countryName in listCountries[countryKey]) {
+                    for (var cityId in listCountries[countryKey][countryName]) {
+                        for (var cityName in listCountries[countryKey][countryName][cityId]) {
+                            for (var streetId in listCountries[countryKey][countryName][cityId][cityName]) {
+                                listCounty[countryKey] = countryName;
+                                listCities[cityId] = cityName;
+                                listStreets[streetId] = listCountries[countryKey][countryName][cityId][cityName][streetId];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    </script>
+
+</head>
+<body>
+
+<h2>Таблица всех пользователей</h2>
+<p>Полный список пользователей <kbd>в базе данных</kbd> данный момент:</p>
+<div class="usersTable" style="border-radius: 30px;">
+    <div style="margin: 3%;">
+        <table class="table table-hover" id="usersTable">
+            <thead>
+            <tr>
+                <th>Id пользователя</th>
+                <th>Имя пользователя</th>
+                <th>Логин пользователя</th>
+                <th>Пароль пользователя</th>
+                <th>Права пользователя</th>
+                <th>Страна</th>
+                <th>Город</th>
+                <th>Улица</th>
+                <th>Управление пользователем</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

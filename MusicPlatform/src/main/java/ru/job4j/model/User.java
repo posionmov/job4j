@@ -1,18 +1,21 @@
 package ru.job4j.model;
 
+import java.util.List;
+
 public class User {
 
     private int id;
     private String name, login, password;
-    private int role, address, musicType;
+    private int role, finalAddress;
+    List<Integer> musicTypes;
+    List<Integer> address;
 
-    public User(String name, String login, String password, int role, int musicType) {
+    public User(String name, String login, String password, int role) {
         this.id = name.hashCode() * 31 + login.hashCode();
         this.name = name;
         this.login = login;
         this.password = password;
         this.role = role;
-        this.musicType = musicType;
     }
 
     public int getId() {
@@ -55,19 +58,28 @@ public class User {
         this.role = role;
     }
 
-    public int getAddress() {
+    public List<Integer> getMusicTypes() {
+        return musicTypes;
+    }
+
+    public void setMusicTypes(List<Integer> musicTypes) {
+        this.musicTypes = musicTypes;
+    }
+
+    public List<Integer> getAddress() {
         return address;
     }
 
-    public void setAddress(int address) {
+    public void setAddress(List<Integer> address) {
         this.address = address;
     }
 
-    public int getMusicType() {
-        return musicType;
+    public int getFinalAddress() {
+        return finalAddress;
     }
 
-    public void setMusicType(int musicType) {
-        this.musicType = musicType;
+    public void setFinalAddress(int finalAddress) {
+        this.finalAddress = finalAddress;
     }
+
 }

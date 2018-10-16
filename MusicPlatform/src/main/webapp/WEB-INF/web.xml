@@ -24,6 +24,18 @@
         <url-pattern>/create</url-pattern>
     </servlet-mapping>
 
+    <!--Servlet for getting all users-->
+    <servlet>
+        <servlet-name>ListUsersServlet</servlet-name>
+        <servlet-class>ru.job4j.platform.ListUsersServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ListUsersServlet</servlet-name>
+        <url-pattern>/list</url-pattern>
+    </servlet-mapping>
+
 
 
 </web-app>

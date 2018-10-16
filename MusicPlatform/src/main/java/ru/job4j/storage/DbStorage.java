@@ -4,7 +4,9 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.postgresql.util.PSQLException;
 import ru.job4j.model.User;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DbStorage {
@@ -55,7 +57,6 @@ public class DbStorage {
                 st.execute("insert into music_type (name) values ('metal');");
                 st.execute("insert into music_type (name) values ('jazz');");
             } catch (PSQLException e) {
-                e.printStackTrace();
                 connection.rollback();
             } finally {
                 connection.setAutoCommit(true);
@@ -173,24 +174,36 @@ public class DbStorage {
         }
     }
 
-    public boolean addUser(User user, String address) {
+    public boolean addUser(User user) {
+        // addres       = (country_id, city_id, street_id)
+        // musicTypes   = (
         boolean result = false;
 
         try (Connection connection = SOURCE.getConnection()) {
             connection.setAutoCommit(false);
             try {
-                // Внесение данных во вспомогательную таблицу типов музыки
-                PreparedStatement stOne = connection.prepareStatement(
-                        "insert into result_types (user_id, type_id) values (?, ?);");
-                stOne.setInt(1, user.getId());
-                stOne.setInt(2, user.getMusicType());
-                stOne.execute();
+
+                for (int i = 0; i < user.getMusicTypes().size(); i++) {
+                    PreparedStatement stMusicTypes = connection.prepareStatement("insert into result_types (user_id, type_id) values (?, ?);");
+                    stMusicTypes.setInt(1, user.getId());
+                    stMusicTypes.setInt(2, user.getMusicTypes().get(i));
+                    stMusicTypes.execute();
+                }
+
+
 
                 // Внесение данных в таблицу адресов
-                PreparedStatement adr = connection.prepareStatement(
-                        "insert into address (user_id, name) values (?, ?) returning id;");
+                // id serial primary key,
+                // user_id integer,
+                // country_id integer references countries(id),
+                // city_id integer references cities(id),
+                // street_id integer references streets(id)
+
+                PreparedStatement adr = connection.prepareStatement("insert into address (user_id, country_id, city_id, street_id) values (?, ?, ?, ?) returning id;");
                 adr.setInt(1, user.getId());
-                adr.setString(2, address);
+                adr.setInt(2, user.getAddress().get(0));
+                adr.setInt(3, user.getAddress().get(1));
+                adr.setInt(4, user.getAddress().get(2));
 //                adr.executeUpdate();
                 ResultSet generatedKeyForAddress = adr.executeQuery();
                 int newAddress = 0;
@@ -201,14 +214,13 @@ public class DbStorage {
 
                 // Внесение данных в таблицу пользователей
                 PreparedStatement stTwo = connection.prepareStatement(
-                        "insert into users (u_name, u_login, u_password, u_role, u_address, u_music_types, id) values (?, ?, ?, ?, ?, ?, ?);");
+                        "insert into users (u_name, u_login, u_password, u_role, u_address, id) values (?, ?, ?, ?, ?, ?);");
                 stTwo.setString(1, user.getName());
                 stTwo.setString(2, user.getLogin());
                 stTwo.setString(3, user.getPassword());
                 stTwo.setInt(4, user.getRole());
                 stTwo.setInt(5, newAddress);
-                stTwo.setInt(6, user.getMusicType());
-                stTwo.setInt(7, user.getId());
+                stTwo.setInt(6, user.getId());
                 stTwo.execute();
                 result = true;
             } catch (SQLException e) {
@@ -222,6 +234,46 @@ public class DbStorage {
         }
         return result;
     }
+
+    public List<User> getAllUsers () {
+        List<User> result = new ArrayList<>();
+        try (Connection connection = SOURCE.getConnection()) {
+
+            PreparedStatement st = connection.prepareStatement("select * from users as u inner join address as a on u.u_address = a.id;");
+            ResultSet users = st.executeQuery();
+            while (users.next()) {
+                User user = new User(users.getString(2), users.getString(3), users.getString(4), users.getInt(5));
+                user.setMusicTypes(this.getAllMusicTypesForUser(user.getId()));
+                List<Integer> adresses = new ArrayList<>();
+                adresses.add(users.getInt(10));
+                adresses.add(users.getInt(11));
+                adresses.add(users.getInt(12));
+                user.setAddress(adresses);
+                result.add(user);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+    private List<Integer> getAllMusicTypesForUser(int userId) {
+        List<Integer> result = new ArrayList<>();
+        try (Connection connection = SOURCE.getConnection()) {
+            PreparedStatement st = connection.prepareStatement("select * from result_types where user_id = ?;");
+            st.setInt(1, userId);
+            ResultSet musicTypes = st.executeQuery();
+            while (musicTypes.next()) {
+                result.add(musicTypes.getInt(3));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
 
 
     /**
