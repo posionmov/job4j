@@ -175,36 +175,26 @@ public class DbStorage {
     }
 
     public boolean addUser(User user) {
-        // addres       = (country_id, city_id, street_id)
-        // musicTypes   = (
         boolean result = false;
 
         try (Connection connection = SOURCE.getConnection()) {
             connection.setAutoCommit(false);
             try {
 
-                for (int i = 0; i < user.getMusicTypes().size(); i++) {
-                    PreparedStatement stMusicTypes = connection.prepareStatement("insert into result_types (user_id, type_id) values (?, ?);");
-                    stMusicTypes.setInt(1, user.getId());
-                    stMusicTypes.setInt(2, user.getMusicTypes().get(i));
-                    stMusicTypes.execute();
-                }
+                fillMusicTypes(user, connection);
 
-
-
-                // Внесение данных в таблицу адресов
-                // id serial primary key,
-                // user_id integer,
-                // country_id integer references countries(id),
-                // city_id integer references cities(id),
-                // street_id integer references streets(id)
+//                for (int i = 0; i < user.getMusicTypes().size(); i++) {
+//                    PreparedStatement stMusicTypes = connection.prepareStatement("insert into result_types (user_id, type_id) values (?, ?);");
+//                    stMusicTypes.setInt(1, user.getId());
+//                    stMusicTypes.setInt(2, user.getMusicTypes().get(i));
+//                    stMusicTypes.execute();
+//                }
 
                 PreparedStatement adr = connection.prepareStatement("insert into address (user_id, country_id, city_id, street_id) values (?, ?, ?, ?) returning id;");
                 adr.setInt(1, user.getId());
                 adr.setInt(2, user.getAddress().get(0));
                 adr.setInt(3, user.getAddress().get(1));
                 adr.setInt(4, user.getAddress().get(2));
-//                adr.executeUpdate();
                 ResultSet generatedKeyForAddress = adr.executeQuery();
                 int newAddress = 0;
                 while (generatedKeyForAddress.next()) {
@@ -234,30 +224,6 @@ public class DbStorage {
         }
         return result;
     }
-
-//    public List<User> getAllUsers () {
-//        List<User> result = new ArrayList<>();
-//        try (Connection connection = SOURCE.getConnection()) {
-//
-//            PreparedStatement st = connection.prepareStatement("select * from users as u inner join address as a on u.u_address = a.id;");
-//            ResultSet users = st.executeQuery();
-//            while (users.next()) {
-//                User user = new User(users.getString(2), users.getString(3), users.getString(4), users.getInt(5));
-//                user.setMusicTypes(this.getAllMusicTypesForUser(user.getId()));
-//                List<Integer> adresses = new ArrayList<>();
-//                adresses.add(users.getInt(10));
-//                adresses.add(users.getInt(11));
-//                adresses.add(users.getInt(12));
-//                user.setAddress(adresses);
-//                result.add(user);
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return result;
-//    }
-
 
     private List<Integer> getAllMusicTypesForUser(int userId) {
         List<Integer> result = new ArrayList<>();
@@ -406,25 +372,25 @@ public class DbStorage {
                     System.out.println(types.get(i));
                 }
             } else if (type.equals("string")) {
-                st = connection.prepareStatement("select * from users as u inner join address as a on u.u_address = a.id inner join result_types as rt on u.id = rt.user_id;");
+                String query = "select * from users as u inner join address as a on u.u_address = a.id inner join result_types as rt on u.id = rt.user_id inner join music_type as mt on mt.id = rt.type_id inner join role as role on role.id = u.u_role where";
+                query += " u.u_name like '%" + stringForSearch + "%'";
+                query += " or u.u_login like '%" + stringForSearch + "%'";
+                query += " or mt.name like '%" + stringForSearch + "%'";
+                query += " or role.name like '%" + stringForSearch + "%';";
+                st = connection.prepareStatement(query);
             }
                 ResultSet rs = st.executeQuery();
                 while (rs.next()) {
                     if (!checkUsersMap(result, rs.getInt(1))) {
                         User user = new User(rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5));
+                        user.setId(rs.getInt(1));
                         user.setMusicTypes(this.getAllMusicTypesForUser(user.getId()));
                         List<Integer> adresses = new ArrayList<>();
                         adresses.add(rs.getInt(10));
                         adresses.add(rs.getInt(11));
                         adresses.add(rs.getInt(12));
                         user.setAddress(adresses);
-                        if (type.equals("string")) {
-                            if (user.getName().contains(stringForSearch) || user.getLogin().contains(stringForSearch)) {
-                                result.add(user);
-                            }
-                        } else {
-                            result.add(user);
-                        }
+                        result.add(user);
                     }
                 }
             } catch (SQLException e1) {
@@ -432,4 +398,114 @@ public class DbStorage {
         }
         return result;
     }
+
+    public User getUserById(int id) {
+        User user = null;
+        try (Connection connection = SOURCE.getConnection()) {
+            PreparedStatement st = connection.prepareStatement("select * from users as u inner join address as a on u.u_address = a.id where u.id = ?;");
+            st.setInt(1, id);
+            ResultSet rs = st.executeQuery();
+            while (rs.next())  {
+                user = new User(rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5));
+                user.setId(rs.getInt(1));
+                user.setMusicTypes(this.getAllMusicTypesForUser(user.getId()));
+                List<Integer> adresses = new ArrayList<>();
+                adresses.add(rs.getInt(10));
+                adresses.add(rs.getInt(11));
+                adresses.add(rs.getInt(12));
+                user.setAddress(adresses);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    private void fillMusicTypes(User user, Connection connection) throws SQLException {
+        for (int i = 0; i < user.getMusicTypes().size(); i++) {
+            System.out.println(user.getMusicTypes().get(i));
+            PreparedStatement stMusicTypes = connection.prepareStatement("insert into result_types (user_id, type_id) values (?, ?);");
+            stMusicTypes.setInt(1, user.getId());
+            stMusicTypes.setInt(2, user.getMusicTypes().get(i));
+            stMusicTypes.execute();
+        }
+    }
+
+    public boolean updateUser(User newUser) {
+        boolean result = true;
+            try (Connection connection = SOURCE.getConnection()) {
+                connection.setAutoCommit(false);
+                try {
+                    PreparedStatement address = connection.prepareStatement("update address set country_id = ?, city_id = ?, street_id = ? where user_id = ?;");
+                    address.setInt(1, newUser.getAddress().get(0));
+                    address.setInt(2, newUser.getAddress().get(1));
+                    address.setInt(3, newUser.getAddress().get(2));
+                    address.setInt(4, newUser.getId());
+                    address.execute();
+
+                    PreparedStatement deleteTypes = connection.prepareStatement("delete from result_types where user_id = ?;");
+                    deleteTypes.setInt(1, newUser.getId());
+                    deleteTypes.execute();
+
+                    fillMusicTypes(newUser, connection);
+
+                    PreparedStatement usr = connection.prepareStatement("update users set u_name = ?, u_login = ?, u_password = ?, u_role = ? where id = ?;");
+                    usr.setString(1, newUser.getName());
+                    usr.setString(2, newUser.getLogin());
+                    usr.setString(3, newUser.getPassword());
+                    usr.setInt(4, newUser.getRole());
+                    usr.setInt(5, newUser.getId());
+                    usr.execute();
+
+                } catch (SQLException e) {
+                    result = false;
+                    connection.rollback();
+                } finally {
+                    connection.setAutoCommit(true);
+                }
+            } catch (SQLException e) {
+                result = false;
+                e.printStackTrace();
+            }
+        return result;
+    }
+
+    public boolean deleteUser(int userId) {
+        boolean result = true;
+        try (Connection connection = SOURCE.getConnection()) {
+            connection.setAutoCommit(false);
+            try {
+
+                PreparedStatement usr = connection.prepareStatement("delete from users where id = ?;");
+                usr.setInt(1, userId);
+                usr.execute();
+
+                PreparedStatement address = connection.prepareStatement("delete from address where user_id = ?;");
+                address.setInt(1, userId);
+                address.execute();
+
+                PreparedStatement deleteTypes = connection.prepareStatement("delete from result_types where user_id = ?;");
+                deleteTypes.setInt(1, userId);
+                deleteTypes.execute();
+
+            } catch (SQLException e) {
+                result = false;
+                connection.rollback();
+                e.printStackTrace();
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            result = false;
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public boolean checkUser(String login, String password) {
+        boolean result = false;
+
+        return result;
+    }
+
 }

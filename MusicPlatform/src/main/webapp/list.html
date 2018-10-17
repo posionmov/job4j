@@ -40,15 +40,30 @@
         });
         
         function createButtons(userId) {
-            var updateButton = '<button type="button" class="btn btn-default btn-sm" onclick="updateUser(' + userId + ';")>Обновить пользователя</button>';
-            var deleteButton = '<button type="button" class="btn btn-default btn-sm" onclick="deleteUser(' + userId + ';")>Удалить пользователя</button>';
+            var updateButton = '<button type="button" class="btn btn-default btn-sm" onclick="updateUser(' + userId + ')")>Обновить пользователя</button>';
+            var deleteButton = '<button type="button" class="btn btn-default btn-sm" onclick="deleteUser(' + userId + ')")>Удалить пользователя</button>';
             return updateButton + deleteButton;
+        }
+
+        function updateUser(id) {
+            window.location.replace("./edit.html?id=" + id);
         }
 
         function deleteUser(id) {
             $.ajax({
                 url: "./list",
-                method: "delete"
+                method: "delete",
+                headers : {
+                    id : id
+                },
+                success: function (data) {
+                    if (JSON.parse(data)["deleted"] == true) {
+                        alert("Пользователь с id" + id + "удален");
+                        window.location.reload();
+                    } else {
+                        alert("error");
+                    }
+                }
             });
         }
 

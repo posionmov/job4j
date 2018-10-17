@@ -20,7 +20,6 @@ public class SearchServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("utf-8");
         if (req.getParameter("type").equals("address")) {
-            System.out.println("address");
             List<Integer> address = new ArrayList<>();
             address.add(Integer.valueOf(req.getParameter("country")));
             address.add(Integer.valueOf(req.getParameter("city")));
@@ -28,7 +27,6 @@ public class SearchServlet extends HttpServlet {
             List<User> users = DbStorage.INSTANCE.getUsers("address", address, 0, new ArrayList<>(), "");
             resp.getWriter().append(new JSONObject().put("users", users).toString()).flush();
         } else if (req.getParameter("type").equals("role")) {
-            System.out.println("roles");
             List<User> users = DbStorage.INSTANCE.getUsers("role", new ArrayList<>(), Integer.valueOf(req.getParameter("role")), new ArrayList<>(), "");
             resp.getWriter().append(new JSONObject().put("users", users).toString()).flush();
         } else if (req.getParameter("type").equals("types")) {

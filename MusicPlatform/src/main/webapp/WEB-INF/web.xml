@@ -48,6 +48,28 @@
         <url-pattern>/search</url-pattern>
     </servlet-mapping>
 
+    <!--Servlet for get info about user-->
+    <servlet>
+        <servlet-name>InfoServlet</servlet-name>
+        <servlet-class>ru.job4j.platform.InfoServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
+    <servlet-mapping>
+        <servlet-name>InfoServlet</servlet-name>
+        <url-pattern>/info</url-pattern>
+    </servlet-mapping>
+
+    <!--Servlet for edit user-->
+    <servlet>
+        <servlet-name>EditServlet</servlet-name>
+        <servlet-class>ru.job4j.platform.EditServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>EditServlet</servlet-name>
+        <url-pattern>/edit</url-pattern>
+    </servlet-mapping>
 
 </web-app>

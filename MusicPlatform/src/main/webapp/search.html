@@ -192,9 +192,17 @@
                         + '<td>' + listCounty[users[user]["address"][0]] + '</td>'
                         + '<td>' + listCities[users[user]["address"][1]] + '</td>'
                         + '<td>' + listStreets[users[user]["address"][2]] + '</td>'
-                        + '<td>' + "сделать кнопку" + '</td></tr>');
+                        + '<td>' + createButton(users[user].id) + '</td></tr>');
                 }
             }
+        }
+
+        function createButton(id) {
+            return "<button type=\"button\" class=\"btn btn-default\" onclick='goToUserInfo("+ id +")'>Редактировать</button>";
+        }
+
+        function goToUserInfo(id) {
+            window.location.replace("./info.html?id=" + id);
         }
 
         function getAllUsersByAddress() {
@@ -302,7 +310,7 @@
 
 
     <div class="form-group" style="margin-top: 200px">
-        <label for="stringForSearch">Поиск по <kbd>имени или слову:</kbd> </label>
+        <label for="stringForSearch">Поиск по <kbd>имени, логину, типу музыки и правам доступа:</kbd> </label>
         <input type="text" style="width: 30%" id="stringForSearch">
         <button type="button" class="btn btn-default btn-sm" onclick="getAllUsersByString()">Простой поиск</button>
     </div>

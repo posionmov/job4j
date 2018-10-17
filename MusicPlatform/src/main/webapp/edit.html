@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация</title>
+    <title>Редактирование пользователя</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -10,55 +10,89 @@
     <style>
         .create {
             background-color: rgba(0, 0, 255, 0.24);
-            width: 45%;
-            height: 35%;
-            padding: 3%; /*отступы внутри блока*/
-            margin-top: 5%; /*Отступы от внешнего блока*/
-            margin-left: 25%;
+            width: 650px;
+            height: 670px;
+            padding: 20px; /*отступы внутри блока*/
+            margin-top: 10px; /*Отступы от внешнего блока*/
+            margin-left: 28%;
             border-radius: 20px;
         }
     </style>
 
     <script>
-        var addresses;
+        // Получение параметров из адресной строки
+        var id = new URL(window.location.href).searchParams.get("id");
+        var musicTypes = {};
+        var addresses = {};
+
+        var listCounty = {};
+        var listCities = {};
+        var listStreets = {};
 
         $.ajax({
-            url: "./create",
+            url: "./info",
             method: "get",
+            data: {
+                id: id
+            },
             success: function (data) {
-                console.log(JSON.parse(data));
-                var selectMusicTypes = document.getElementById("musicType");
+                var user = JSON.parse(data)["user"];
+                var roles = JSON.parse(data)["roles"];
+                addresses = JSON.parse(data)["addresses"];
+                musicTypes = JSON.parse(data)["types"];
+
+                var userCountry = user["address"][0];
+                var userCity = user["address"][1];
+                var userStreet = user["address"][2];
+
                 var selectRoles = document.getElementById("role");
+                var selectMusicTypes = document.getElementById("musicType");
                 var selectCountries = document.getElementById("country");
                 var selectCity = document.getElementById("city");
                 var selectStreet = document.getElementById("street");
                 selectMusicTypes.multiple = true;
 
-                var parsedData = JSON.parse(data);
-                var roles = parsedData["roles"];
-                var types = parsedData["types"];
-                addresses = parsedData["addresses"];
-                console.log(roles);
+                setCountries(addresses);
+                console.log(user);
+
+                document.getElementById("name").value = user.name;
+                document.getElementById("login").value = user.login;
+                document.getElementById("password").value = user.password;
+
                 for (var key in roles) {
                     selectRoles.options[key - 1] = new Option(roles[key], key);
+                    if (key == user["role"]) {
+                        selectRoles.options[key - 1].selected = true;
+                    }
                 }
 
-                for (var key in types) {
-                    selectMusicTypes.options[key - 1] = new Option(types[key], key);
+                for (var key in musicTypes) {
+                    selectMusicTypes.options[key - 1] = new Option(musicTypes[key], key);
+                    if (containsKeyInArray(key, user["musicTypes"])) {
+                        selectMusicTypes.options[key - 1].selected = true;
+                    }
                 }
 
                 var i = 0;
-
                 for (var countryKey in addresses) {
                     for (var countryName in addresses[countryKey]) {
                         selectCountries.options[countryKey - 1] = new Option(countryName, countryKey);
+                        if (userCountry == countryKey) {
+                            selectCountries.options[countryKey - 1].selected = true;
+                        }
                         for (var cityKey in addresses[countryKey][countryName]) {
                             for (var cityName in addresses[countryKey][countryName][cityKey]) {
                                 if (selectCountries.value === countryKey) {
                                     selectCity[cityKey - 1] = new Option(cityName, cityKey);
+                                    if (userCity == cityKey) {
+                                        selectCity[cityKey - 1].selected = true;
+                                    }
                                     for (var streetKey in addresses[countryKey][countryName][cityKey][cityName]) {
                                         if (selectCity.value === cityKey ) {
                                             selectStreet[i++] = new Option(addresses[countryKey][countryName][cityKey][cityName][streetKey], streetKey);
+                                            if (userStreet == streetKey) {
+                                                selectStreet[i - 1].selected = true;
+                                            }
                                         }
                                     }
                                 }
@@ -122,19 +156,54 @@
             }
         }
 
-        function createUser() {
+        function containsKeyInArray(key, array) {
+            var result = false;
+            for (var aKey in array) {
+                if (array[aKey] == key) {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        // Метод, парсящий итоговые данные о странах, городах и улицах
+        // Полученные данные сохраняет в глобальные переменные страницы
+        function setCountries(listCountries) {
+            for (var countryKey in listCountries) {
+                for (var countryName in listCountries[countryKey]) {
+                    for (var cityId in listCountries[countryKey][countryName]) {
+                        for (var cityName in listCountries[countryKey][countryName][cityId]) {
+                            for (var streetId in listCountries[countryKey][countryName][cityId][cityName]) {
+                                listCounty[countryKey] = countryName;
+                                listCities[cityId] = cityName;
+                                listStreets[streetId] = listCountries[countryKey][countryName][cityId][cityName][streetId];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function goBackToList() {
+            document.location.replace("./list.html");
+        }
+
+        function updateUser() {
             var name = document.getElementById("name").value;
             var login = document.getElementById("login").value;
             var password = document.getElementById("password").value;
             var role = document.getElementById("role").value;
             var address = getAllAddress().toString();
             var musicTypeResult =  getAllMusicTypes().toString();
-            console.log("post music Types " + musicTypeResult);
+
+            console.log(musicTypeResult);
 
             $.ajax({
-                url: "./create",
+                url: "./edit",
                 method: "post",
                 data: {
+                    id : id,
                     name: name,
                     login: login,
                     password: password,
@@ -144,7 +213,10 @@
                 },
                 success: function (data) {
                     if (JSON.parse(data)["success"] === true) {
+                        alert("Пользователь изменен");
                         window.location.replace("./list.html");
+                    } else {
+                        alert("Ошибка обновления");
                     }
                 }
             })
@@ -164,18 +236,20 @@
             var j = 0;
             for (var i = 0; i < selectTypes.options.length; i++) {
                 if (selectTypes[i].selected === true) {
-                    console.log(selectTypes[i].value);
                     result[j++] = selectTypes[i].value;
                 }
             }
             return result;
         }
+
+
     </script>
+
 </head>
 <body>
 <div class="create">
 
-    <div style="text-align: center;"><label>Регистрация</label></div>
+    <div style="text-align: center; "><label>Редактирование пользователя</label></div>
 
     <div class="form-group">
         <label for="name">Имя:</label>
@@ -208,7 +282,8 @@
         <select id="street" class="form-control"></select>
     </div>
 
-    <input type="button" value="Зарегистрироваться" onclick="createUser()">
+    <button type="button" class="btn btn-default" onclick="updateUser()">Сохранить изменения</button>
+    <button type="button" class="btn btn-default" onclick="goBackToList()">Вернуться к списку пользователей</button>
 </div>
 
 </body>
