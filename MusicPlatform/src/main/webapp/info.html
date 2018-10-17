@@ -17,15 +17,20 @@
             margin-left: 33%;
             border-radius: 20px;
         }
-
         .elementInForm {
             background-color: rgba(13, 255, 44, 0.67);
             border-radius: 15px;
             padding: 3px;
         }
-
         .headerElement {
             padding: 3px;
+            text-align: center;
+        }
+        .btnGroup {
+            margin-left: 30px;
+        }
+        .editButton {
+            visibility: hidden;
         }
 
     </style>
@@ -35,7 +40,6 @@
         var id = new URL(window.location.href).searchParams.get("id");
         var musicTypes = {};
         var addresses = {};
-
         var listCounty = {};
         var listCities = {};
         var listStreets = {};
@@ -47,14 +51,17 @@
                 id: id
             },
             success: function (data) {
-                var user = JSON.parse(data)["user"];
-                var roles = JSON.parse(data)["roles"];
-                addresses = JSON.parse(data)["addresses"];
-                musicTypes = JSON.parse(data)["types"];
-
+                var parsedData = JSON.parse(data);
+                var user = parsedData["user"];
+                var roles = parsedData["roles"];
+                addresses = parsedData["addresses"];
+                musicTypes = parsedData["types"];
                 setCountries(addresses);
-                console.log(user);
-
+                var sessionId = parsedData["curId"];
+                var sessionRole = parsedData["curRule"];
+                if (sessionId == id || sessionRole === 3) {
+                    document.getElementById("editButton").style.visibility = 'visible';
+                }
                 document.getElementById("name").innerText = user.name;
                 document.getElementById("login").innerText = user.login;
                 document.getElementById("role").innerText = roles[user.role];
@@ -102,67 +109,55 @@
         function goToSearch() {
             window.location.replace("./search.html");
         }
-
     </script>
-
 </head>
 <body>
 
 <div class="create">
-
     <form class="form-horizontal">
-
         <div class="form-group headerElement">
             <label>Информация о пользователе </label>
-            <button type="button" class="btn btn-default">Редактировать</button>
+            <button type="button" class="btn btn-default editButton" id="editButton">Редактировать</button>
         </div>
-
-
         <div class="form-group elementInForm">
             <label class="control-label col-sm-2" for="name">Имя:</label>
             <div class="col-sm-10">
                 <p class="form-control-static" id="name"></p>
             </div>
         </div>
-
         <div class="form-group elementInForm">
             <label class="control-label col-sm-2" for="login">Логин:</label>
             <div class="col-sm-10">
                 <p class="form-control-static" id="login"></p>
             </div>
         </div>
-
         <div class="form-group elementInForm">
             <label class="control-label col-sm-2" for="name">Права доступа:</label>
             <div class="col-sm-10">
                 <p class="form-control-static" id="role"></p>
             </div>
         </div>
-
         <div class="form-group elementInForm">
             <label class="control-label col-sm-2" for="name">Типы музыки:</label>
             <div class="col-sm-10">
                 <p class="form-control-static" id="musicType"></p>
             </div>
         </div>
-
         <div class="form-group elementInForm">
             <label class="control-label col-sm-2">Адрес:</label>
             <div class="col-sm-10">
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="country">Страна:</label>
                     <div class="col-sm-10">
-                    <p class="form-control-static" id="country"></p>
+                        <p class="form-control-static" id="country"></p>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="city">Город:</label>
                     <div class="col-sm-10">
                         <p class="form-control-static" id="city"></p>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="street">Улица:</label>
                     <div class="col-sm-10">
@@ -178,5 +173,6 @@
         </div>
 
     </form>
+</div>
 </body>
 </html>

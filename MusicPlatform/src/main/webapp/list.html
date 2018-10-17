@@ -7,9 +7,31 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <style>
+        .mainDiv {
+            background-color: rgba(0, 0, 255, 0.24);
+            border-radius: 20px;
+            padding: 10px;
+        }
+        .searchField {
+            position: absolute;
+            width: auto;
+            height: auto;
+            background-color: rgba(0, 0, 255, 0.24);
+            margin-left: 80%;
+            border-radius: 10px;
+            padding: 5px;
+        }
+        .headDiv {
+            margin: 30px;
+            background-color: rgba(0, 0, 255, 0.24);
+            border-radius: 20px;
+            padding: 10px;
+            width: 200px;
+        }
+    </style>
 
     <script>
-
         var listCounty = {};
         var listCities = {};
         var listStreets = {};
@@ -22,9 +44,15 @@
                 var users = parsedData["users"];
                 var roles = parsedData["roles"];
                 var addresses = parsedData["addresses"];
+                var curId = parsedData["curId"];
+                var curRole = parsedData["curRule"];
+                console.log(curRole);
                 setCountries(addresses);
-
+                var fieldForName = document.getElementById("curName");
                 for (var user in users) {
+                    if (users[user].id == curId) {
+                        fieldForName.innerText = users[user].name;
+                    }
                     $('#usersTable tbody').append('<tr>'
                         + '<td>' + users[user].id + '</td>'
                         + '<td>' + users[user].name + '</td>'
@@ -34,15 +62,24 @@
                         + '<td>' + listCounty[users[user]["address"][0]] + '</td>'
                         + '<td>' + listCities[users[user]["address"][1]] + '</td>'
                         + '<td>' + listStreets[users[user]["address"][2]] + '</td>'
-                        + '<td>' + createButtons(users[user].id) + '</td></tr>');
+                        + '<td>' + createButtons(curId, curRole, users[user].id) + '</td></tr>');
                 }
             }
         });
         
-        function createButtons(userId) {
-            var updateButton = '<button type="button" class="btn btn-default btn-sm" onclick="updateUser(' + userId + ')")>Обновить пользователя</button>';
-            var deleteButton = '<button type="button" class="btn btn-default btn-sm" onclick="deleteUser(' + userId + ')")>Удалить пользователя</button>';
-            return updateButton + deleteButton;
+        function createButtons(userId, userRole, curId) {
+            var goToUserPage = '<button type="button" class="btn btn-default btn-xs" onclick="goToInfo(' + curId + ')")>Страница пользователя</button>';
+            var updateButton = '';
+            var deleteButton = '';
+            if (userId === curId || userRole === 3) {
+                updateButton = '<button type="button" class="btn btn-default btn-xs" onclick="updateUser(' + curId + ')")>Обновить пользователя</button>';
+                deleteButton = '<button type="button" class="btn btn-default btn-xs" onclick="deleteUser(' + curId + ')")>Удалить пользователя</button>';
+            }
+            return goToUserPage + updateButton + deleteButton;
+        }
+
+        function goToInfo(id) {
+            window.location.replace("./info.html?id=" + id);
         }
 
         function updateUser(id) {
@@ -84,33 +121,62 @@
                 }
             }
         }
+        
+        function search() {
+            window.location.replace("./search.html?search=" + document.getElementById("search").value);
+        }
 
+        function signOut() {
+            $.ajax({
+                url: "./list",
+                method: "post",
+                headers : {
+                    login : null
+                },
+                success: function (data) {
+                    window.location.reload();
+                }
+            });
+        }
     </script>
-
 </head>
 <body>
+<div class="searchField">
+    <input type="text" placeholder="Введите слово для поиска" id="search">
+    <button type="button" class="btn btn-sm" onclick="search()">Поиск</button>
+</div>
 
-<h2>Таблица всех пользователей</h2>
-<p>Полный список пользователей <kbd>в базе данных</kbd> данный момент:</p>
-<div class="usersTable" style="border-radius: 30px;">
-    <div style="margin: 3%;">
-        <table class="table table-hover" id="usersTable">
-            <thead>
-            <tr>
-                <th>Id пользователя</th>
-                <th>Имя пользователя</th>
-                <th>Логин пользователя</th>
-                <th>Пароль пользователя</th>
-                <th>Права пользователя</th>
-                <th>Страна</th>
-                <th>Город</th>
-                <th>Улица</th>
-                <th>Управление пользователем</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+<div class="headDiv">
+    <p class="form-control-static" style="float: left; margin-right: 10px">Вы вошли как:</p>
+    <p class="form-control-static" style="float: left; margin-right: 10px" id="curName"></p>
+    <button type="button" class="btn btn-sm" onclick="signOut()">Выйти</button>
+</div>
+
+<div style="padding: 10px; width: 1500px; margin-left: 15px">
+    <div>
+        <h2>Таблица всех пользователей</h2>
+        <p>Полный список пользователей <kbd>в базе данных</kbd> данный момент:</p>
+    </div>
+    <div class="mainDiv">
+        <div>
+            <table class="table table-hover" id="usersTable">
+                <thead>
+                <tr>
+                    <th>Id пользователя</th>
+                    <th>Имя пользователя</th>
+                    <th>Логин пользователя</th>
+                    <th>Пароль пользователя</th>
+                    <th>Права пользователя</th>
+                    <th>Страна</th>
+                    <th>Город</th>
+                    <th>Улица</th>
+                    <th>Управление пользователем</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

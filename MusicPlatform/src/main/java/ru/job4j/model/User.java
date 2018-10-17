@@ -1,15 +1,36 @@
 package ru.job4j.model;
-
 import java.util.List;
 
+/**
+ * Класс-модель для пользователей
+ * @author Galanov Sergey
+ * @since 17.10.2018
+ * @version 1.0
+ */
 public class User {
 
+    /**
+     * Поля класса
+     * Содержат в себе:
+     *      - id пользователя
+     *      - имя, логин и пароль пользователя
+     *      - права пользователя
+     *      - коллекцию типов музыки пользователя
+     *      - коллекцию, содержащую полный адрес пользователя
+     */
     private int id;
     private String name, login, password;
-    private int role, finalAddress;
-    List<Integer> musicTypes;
-    List<Integer> address;
+    private int role;
+    private List<Integer> musicTypes;
+    private List<Integer> address;
 
+    /**
+     * Конструктор данного класса
+     * @param name - имя
+     * @param login - логин
+     * @param password - пароль
+     * @param role - права доступа
+     */
     public User(String name, String login, String password, int role) {
         this.id = name.hashCode() * 31 + login.hashCode();
         this.name = name;
@@ -17,6 +38,10 @@ public class User {
         this.password = password;
         this.role = role;
     }
+
+    /**
+     * Блок гетеров и сетеров для полей данной модели пользователя
+     */
 
     public int getId() {
         return id;
@@ -72,14 +97,6 @@ public class User {
 
     public void setAddress(List<Integer> address) {
         this.address = address;
-    }
-
-    public int getFinalAddress() {
-        return finalAddress;
-    }
-
-    public void setFinalAddress(int finalAddress) {
-        this.finalAddress = finalAddress;
     }
 
 }

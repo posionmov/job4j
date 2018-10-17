@@ -22,12 +22,13 @@
     <script>
         // Получение параметров из адресной строки
         var id = new URL(window.location.href).searchParams.get("id");
-        var musicTypes = {};
-        var addresses = {};
 
-        var listCounty = {};
-        var listCities = {};
-        var listStreets = {};
+        // Массивы
+        var musicTypes = {};    // Типы музыки
+        var addresses = {};     // Адрсе
+        var listCounty = {};    // Список стран
+        var listCities = {};    // Список городов
+        var listStreets = {};   // Список улиц
 
         $.ajax({
             url: "./info",
@@ -36,62 +37,59 @@
                 id: id
             },
             success: function (data) {
-                var user = JSON.parse(data)["user"];
-                var roles = JSON.parse(data)["roles"];
-                addresses = JSON.parse(data)["addresses"];
-                musicTypes = JSON.parse(data)["types"];
-
-                var userCountry = user["address"][0];
-                var userCity = user["address"][1];
-                var userStreet = user["address"][2];
-
-                var selectRoles = document.getElementById("role");
-                var selectMusicTypes = document.getElementById("musicType");
-                var selectCountries = document.getElementById("country");
-                var selectCity = document.getElementById("city");
-                var selectStreet = document.getElementById("street");
-                selectMusicTypes.multiple = true;
-
-                setCountries(addresses);
-                console.log(user);
-
-                document.getElementById("name").value = user.name;
-                document.getElementById("login").value = user.login;
-                document.getElementById("password").value = user.password;
-
-                for (var key in roles) {
-                    selectRoles.options[key - 1] = new Option(roles[key], key);
-                    if (key == user["role"]) {
-                        selectRoles.options[key - 1].selected = true;
-                    }
-                }
-
-                for (var key in musicTypes) {
-                    selectMusicTypes.options[key - 1] = new Option(musicTypes[key], key);
-                    if (containsKeyInArray(key, user["musicTypes"])) {
-                        selectMusicTypes.options[key - 1].selected = true;
-                    }
-                }
-
-                var i = 0;
-                for (var countryKey in addresses) {
-                    for (var countryName in addresses[countryKey]) {
-                        selectCountries.options[countryKey - 1] = new Option(countryName, countryKey);
-                        if (userCountry == countryKey) {
-                            selectCountries.options[countryKey - 1].selected = true;
+                var parsedData = JSON.parse(data);
+                var serverId = parsedData["curId"];
+                var serverRole = parsedData["curRule"];
+                if (id == serverId || serverRole == 3) {
+                    var user = parsedData["user"];
+                    var roles = parsedData["roles"];
+                    addresses = parsedData["addresses"];
+                    musicTypes = parsedData["types"];
+                    var userCountry = user["address"][0];
+                    var userCity = user["address"][1];
+                    var userStreet = user["address"][2];
+                    var selectRoles = document.getElementById("role");
+                    var selectMusicTypes = document.getElementById("musicType");
+                    var selectCountries = document.getElementById("country");
+                    var selectCity = document.getElementById("city");
+                    var selectStreet = document.getElementById("street");
+                    selectMusicTypes.multiple = true;
+                    setCountries(addresses);
+                    document.getElementById("name").value = user.name;
+                    document.getElementById("login").value = user.login;
+                    document.getElementById("password").value = user.password;
+                    for (var key in roles) {
+                        selectRoles.options[key - 1] = new Option(roles[key], key);
+                        if (key == user["role"]) {
+                            selectRoles.options[key - 1].selected = true;
                         }
-                        for (var cityKey in addresses[countryKey][countryName]) {
-                            for (var cityName in addresses[countryKey][countryName][cityKey]) {
-                                if (selectCountries.value === countryKey) {
-                                    selectCity[cityKey - 1] = new Option(cityName, cityKey);
-                                    if (userCity == cityKey) {
-                                        selectCity[cityKey - 1].selected = true;
-                                    }
-                                    for (var streetKey in addresses[countryKey][countryName][cityKey][cityName]) {
-                                        if (selectCity.value === cityKey ) {
-                                            selectStreet[i++] = new Option(addresses[countryKey][countryName][cityKey][cityName][streetKey], streetKey);
-                                            if (userStreet == streetKey) {
-                                                selectStreet[i - 1].selected = true;
+                    }
+                    for (var key in musicTypes) {
+                        selectMusicTypes.options[key - 1] = new Option(musicTypes[key], key);
+                        if (containsKeyInArray(key, user["musicTypes"])) {
+                            selectMusicTypes.options[key - 1].selected = true;
+                        }
+                    }
+                    var i = 0;
+                    for (var countryKey in addresses) {
+                        for (var countryName in addresses[countryKey]) {
+                            selectCountries.options[countryKey - 1] = new Option(countryName, countryKey);
+                            if (userCountry == countryKey) {
+                                selectCountries.options[countryKey - 1].selected = true;
+                            }
+                            for (var cityKey in addresses[countryKey][countryName]) {
+                                for (var cityName in addresses[countryKey][countryName][cityKey]) {
+                                    if (selectCountries.value === countryKey) {
+                                        selectCity[cityKey - 1] = new Option(cityName, cityKey);
+                                        if (userCity == cityKey) {
+                                            selectCity[cityKey - 1].selected = true;
+                                        }
+                                        for (var streetKey in addresses[countryKey][countryName][cityKey][cityName]) {
+                                            if (selectCity.value === cityKey ) {
+                                                selectStreet[i++] = new Option(addresses[countryKey][countryName][cityKey][cityName][streetKey], streetKey);
+                                                if (userStreet == streetKey) {
+                                                    selectStreet[i - 1].selected = true;
+                                                }
                                             }
                                         }
                                     }
@@ -99,7 +97,11 @@
                             }
                         }
                     }
+                } else {
+                    alert("У Вас нет прав доступа к редактированию данного пользователя");
+                    window.location.replace("./list.html");
                 }
+
             }
         });
 
@@ -138,7 +140,6 @@
                 selectStreet.options[i] = null;
             }
             var j = 0;
-
             for (var countryKey in addresses) {
                 for (var countryName in addresses[countryKey]) {
                     for (var cityKey in addresses[countryKey][countryName]) {
@@ -189,6 +190,18 @@
             document.location.replace("./list.html");
         }
 
+        function checkFields() {
+            var name = document.getElementById("name").value;
+            var login = document.getElementById("login").value;
+            var password = document.getElementById("password").value;
+            var musicTypeResult =  getAllMusicTypes().toString();
+            if (name != '' & login != '' & password != '' & musicTypeResult.length != 0) {
+                updateUser();
+            } else {
+                document.getElementById("incorrect").innerHTML = "<kbd>Необходимо заполнить все поля</kbd>";
+            }
+        }
+
         function updateUser() {
             var name = document.getElementById("name").value;
             var login = document.getElementById("login").value;
@@ -196,9 +209,6 @@
             var role = document.getElementById("role").value;
             var address = getAllAddress().toString();
             var musicTypeResult =  getAllMusicTypes().toString();
-
-            console.log(musicTypeResult);
-
             $.ajax({
                 url: "./edit",
                 method: "post",
@@ -241,10 +251,7 @@
             }
             return result;
         }
-
-
     </script>
-
 </head>
 <body>
 <div class="create">
@@ -282,8 +289,14 @@
         <select id="street" class="form-control"></select>
     </div>
 
-    <button type="button" class="btn btn-default" onclick="updateUser()">Сохранить изменения</button>
+    <button type="button" class="btn btn-default" onclick="checkFields()">Сохранить изменения</button>
     <button type="button" class="btn btn-default" onclick="goBackToList()">Вернуться к списку пользователей</button>
+
+    <!--Hidden Field For Incorrect Input-->
+    <div style="text-align: center;">
+        <p id="incorrect"></p>
+
+    </div>
 </div>
 
 </body>

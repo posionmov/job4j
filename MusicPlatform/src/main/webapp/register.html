@@ -11,11 +11,19 @@
         .create {
             background-color: rgba(0, 0, 255, 0.24);
             width: 45%;
-            height: 35%;
-            padding: 3%; /*отступы внутри блока*/
-            margin-top: 5%; /*Отступы от внешнего блока*/
+            height: 650px;
+            padding: 15px; /*отступы внутри блока*/
+            margin-top: 15px; /*Отступы от внешнего блока*/
             margin-left: 25%;
             border-radius: 20px;
+        }
+        .btnGroup {
+            position: relative;
+            top: 50%;
+            padding-top: 20px;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
         }
     </style>
 
@@ -33,7 +41,6 @@
                 var selectCity = document.getElementById("city");
                 var selectStreet = document.getElementById("street");
                 selectMusicTypes.multiple = true;
-
                 var parsedData = JSON.parse(data);
                 var roles = parsedData["roles"];
                 var types = parsedData["types"];
@@ -42,13 +49,10 @@
                 for (var key in roles) {
                     selectRoles.options[key - 1] = new Option(roles[key], key);
                 }
-
                 for (var key in types) {
                     selectMusicTypes.options[key - 1] = new Option(types[key], key);
                 }
-
                 var i = 0;
-
                 for (var countryKey in addresses) {
                     for (var countryName in addresses[countryKey]) {
                         selectCountries.options[countryKey - 1] = new Option(countryName, countryKey);
@@ -104,7 +108,6 @@
                 selectStreet.options[i] = null;
             }
             var j = 0;
-
             for (var countryKey in addresses) {
                 for (var countryName in addresses[countryKey]) {
                     for (var cityKey in addresses[countryKey][countryName]) {
@@ -122,6 +125,18 @@
             }
         }
 
+        function checkAndCreate() {
+            var name = document.getElementById("name").value;
+            var login = document.getElementById("login").value;
+            var password = document.getElementById("password").value;
+            var musicTypeResult =  getAllMusicTypes().toString();
+            if (name != '' & login != '' & password != '' & musicTypeResult.length != 0) {
+                createUser();
+            } else {
+                document.getElementById("incorrect").innerHTML = "<kbd>Необходимо заполнить все поля</kbd>";
+            }
+        }
+
         function createUser() {
             var name = document.getElementById("name").value;
             var login = document.getElementById("login").value;
@@ -129,8 +144,7 @@
             var role = document.getElementById("role").value;
             var address = getAllAddress().toString();
             var musicTypeResult =  getAllMusicTypes().toString();
-            console.log("post music Types " + musicTypeResult);
-
+            console.log(getAllMusicTypes().length);
             $.ajax({
                 url: "./create",
                 method: "post",
@@ -144,10 +158,11 @@
                 },
                 success: function (data) {
                     if (JSON.parse(data)["success"] === true) {
+                        alert("Пользователь успешно зарегистрирован");
                         window.location.replace("./list.html");
                     }
                 }
-            })
+            });
         }
 
         function getAllAddress() {
@@ -164,11 +179,14 @@
             var j = 0;
             for (var i = 0; i < selectTypes.options.length; i++) {
                 if (selectTypes[i].selected === true) {
-                    console.log(selectTypes[i].value);
                     result[j++] = selectTypes[i].value;
                 }
             }
             return result;
+        }
+
+        function goBack() {
+            window.location.replace("./index.html");
         }
     </script>
 </head>
@@ -207,8 +225,15 @@
         <select id="city" onchange="changeCity()" class="form-control"></select>
         <select id="street" class="form-control"></select>
     </div>
+    <div class="btn-group btnGroup">
+        <button type="button" class="btn btn-default" onclick="checkAndCreate()">Зарегистрироваться</button>
+        <button type="button" class="btn btn-default" onclick="goBack()">Назад</button>
+    </div>
 
-    <input type="button" value="Зарегистрироваться" onclick="createUser()">
+    <!--Hidden Field For Incorrect Input-->
+    <div style="text-align: center;">
+        <p id="incorrect"></p>
+    </div>
 </div>
 
 </body>
