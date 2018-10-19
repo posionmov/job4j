@@ -22,7 +22,8 @@
 		<module>chapter_junior_003_sql</module>
         <module>chapter_junior_004_servlets</module>
 		<module>MusicPlatform</module>
-	</modules>
+        <module>chapter_middle_001_hibernate</module>
+    </modules>
 	 
 	<build>
 		<plugins>

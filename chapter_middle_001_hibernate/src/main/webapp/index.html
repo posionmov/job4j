@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ToLo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        .createDiv {
+            border-radius: 10px;
+            background-color: rgba(0, 8, 255, 0.33);
+            padding: 10px;
+            margin-left: 100px;
+            width: 300px;
+        }
+
+        .btnCreate {
+            margin-top: 3px;
+            margin-left: 50px;
+        }
+
+        .tableDiv {
+            border-radius: 10px;
+            padding: 10px;
+            background-color: rgba(0, 8, 255, 0.33);
+            margin-left: 50px;
+            margin-top: 20px;
+            width: min-content;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        td {
+            word-break: break-all;
+        }
+    </style>
+
+    <script>
+
+        document.onload = getData();
+
+        function getData() {
+            $.ajax({
+                url: "./hiberconf",
+                method: "get",
+                success: function (data) {
+                    console.log(JSON.parse(data)["items"]);
+                    var table = document.getElementById("tableBody");
+                    table.innerHTML = "";
+                    var items = JSON.parse(data)["items"];
+
+                    for (var i = 0; i <items.length; i++) {
+                        table.innerHTML += "<tr>" +
+                            "<td>" + items[i]["id"] + "</td>" +
+                            "<td><div style='width:300px'>" + items[i]["desc"] + "</div></td>" +
+                            "<td><div style='width:200px'>" + items[i]["createDate"] + "</div></td>" +
+                            "<td>" + createButton(items[i]["done"]) + "</td>" +
+                            "<td>" + isDone(items[i]["id"]) + "</td></tr>";
+                    }
+                }
+            });
+        }
+
+        function createButton(isComplete) {
+            var text = isComplete ? "Задача выполнена" : "Задача в процессе";
+            var color = isComplete ? "rgb(101,95,255)" : "rgb(255,93,49)";
+            return "<div class='btn btn-primary btn-md' style='background-color: " + color + "'>" + text + "</div>";
+        }
+
+        function isDone(id) {
+            return "<button type=\"button\" class=\"btn btn-primary btn-md btnCreate\" onclick=\"changeItem(" + id + ")\">Завершить задачу</button>";
+        }
+
+        function changeItem(id) {
+            $.ajax({
+                url: "./hiberconf",
+                method: "post",
+                data: {
+                    done : true,
+                    id : id
+                },
+                success: function (data) {
+                    getData();
+                }
+            });
+        }
+
+        function createItem() {
+            $.ajax({
+                url: "./hiberconf",
+                method: "put",
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                headers: {
+                    description : document.getElementById("newItem").value
+                },
+                success: function (data) {
+                    getData();
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="createDiv" id="create">
+    <input type="text" class="form-control" placeholder="Введите описание задания" id="newItem">
+    <button type="button" class="btn btn-primary btn-md btnCreate" id="createItem" onclick="createItem()">Создать новое
+        задание
+    </button>
+</div>
+<div class="tableDiv">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>id задачи</th>
+            <th>Описание задачи</th>
+            <th>Дата создания</th>
+            <th>Состояние</th>
+            <th>Выполнить</th>
+        </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app>
+
+    <!--Servlet for ToDoList-->
+    <servlet>
+        <servlet-name>ToDoListServlet</servlet-name>
+        <servlet-class>ru.job4j.todolist.ToDoListServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ToDoListServlet</servlet-name>
+        <url-pattern>/hiberconf</url-pattern>
+    </servlet-mapping>
+</web-app>
