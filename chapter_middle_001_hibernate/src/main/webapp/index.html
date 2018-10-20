@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ToLo</title>
+    <title>ToDo</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -43,6 +43,8 @@
 
         document.onload = getData();
 
+        var showAll = false;
+
         function getData() {
             $.ajax({
                 url: "./hiberconf",
@@ -54,15 +56,22 @@
                     var items = JSON.parse(data)["items"];
 
                     for (var i = 0; i <items.length; i++) {
-                        table.innerHTML += "<tr>" +
-                            "<td>" + items[i]["id"] + "</td>" +
-                            "<td><div style='width:300px'>" + items[i]["desc"] + "</div></td>" +
-                            "<td><div style='width:200px'>" + items[i]["createDate"] + "</div></td>" +
-                            "<td>" + createButton(items[i]["done"]) + "</td>" +
-                            "<td>" + isDone(items[i]["id"]) + "</td></tr>";
+                        if (showAll || items[i]["done"] === false) {
+                            table.innerHTML += "<tr>" +
+                                "<td>" + items[i]["id"] + "</td>" +
+                                "<td><div style='width:300px'>" + items[i]["desc"] + "</div></td>" +
+                                "<td><div style='width:200px'>" + items[i]["createDate"] + "</div></td>" +
+                                "<td>" + createButton(items[i]["done"]) + "</td>" +
+                                "<td>" + isDone(items[i]["id"]) + "</td></tr>";
+                        }
                     }
                 }
             });
+        }
+
+        function changeCheckBox() {
+            showAll = !showAll;
+            getData();
         }
 
         function createButton(isComplete) {
@@ -80,6 +89,7 @@
                 url: "./hiberconf",
                 method: "post",
                 data: {
+                    operation : "change",
                     done : true,
                     id : id
                 },
@@ -90,16 +100,16 @@
         }
 
         function createItem() {
+            var text = document.getElementById("newItem").value;
+
             $.ajax({
                 url: "./hiberconf",
-                method: "put",
-                contentType: "application/x-www-form-urlencoded; charset=utf-8",
-                headers: {
-                    description : document.getElementById("newItem").value
+                method: "post",
+                data: {
+                    operation : "add",
+                    description : text
                 },
-                success: function (data) {
-                    getData();
-                }
+                success: getData()
             });
         }
     </script>
@@ -112,6 +122,13 @@
     </button>
 </div>
 <div class="tableDiv">
+    <h2>Таблица всех задач</h2>
+    <p>Полный список задач <kbd>в данный момент:</kbd></p>
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" id="getAll" onclick="changeCheckBox()">Показать все задачи
+        </label>
+    </div>
     <table class="table table-hover">
         <thead>
         <tr>

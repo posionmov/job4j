@@ -17,8 +17,8 @@ import java.util.List;
 /**
  * Сервлет получения и обновления информации из БД для программы todoList
  * @author Galanov Sergey
- * @since 19.10.2018
- * @version 1.0
+ * @since 20.10.2018
+ * @version 1.1
  */
 public class ToDoListServlet extends HttpServlet {
 
@@ -32,7 +32,6 @@ public class ToDoListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("utf-8");
-        System.out.println("get");
         SessionFactory factory = new Configuration().configure().buildSessionFactory();
         Session session = factory.openSession();
         session.beginTransaction();
@@ -52,38 +51,21 @@ public class ToDoListServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("post");
         SessionFactory factory = new Configuration().configure().buildSessionFactory();
         Session session = factory.openSession();
         session.beginTransaction();
-        Query query = session.createQuery("update ListModel set done = :done where id = :id");
-        query.setParameter("done", Boolean.valueOf(req.getParameter("done")));
-        query.setParameter("id", Integer.valueOf(req.getParameter("id")));
-        query.executeUpdate();
-        session.getTransaction().commit();
-        session.close();
-        factory.close();
-
-    }
-
-    /**
-     * Метод для внесения изменений на сервер: добавление задачи
-     * @param req
-     * @param resp
-     * @throws ServletException
-     * @throws IOException
-     */
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(req.getHeader("description"));
-        SessionFactory factory = new Configuration().configure().buildSessionFactory();
-        Session session = factory.openSession();
-        session.beginTransaction();
-        ListModel listModel = new ListModel();
-        listModel.setDesc(req.getHeader("description"));
-        listModel.setCreateDate(new Timestamp(System.currentTimeMillis()));
-        listModel.setDone(false);
-        session.save(listModel);
+        if (req.getParameter("operation").equals("change")) {
+            Query query = session.createQuery("update ListModel set done = :done where id = :id");
+            query.setParameter("done", Boolean.valueOf(req.getParameter("done")));
+            query.setParameter("id", Integer.valueOf(req.getParameter("id")));
+            query.executeUpdate();
+        } else if (req.getParameter("operation").equals("add")) {
+            ListModel listModel = new ListModel();
+            listModel.setDesc(req.getParameter("description"));
+            listModel.setCreateDate(new Timestamp(System.currentTimeMillis()));
+            listModel.setDone(false);
+            session.save(listModel);
+        }
         session.getTransaction().commit();
         session.close();
         factory.close();
