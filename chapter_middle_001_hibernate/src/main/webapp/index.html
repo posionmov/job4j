@@ -93,7 +93,7 @@
                     done : true,
                     id : id
                 },
-                success: function (data) {
+                success: function () {
                     getData();
                 }
             });
@@ -109,7 +109,9 @@
                     operation : "add",
                     description : text
                 },
-                success: getData()
+                success: function () {
+                    getData();
+                }
             });
         }
     </script>
