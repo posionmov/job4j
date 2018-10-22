@@ -23,6 +23,7 @@
         <module>chapter_junior_004_servlets</module>
 		<module>MusicPlatform</module>
         <module>chapter_middle_001_hibernate</module>
+        <module>carstorage</module>
     </modules>
 	 
 	<build>
