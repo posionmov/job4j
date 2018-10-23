@@ -24,6 +24,7 @@
 		<module>MusicPlatform</module>
         <module>chapter_middle_001_hibernate</module>
         <module>carstorage</module>
+        <module>car_sale_site</module>
     </modules>
 	 
 	<build>
