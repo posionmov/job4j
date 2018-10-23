@@ -7,53 +7,59 @@ import ru.job4j.models.Transmission;
 
 import java.util.List;
 
+/**
+ * Класс-синглтон для работы с БД
+ * @author Galanov Sergey
+ * @since 23.10.2018
+ * @version 1.0
+ */
 public enum  ValidateService implements Store {
 
     INSTANCE;
 
     @Override
     public List<Car> getAllCars() {
-        return null;
+        return DbStorage.INSTANCE.getAllCars();
     }
 
     @Override
     public List<Body> getAllBody() {
-        return null;
+        return DbStorage.INSTANCE.getAllBody();
     }
 
     @Override
     public List<Engine> getAllEngine() {
-        return null;
+        return DbStorage.INSTANCE.getAllEngine();
     }
 
     @Override
     public List<Transmission> getAllTransmissions() {
-        return null;
+        return DbStorage.INSTANCE.getAllTransmissions();
     }
 
     @Override
-    public boolean addCar(Car car) {
-        return false;
+    public int addCar(Car car) {
+        return DbStorage.INSTANCE.addCar(car);
     }
 
     @Override
-    public boolean addBody(Body body) {
-        return false;
+    public int addBody(Body body) {
+        return DbStorage.INSTANCE.addBody(body);
     }
 
     @Override
-    public boolean addEngine(Engine engine) {
-        return false;
+    public int addEngine(Engine engine) {
+        return DbStorage.INSTANCE.addEngine(engine);
     }
 
     @Override
-    public boolean addTransmission(Transmission transmission) {
-        return false;
+    public int addTransmission(Transmission transmission) {
+        return DbStorage.INSTANCE.addTransmission(transmission);
     }
 
     @Override
     public boolean updateCar(Car car) {
-        return false;
+        return DbStorage.INSTANCE.updateCar(car);
     }
 
     @Override
@@ -73,21 +79,26 @@ public enum  ValidateService implements Store {
 
     @Override
     public boolean deleteCar(Car car) {
-        return false;
+        return DbStorage.INSTANCE.deleteCar(car);
     }
 
     @Override
     public boolean deleteBody(Body body) {
-        return false;
+        return DbStorage.INSTANCE.deleteBody(body);
     }
 
     @Override
     public boolean deleteEngine(Engine engine) {
-        return false;
+        return DbStorage.INSTANCE.deleteEngine(engine);
     }
 
     @Override
     public boolean deleteTransmission(Transmission transmission) {
-        return false;
+        return DbStorage.INSTANCE.deleteTransmission(transmission);
+    }
+
+    @Override
+    public Car getCarFromId(int carId) {
+        return DbStorage.INSTANCE.getCarFromId(carId);
     }
 }

@@ -1,3 +1,7 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="ru.job4j.models.Car" table="cars">
         <id name="id" column="id">
@@ -5,9 +9,9 @@
         </id>
         <property name="description" column="description"/>
 
-        <many-to-one name="body" column="body_id" class="ru.job4j.models.Body"/>
-        <many-to-one name="engine" column="engine_id" class="ru.job4j.models.Engine"/>
-        <many-to-one name="transmission" column="transmission_id" class="ru.job4j.models.Transmission"/>
+        <many-to-one name="body" column="body_id" class="ru.job4j.models.Body" fetch="join"/> <!--select(загружает все в прокси обьекты), join (загружает обьекты полностью)-->
+        <many-to-one name="engine" column="engine_id" class="ru.job4j.models.Engine" fetch="join"/>
+        <many-to-one name="transmission" column="transmission_id" class="ru.job4j.models.Transmission" fetch="join"/>
 
     </class>
 </hibernate-mapping>

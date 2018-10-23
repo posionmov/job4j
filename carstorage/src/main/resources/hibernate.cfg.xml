@@ -16,9 +16,16 @@
         <property name="hibernate.c3p0.max_statements">50</property> <!-- размер кэша PreparedStatement в пуле -->
         <property name="hibernate.c3p0.idle_test_period">5</property> <!-- время проверки потока. если поток бездействует больше данного промежута времени, то он отключается -->
 
-        <mapping resource="ru/job4j/models/Body.hbm.xml"/> <!-- Маппинг-->
-        <mapping resource="ru/job4j/models/Engine.hbm.xml"/> <!-- Маппинг-->
-        <mapping resource="ru/job4j/models/Transmission.hbm.xml"/> <!-- Маппинг-->
-        <mapping resource="ru/job4j/models/Car.hbm.xml"/> <!-- Маппинг-->
+        <!--Маппинг при поомщи XML-->
+        <!--<mapping resource="ru/job4j/models/Body.hbm.xml"/> &lt;!&ndash; Маппинг&ndash;&gt;-->
+        <!--<mapping resource="ru/job4j/models/Engine.hbm.xml"/> &lt;!&ndash; Маппинг&ndash;&gt;-->
+        <!--<mapping resource="ru/job4j/models/Transmission.hbm.xml"/> &lt;!&ndash; Маппинг&ndash;&gt;-->
+        <!--<mapping resource="ru/job4j/models/Car.hbm.xml"/> &lt;!&ndash; Маппинг&ndash;&gt;-->
+
+        <!--Маппинг при помощи аннотаций-->
+        <mapping class="ru.job4j.models.Body"/> <!-- Маппинг-->
+        <mapping class="ru.job4j.models.Car"/> <!-- Маппинг-->
+        <mapping class="ru.job4j.models.Transmission"/> <!-- Маппинг-->
+        <mapping class="ru.job4j.models.Engine"/> <!-- Маппинг-->
     </session-factory>
 </hibernate-configuration>

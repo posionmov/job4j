@@ -7,6 +7,12 @@ import ru.job4j.models.Transmission;
 
 import java.util.List;
 
+/**
+ * Интерфейс для работы с БД
+ * @author Ganaov Sergey
+ * @since 23.10.2018
+ * @version 1.0
+ */
 public interface Store {
 
     List<Car> getAllCars();
@@ -14,10 +20,10 @@ public interface Store {
     List<Engine> getAllEngine();
     List<Transmission> getAllTransmissions();
 
-    boolean addCar(Car car);
-    boolean addBody(Body body);
-    boolean addEngine(Engine engine);
-    boolean addTransmission(Transmission transmission);
+    int addCar(Car car);
+    int addBody(Body body);
+    int addEngine(Engine engine);
+    int addTransmission(Transmission transmission);
 
     boolean updateCar(Car car);
     boolean updateBody(Body body);
@@ -28,5 +34,7 @@ public interface Store {
     boolean deleteBody(Body body);
     boolean deleteEngine(Engine engine);
     boolean deleteTransmission(Transmission transmission);
+
+    Car getCarFromId(int carId);
 
 }
