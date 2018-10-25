@@ -5,8 +5,18 @@ import java.util.List;
 public class CarMark {
 
     private int id;
+
     private String descr;
+
     private List<CarModel> models;
+
+    public CarMark() {
+
+    }
+
+    public CarMark(int id) {
+        this.id = id;
+    }
 
     public int getId() {
         return id;
@@ -34,10 +44,8 @@ public class CarMark {
 
     @Override
     public String toString() {
-        return "CarMark{" +
-                "id=" + id +
-                ", descr='" + descr + '\'' +
-                ", models=" + models +
-                '}';
+        return "CarMark{" + "id=" + id
+                + ", descr='" + descr + '\''
+                + ", models=" + models + '}';
     }
 }

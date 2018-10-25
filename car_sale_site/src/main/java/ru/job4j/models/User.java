@@ -1,5 +1,8 @@
 package ru.job4j.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
 /**
@@ -12,11 +15,20 @@ public class User {
 
     private int id;
     private String name;
+
+    @JsonIgnore
     private String login;
+
+    @JsonIgnore
     private String password;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Role role;
+
+    @JsonIgnore
     private List<Advertisement> advertisements;
+
+    private String email;
 
     public User() {
 
@@ -74,6 +86,14 @@ public class User {
         this.advertisements = advertisements;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "User{" + "id=" + id
@@ -81,6 +101,7 @@ public class User {
                 + ", login='" + login + '\''
                 + ", password='" + password + '\''
                 + ", role=" + role
-                + ", advertisements=" + advertisements + '}';
+                + ", advertisements=" + advertisements
+                + ", email='" + email + '\'' + '}';
     }
 }

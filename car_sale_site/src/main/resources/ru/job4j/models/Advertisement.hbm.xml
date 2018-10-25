@@ -10,6 +10,7 @@
         <property name="close" column="is_close"/>
 
         <many-to-one name="car" column="car_id" class="ru.job4j.models.cars.Car" fetch="join"/>
+        <many-to-one name="user" column="user_id" class="ru.job4j.models.User" fetch="join"/>
 
 
     </class>

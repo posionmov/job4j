@@ -8,10 +8,11 @@
         <property name="name" column="u_name"/>
         <property name="login" column="u_login"/>
         <property name="password" column="u_password"/>
+        <property name="email" column="u_email"/>
         <many-to-one name="role" column="role_id" class="ru.job4j.models.Role"/>
-        <bag name="advertisements">
+        <bag name="advertisements" cascade="all">
             <key>
-                <column name="ad_id"/>
+                <column name="user_id"/>
             </key>
             <one-to-many class="ru.job4j.models.Advertisement"/>
         </bag>

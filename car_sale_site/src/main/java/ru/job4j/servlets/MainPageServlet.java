@@ -40,7 +40,11 @@ public class MainPageServlet extends HttpServlet {
         res.put("drives", drives);
         res.put("colors", colors);
         res.put("bodies", bodies);
-
+        if (req.getSession().getAttribute("logged") != null) {
+            res.put("login", true);
+        } else {
+            res.put("login", false);
+        }
         resp.getWriter().append(mapper.writeValueAsString(res)).flush();
     }
 

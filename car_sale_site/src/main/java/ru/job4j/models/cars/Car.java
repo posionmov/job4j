@@ -1,5 +1,7 @@
 package ru.job4j.models.cars;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.awt.*;
 
 public class Car {
@@ -18,6 +20,7 @@ public class Car {
     private CarEngine engine;               // тип двигателя (бензин, дизель и тп)
     private CarDrive drive;                 // привод автомобиля (передний, задний, полный)
     private CarColor carColor;              // цвет машины
+    private CarModel carModel;
 
     public int getId() {
         return id;
@@ -131,21 +134,32 @@ public class Car {
         this.carColor = carColor;
     }
 
+    public CarModel getCarModel() {
+        return carModel;
+    }
+
+    public void setCarModel(CarModel carModel) {
+        this.carModel = carModel;
+    }
+
     @Override
     public String toString() {
-        return "Car{" + "id=" + id
-                + ", descr='" + descr + '\''
-                + ", yearOfManufactured=" + yearOfManufactured
-                + ", mileage=" + mileage
-                + ", engineCapacity=" + engineCapacity
-                + ", power=" + power
-                + ", leftRudder=" + leftRudder
-                + ", price=" + price
-                + ", bodyType=" + bodyType
-                + ", mark=" + mark
-                + ", transmission=" + transmission
-                + ", engine=" + engine
-                + ", drive=" + drive
-                + ", carColor=" + carColor + '}';
+        return "Car{" +
+                "id=" + id +
+                ", descr='" + descr + '\'' +
+                ", yearOfManufactured=" + yearOfManufactured +
+                ", mileage=" + mileage +
+                ", engineCapacity=" + engineCapacity +
+                ", power=" + power +
+                ", leftRudder=" + leftRudder +
+                ", price=" + price +
+                ", bodyType=" + bodyType +
+                ", mark=" + mark +
+                ", transmission=" + transmission +
+                ", engine=" + engine +
+                ", drive=" + drive +
+                ", carColor=" + carColor +
+                ", carModel=" + carModel +
+                '}';
     }
 }

@@ -19,7 +19,11 @@ public class Advertisement {
     private Timestamp createDate;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private User user;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Car car;
+
     private boolean close;
 
     public Advertisement() {
@@ -68,6 +72,18 @@ public class Advertisement {
 
     public void setClose(boolean close) {
         this.close = close;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public boolean isClose() {
+        return close;
     }
 
     @Override

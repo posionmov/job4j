@@ -14,11 +14,13 @@
         <property name="price" column="price"/>
 
         <many-to-one name="bodyType" column="body_id" class="ru.job4j.models.cars.CarBodyType" fetch="join"/>
+
         <many-to-one name="mark" column="mark_id" class="ru.job4j.models.cars.CarMark" fetch="join"/>
         <many-to-one name="transmission" column="trans_id" class="ru.job4j.models.cars.CarTransmission" fetch="join"/>
         <many-to-one name="engine" column="engine_id" class="ru.job4j.models.cars.CarEngine" fetch="join"/>
         <many-to-one name="drive" column="drive_id" class="ru.job4j.models.cars.CarDrive" fetch="join"/>
         <many-to-one name="carColor" column="color_id" class="ru.job4j.models.cars.CarColor" fetch="join"/>
+        <many-to-one name="carModel" column="model_id" class="ru.job4j.models.cars.CarModel" fetch="join"/>
 
     </class>
 </hibernate-mapping>

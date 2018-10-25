@@ -9,6 +9,14 @@ public class CarModel {
     @JsonIgnore
     private CarMark mark;
 
+    public CarModel() {
+
+    }
+
+    public CarModel(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

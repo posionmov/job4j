@@ -4,6 +4,14 @@ public class CarBodyType {
     private int id;
     private String  descr;
 
+    public CarBodyType() {
+
+    }
+
+    public CarBodyType(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

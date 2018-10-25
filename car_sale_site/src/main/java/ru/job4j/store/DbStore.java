@@ -3,6 +3,7 @@ package ru.job4j.store;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import ru.job4j.models.Advertisement;
 import ru.job4j.models.Role;
 import ru.job4j.models.User;
@@ -81,27 +82,43 @@ public class DbStore implements Store {
     }
 
     @Override
-    public int addCar(Car car) {
+    public Car addCar(Car car) {
         return this.tx(session -> {
             session.save(car);
-            return car.getId();
+            return car;
         });
     }
 
     @Override
-    public int addAd(Advertisement ad) {
+    public Advertisement addAd(Advertisement ad) {
         return this.tx(session -> {
             session.save(ad);
-            return ad.getId();
+            return ad;
         });
     }
 
     @Override
-    public int addUser(User user) {
+    public User addUser(User user) {
         return this.tx(session -> {
             session.save(user);
-            return user.getId();
+            return user;
         });
+    }
+
+    // Метод проверки существования пользователя
+    @Override
+    public User checkUser(User user) {
+        User result = null;
+        List list = this.tx(session -> {
+            Query query = session.createQuery("from User where login = :login and password = :password");
+            query.setParameter("login", user.getLogin());
+            query.setParameter("password", user.getPassword());
+            return query.list();
+        });
+        if (list.size() == 1) {
+            result = (User) list.get(0);
+        }
+        return result;
     }
 
     @Override
@@ -162,14 +179,12 @@ public class DbStore implements Store {
      */
     private <T> T tx(final Function<Session, T> command) {
         Session session = SOURCE.openSession();
-//        session.beginTransaction();
         try {
             return command.apply(session);
         } catch (final Exception e) {
             session.getTransaction().rollback();
             throw e;
         } finally {
-//            session.getTransaction().commit();
             session.close();
         }
     }

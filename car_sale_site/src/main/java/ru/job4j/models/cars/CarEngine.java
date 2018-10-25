@@ -2,7 +2,15 @@ package ru.job4j.models.cars;
 
 public class CarEngine {
     private int id;
-    private String  descr;
+    private String descr;
+
+    public CarEngine() {
+
+    }
+
+    public CarEngine(int id) {
+        this.id = id;
+    }
 
     public int getId() {
         return id;

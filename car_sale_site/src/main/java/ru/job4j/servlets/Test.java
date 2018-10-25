@@ -4,6 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import org.json.JSONObject;
 import ru.job4j.models.Advertisement;
 import ru.job4j.models.Role;
@@ -13,11 +17,13 @@ import ru.job4j.store.DbStore;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Test {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JsonProcessingException {
 ////        Добавление марки AUDI
 //        CarMark audi = new CarMark();
 //        audi.setDescr("audi");
@@ -41,18 +47,18 @@ public class Test {
 //
 ////        Добавление марки BMW
 //        CarMark bmw = new CarMark();
-//        audi.setDescr("bmw");
+//        bmw.setDescr("bmw");
 //        List<CarModel> bmwModels = new ArrayList<>();
 //
 //        CarModel bmw1 = new CarModel();
-//        bmw1.setDescr("A 1");
-//        bmw1.setMark(audi);
+//        bmw1.setDescr("X 1");
+//        bmw1.setMark(bmw);
 //        CarModel bmw2 = new CarModel();
-//        bmw2.setDescr("A 2");
-//        bmw2.setMark(audi);
+//        bmw2.setDescr("X 2");
+//        bmw2.setMark(bmw);
 //        CarModel bmw3 = new CarModel();
-//        bmw3.setDescr("A 3");
-//        bmw3.setMark(audi);
+//        bmw3.setDescr("X 3");
+//        bmw3.setMark(bmw);
 //
 //        bmwModels.add(bmw1);
 //        bmwModels.add(bmw2);
@@ -113,6 +119,7 @@ public class Test {
 //        user.setName("test user");
 //        user.setLogin("login");
 //        user.setPassword("password");
+//        user.setEmail("example@ex.ru");
 //        user.setRole(role1);
 //        DbStore.INSTANCE.addUser(user);
 //
@@ -127,6 +134,7 @@ public class Test {
 //        car.setPrice(100_000);
 //        car.setBodyType(type1);
 //        car.setMark(bmw);
+//        car.setCarModel(bmw2);
 //        car.setTransmission(tr1);
 //        car.setEngine(eng1);
 //        car.setDrive(drive1);
@@ -139,24 +147,26 @@ public class Test {
 //        ad.setDescription("test ad");
 //        ad.setCreateDate(new Timestamp(System.currentTimeMillis()));
 //        ad.setCar(car);
+//        ad.setUser(user);
 //        ad.setClose(false);
 //        DbStore.INSTANCE.addAd(ad);
 //
-//        List<Car> cars = DbStore.INSTANCE.getAllCars();
-//        System.out.println(cars.get(0).getDrive().getDescr());
-        List<Advertisement> ads = DbStore.INSTANCE.getAllAd();
-        ObjectMapper mapper = new ObjectMapper();
+//        List<Advertisement> ads = DbStore.INSTANCE.getAllAd();
+//        ObjectMapper mapper = new ObjectMapper();
+//        Map<String, Object> res = new LinkedHashMap<>();
+//        res.put("res", ads);
+//        System.out.println(mapper.writeValueAsString(res));
 
+        SessionFactory factory = new Configuration().configure().buildSessionFactory();
+        Session session = factory.openSession();
 
-        String res = null;
-        try {
-            res = new JSONObject().put("res", mapper.writeValueAsString(ads)).toString();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        Query query = session.createQuery("from User where login = :login and password = :password");
+        query.setParameter("login", "login");
+        query.setParameter("password", "password1");
+        List list = query.list();
+        session.close();
 
-
-        System.out.println(res);
+        System.out.println(list.size());
 
     }
 }

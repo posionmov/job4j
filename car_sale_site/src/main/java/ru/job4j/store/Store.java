@@ -22,9 +22,11 @@ public interface Store {
     int addCarColor(CarColor carColor);
     int addMark(CarMark mark);
     int addRole(Role role);
-    int addCar(Car car);
-    int addAd(Advertisement ad);
-    int addUser(User user);
+    Car addCar(Car car);
+    Advertisement addAd(Advertisement ad);
+    User addUser(User user);
+
+    User checkUser(User user);
 
     List<Car> getAllCars();
     List<CarMark> getAllMarks();

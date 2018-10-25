@@ -22,4 +22,40 @@
         <servlet-name>MainPageServlet</servlet-name>
         <url-pattern>/list</url-pattern>
     </servlet-mapping>
+
+    <!--Servlet For Authorization-->
+    <servlet>
+        <servlet-name>AuthorizationServlet</servlet-name>
+        <servlet-class>ru.job4j.servlets.AuthorizationServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AuthorizationServlet</servlet-name>
+        <url-pattern>/auth</url-pattern>
+    </servlet-mapping>
+
+    <!--Servlet For Registration-->
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>ru.job4j.servlets.RegisterServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/reg</url-pattern>
+    </servlet-mapping>
+
+    <!--Servlet For Creating Advertisements-->
+    <servlet>
+        <servlet-name>CreateAdServlet</servlet-name>
+        <servlet-class>ru.job4j.servlets.CreateAdServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CreateAdServlet</servlet-name>
+        <url-pattern>/add</url-pattern>
+    </servlet-mapping>
 </web-app>

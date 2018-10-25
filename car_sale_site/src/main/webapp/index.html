@@ -6,8 +6,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 
     <style>
+        body {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
         p {
             margin-left: 15px;
         }
@@ -58,7 +63,7 @@
         }
 
         .headDiv {
-            background-color: rgba(255, 4, 0, 0.3);
+            background-color: rgba(0, 27, 255, 0.42);
             margin-top: 15px;
             margin-left: 50px;
             margin-right: 50px;
@@ -73,20 +78,18 @@
         }
 
         .tableDivMain {
-            background-color: rgba(255, 4, 0, 0.3);
+            background-color: rgba(0, 27, 255, 0.42);
             border-radius: 10px;
             margin-top: 15px;
             margin-left: 50px;
             margin-right: 50px;
             padding: 5px;
+            border: 5px;
         }
 
-        .tableMain {
-
-        }
-
-        .tableDivItem {
-
+        .addAdModalItem {
+            margin: 15px;
+            width: 570px;
         }
 
         .multiselect-container>li>a>label {
@@ -120,6 +123,18 @@
                 drives = parsedData["drives"];
                 ads = parsedData["ads"];
 
+
+                if (parsedData["login"] == false) {
+                    document.getElementById("createAdHeader").style.visibility = "hidden";
+                    document.getElementById("headLogOut").style.visibility = "hidden";
+                    document.getElementById("headLogin").style.visibility = "visible";
+                } else {
+                    document.getElementById("headLogOut").style.visibility = "visible";
+                    document.getElementById("createAdHeader").style.visibility = "visible";
+                    document.getElementById("headLogin").style.visibility = "hidden";
+
+                }
+
                 fillMarks();
                 fillBodies();
                 fillTransmissions();
@@ -147,6 +162,8 @@
             document.getElementById("modalRudder").innerText = rudder;
             document.getElementById("modalColor").innerText = ads[adId]["car"]["carColor"]["descr"];
             document.getElementById("modalPrice").innerText = ads[adId]["car"]["price"];
+            document.getElementById("modalSeller").innerText = ads[adId]["user"]["name"];
+            document.getElementById("modalConnection").innerText = ads[adId]["user"]["email"];
 
         }
 
@@ -160,81 +177,98 @@
                                                 + "<div><label style='margin-right: 10px'>Цена: </label>" + ads[i]["car"]["price"] + "</div>"
                                                 + "<div><label style='margin-right: 10px'>Описание: </label>" + ads[i]["description"] + "</div>"
                                                 + "<div><label style='margin-right: 10px'>Цвет автомобиля: </label>" + ads[i]["car"]["carColor"]["descr"] + "</div>"
-
-                                        + "</td>\n" +
-                    "                    <td>\n" +
-                    "                        <div class=\"btn-group-vertical\">\n" +
-                    "                            <button type=\"button\" class=\"btn btn-primary\" onclick=\"fillModal(" + i + ")\" data-toggle=\"modal\" data-target=\"#adModal\">Обьявление</button>\n" +
-                    "                            <button type=\"button\" class=\"btn btn-primary\">Удалить обьявление</button>\n" +
-                    "                        </div>\n" +
-                    "                    </td></tr>";
+                                        + "</td>\n"
+                                        + "<td>\n"
+                                            +"<div class=\"btn-group-vertical\">\n"
+                                                +"<button type=\"button\" class=\"btn btn-default\" onclick=\"fillModal(" + i + ")\" data-toggle=\"modal\" data-target=\"#adModal\">Обьявление</button>\n"
+                                                + "<button type=\"button\" class=\"btn btn-default\">Удалить обьявление</button>\n"
+                                            +"</div>\n"
+                                        + "</td></tr>";
             }
         }
 
         // Метод наполнения поля выбора типа руля (левый или правый)
         function fillRudders() {
             var rudderSelect = document.getElementById("rudderSelect");
+            var modalRudderSelect = document.getElementById("modalRudderSelect");
             rudderSelect.options[1] = new Option("Левый", "true");
+            modalRudderSelect.options[1] = new Option("Левый", "true");
             rudderSelect.options[2] = new Option("Правый", "false");
+            modalRudderSelect.options[2] = new Option("Правый", "false");
         }
 
         // Метод наполнения поля выбора типа привода
         function fillDrives() {
             var driveSelect = document.getElementById("driveSelect");
+            var modalDriveSelect = document.getElementById("modalDriveSelect");
             for (var i = 0; i < bodies.length; i++) {
                 driveSelect.options[i + 1] = new Option(drives[i]["descr"], drives[i]["id"]);
+                modalDriveSelect.options[i + 1] = new Option(drives[i]["descr"], drives[i]["id"]);
             }
         }
 
         // Метод наполнения поля выбора типа двигателя (бензин, дизель и тп)
         function fillEngines() {
             var engineSelect = document.getElementById("engineSelect");
+            var modalEngineSelect = document.getElementById("modalEngineSelect");
             for (var i = 0; i < bodies.length; i++) {
                 engineSelect.options[i + 1] = new Option(engines[i]["descr"], engines[i]["id"]);
+                modalEngineSelect.options[i + 1] = new Option(engines[i]["descr"], engines[i]["id"]);
             }
         }
 
         // Метод наполнения поля выбора цветв
         function fillColor() {
             var colorSelect = document.getElementById("colorSelect");
+            var modalColorSelect = document.getElementById("modalColorSelect");
             for (var i = 0; i < bodies.length; i++) {
                 colorSelect.options[i + 1] = new Option(colors[i]["descr"], colors[i]["id"]);
+                modalColorSelect.options[i + 1] = new Option(colors[i]["descr"], colors[i]["id"]);
             }
         }
 
         // Метод наполнения поля выбора коробки передач
         function fillTransmissions() {
             var transSelect = document.getElementById("transSelect");
+            var modalTransSelect = document.getElementById("modalTransSelect");
             for (var i = 0; i < bodies.length; i++) {
                 transSelect.options[i + 1] = new Option(trans[i]["descr"], trans[i]["id"]);
+                modalTransSelect.options[i + 1] = new Option(trans[i]["descr"], trans[i]["id"]);
             }
         }
 
         // Метод наполнения поля выбора кузовов
         function fillBodies() {
             var bodySelect = document.getElementById("bodySelect");
+            var modalBodySelect = document.getElementById("modalBodySelect");
             for (var i = 0; i < bodies.length; i++) {
                 bodySelect.options[i + 1] = new Option(bodies[i]["descr"], bodies[i]["id"]);
+                modalBodySelect.options[i + 1] = new Option(bodies[i]["descr"], bodies[i]["id"]);
             }
         }
 
         // Метод наполнения поля марок автомобилей
         function fillMarks() {
             var markField = document.getElementById("marcSelect");
+            var modalMarcSelect = document.getElementById("modalMarcSelect");
             for (var i = 0; i < marks.length; i++) {
                 markField.options[i + 1] = new Option(marks[i]["descr"], marks[i]["id"]);
+                modalMarcSelect.options[i + 1] = new Option(marks[i]["descr"], marks[i]["id"]);
             }
         }
 
         // Метод наполнения поля моделей при изменении поля марки
         function onChangeMark() {
             var markValue = document.getElementById("marcSelect").value;
+            var modalMarcSelect = document.getElementById("modalMarcSelect").value;
             console.log(markValue);
             var modelField = document.getElementById("modelSelect");
+            var modalModelSelect = document.getElementById("modalModelSelect");
             for (var i = 0; i < marks.length; i++) {
-                if (marks[i]["id"] == markValue) {
+                if (marks[i]["id"] == markValue || marks[i]["id"] == modalMarcSelect) {
                     for (var j = 0; j < marks[i]["models"].length; j++) {
                         modelField.options[j + 1] = new Option(marks[i]["models"][j]["descr"], marks[i]["models"][j]["id"]);
+                        modalModelSelect.options[j + 1] = new Option(marks[i]["models"][j]["descr"], marks[i]["models"][j]["id"]);
                     }
                 }
             }
@@ -276,25 +310,97 @@
             }
         }
 
+        // Метод авторизации
+        function auth() {
+            var login = document.getElementById("login").value;
+            var password = document.getElementById("password").value;
+
+            $.ajax({
+                url: "./auth",
+                method: "post",
+                data: {
+                    login : login,
+                    password : password
+                },
+                success: function (data) {
+                    console.log(JSON.parse(data));
+                    if (JSON.parse(data)["auth"] === true) {
+                        document.location.reload();
+                    } else {
+                        document.getElementById("incorrect").innerText = "Не верный логин или пароль";
+                    }
+                }
+            });
+        }
+
+        // Метод создания небольшого окна регистрации
+        function goToRegister() {
+            window.open("./register.html", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=430,height=400");
+        }
+
+        // Метод создания обьявления
+        function createAd() {
+            $.ajax({
+                url: "./add",
+                method: "post",
+                data: {
+                    description: document.getElementById("modalAddDescr").value,
+                    year: document.getElementById("addModalYear").value,
+                    mills: document.getElementById("addModalMills").value,
+                    capacity: document.getElementById("addModalCapacity").value,
+                    power: document.getElementById("addModalPower").value,
+                    left: document.getElementById("modalRudderSelect").value,
+                    price: document.getElementById("modalAddPrice").value,
+                    body: document.getElementById("modalBodySelect").value,
+                    mark: document.getElementById("modalMarcSelect").value,
+                    trans: document.getElementById("modalTransSelect").value,
+                    engine: document.getElementById("modalEngineSelect").value,
+                    drive: document.getElementById("modalDriveSelect").value,
+                    color: document.getElementById("modalColorSelect").value,
+                    model: document.getElementById("modalModelSelect").value
+                },
+                success: function (data) {
+                    if (JSON.parse(data)["newAd"] == true) {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+
+        function signOut() {
+            $.ajax({
+                url: "./auth",
+                method: "get",
+                data: {
+                    signOut : true,
+                },
+                success: function (data) {
+                    window.location.reload();
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
     <nav class="navbar navbar-inverse" style="border-radius: 0">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="#">Auto-sell.ru</a>
+                <a class="navbar-brand">Auto-sell.ru</a>
             </div>
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Главная страница</a></li>
-                <li><a href="#">Создать обьявление</a></li>
+                <li class="active"><a onclick="document.location.reload()">Главная страница</a></li>
+                <li id="createAdHeader" style="visibility: hidden"><a href="#" data-toggle="modal" data-target="#addAdModal">Создать обьявление</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="#"  data-toggle="modal" data-target="#myModal">
-                        <span class="glyphicon glyphicon-user"></span>
-                        Войти или зарегистрироваться
+                    <a style="visibility: hidden" data-toggle="modal" data-target="#myModal" id="headLogin">
+                    <span class="glyphicon glyphicon-user"></span>
+                    Войти или зарегистрироваться
                     </a>
                 </li>
+                <li id="headLogOut" style="visibility: hidden"><a href="#" onclick="signOut()"><span class="glyphicon glyphicon-user"></span> Выйти</a></li>
+
             </ul>
         </div>
     </nav>
@@ -304,7 +410,6 @@
             <select class="form-control" id="marcSelect" onchange="onChangeMark()">
                 <option>Выберите марку</option>
             </select>
-
         </div> <!--Марка-->
         <div class="dropdown headElement">
             <select class="form-control" id="modelSelect">
@@ -320,16 +425,16 @@
             <div style="float: left; margin-top: 5px; margin-left: 5px">
                 <label>Выпуск от:</label>
             </div>
-            <div id="yearShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 47px">2018</div>
-            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="1900" max="2019" value="2018" class="slider" id="yearInput" oninput="onInputYear()">
+            <div id="yearShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 47px">Все</div>
+            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="1900" max="2019" value="2019" class="slider" id="yearInput" oninput="onInputYear()">
         </div> <!--Год выпуска-->
 
         <div class="dropdown headElement">
             <div style="float: left; margin-top: 5px; margin-left: 5px">
                 <label>Пробег км от:</label>
             </div>
-            <div id="millsShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 47px">1900</div>
-            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="0" max="900001" value="0" class="slider" id="millsInput" oninput="onInputMills()">
+            <div id="millsShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 47px">Все</div>
+            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="0" max="900001" value="900001" class="slider" id="millsInput" oninput="onInputMills()">
         </div> <!--Пробег-->
 
         <div style="clear: both"></div>
@@ -349,16 +454,16 @@
             <div style="float: left; margin-top: 5px; margin-left: 5px">
                 <label>V двигателя от:</label>
             </div>
-            <div id="capacityShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 27px">3</div>
-            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="0" max="7" value="2" class="slider" id="capacityInput" oninput="onInputCapacity()">
+            <div id="capacityShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 27px">Все</div>
+            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="0" max="7" value="7" class="slider" id="capacityInput" oninput="onInputCapacity()">
 
         </div> <!--Обьем двигателя-->
         <div class="dropdown headElement">
             <div style="float: left; margin-top: 5px; margin-left: 5px">
                 <label>Мощность от:</label>
             </div>
-            <div id="powerShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 27px">200</div>
-            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="0" max="500" value="200" class="slider" id="powerInput" oninput="onInputPower()">
+            <div id="powerShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 27px">Все</div>
+            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="0" max="500" value="500" class="slider" id="powerInput" oninput="onInputPower()">
         </div> <!--Мощность-->
         <div class="dropdown headElement">
             <select class="form-control" id="driveSelect">
@@ -393,7 +498,7 @@
 
     </div>
 
-    <div class="tableDivMain">
+    <div class="tableDivMain border">
         <table class="table table-hover" id="usersTable">
             <thead>
             <tr>
@@ -402,18 +507,7 @@
                 <th style="width: 150px">(действия)</th>
             </tr>
             </thead>
-            <tbody id="tableBody">
-                <tr>
-                    <td>1234567</td>
-                    <td>Самая крутая машина</td>
-                    <td>
-                        <div class="btn-group-vertical">
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#adModal">Обьявление</button>
-                            <button type="button" class="btn btn-primary">Удалить обьявление</button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
+            <tbody id="tableBody"></tbody>
         </table>
     </div>
 
@@ -428,16 +522,17 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="usr">Логин:</label>
-                        <input type="text" class="form-control" id="usr">
+                        <label for="login">Логин:</label>
+                        <input type="text" class="form-control" id="login">
                     </div>
                     <div class="form-group">
-                        <label for="pwd">Пароль:</label>
-                        <input type="password" class="form-control" id="pwd">
+                        <label for="password">Пароль:</label>
+                        <input type="password" class="form-control" id="password">
                     </div>
                     <div class="btn-group" style="margin-left: 160px">
-                        <button type="button" class="btn btn-default">Войти</button>
-                        <button type="button" class="btn btn-default">Зарегистрироваться</button>
+                        <button type="button" class="btn btn-default" onclick="auth()">Войти</button>
+                        <button type="button" class="btn btn-default" onclick="goToRegister()">Зарегистрироваться</button>
+                        <div id="incorrect"></div>
                     </div>
                 </div>
             </div>
@@ -549,6 +644,92 @@
                         <p class="form-control-static" id="modalConnection"></p>
                     </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модал для добавления обьявления -->
+    <div id="addAdModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+
+                <div class="dropdown addAdModalItem">
+                    <select class="form-control" id="modalMarcSelect" onchange="onChangeMark()">
+                        <option>Выберите марку</option>
+                    </select>
+                </div> <!--Марка-->
+
+                <div class="dropdown addAdModalItem">
+                    <select class="form-control" id="modalModelSelect">
+                        <option>Выберите модель</option>
+                    </select>
+                </div> <!--Модель-->
+
+                <div class="dropdown addAdModalItem">
+                    <select class="form-control" id="modalBodySelect">
+                        <option>Выберите тип кузова</option>
+                    </select>
+                </div> <!--Тип кузова-->
+
+                <div class="input-group addAdModalItem">
+                    <input id="addModalYear" type="number" class="form-control" placeholder="Введите год выпуска">
+                </div> <!--Год выпуска-->
+
+                <div class="input-group addAdModalItem">
+                    <input id="addModalMills" type="number" class="form-control" placeholder="Введите пробег">
+                </div><!--Пробег-->
+
+                <div class="dropdown addAdModalItem">
+                    <select class="form-control" id="modalTransSelect">
+                        <option>Выберите коробку передач</option>
+                    </select>
+                </div> <!--Коробка передач-->
+
+                <div class="dropdown addAdModalItem">
+                    <select class="form-control" id="modalEngineSelect">
+                        <option>Выберите тип двигателя</option>
+                    </select>
+                </div> <!--Тип двигателя-->
+
+                <div class="input-group addAdModalItem">
+                    <input id="addModalCapacity" type="number" class="form-control" placeholder="Введите обьем двигателя">
+                </div><!--Обьем двигателя-->
+
+                <div class="input-group addAdModalItem">
+                    <input id="addModalPower" type="number" class="form-control" placeholder="Введите мощность двигателя">
+                </div> <!--Мощность-->
+
+                <div class="dropdown addAdModalItem">
+                    <select class="form-control" id="modalDriveSelect">
+                        <option>Выберите привод</option>
+                    </select>
+                </div> <!--Привод-->
+
+                <div class="dropdown addAdModalItem">
+                    <select class="form-control" id="modalRudderSelect">
+                        <option>Выберите руль</option>
+                    </select>
+                </div> <!--Руль-->
+
+                <div class="dropdown addAdModalItem">
+                    <select class="form-control" id="modalColorSelect">
+                        <option>Выберите цвет</option>
+                    </select>
+                </div> <!--Цвет-->
+
+                <div class="input-group addAdModalItem">
+                    <input id="modalAddPrice" type="number" class="form-control" name="msg" placeholder="Цена">
+                </div> <!--Цена-->
+
+                <div class="input-group addAdModalItem">
+                    <input id="modalAddDescr" type="text" class="form-control" name="msg" placeholder="Описание">
+                </div> <!--Описание-->
+
+                <div class="input-group addAdModalItem">
+                    <button type="button" class="btn btn-success" style="width: 100%" onclick="createAd()">Создать обьявление</button>
                 </div>
             </div>
         </div>
