@@ -14,6 +14,7 @@ public class User {
     private String name;
     private String login;
     private String password;
+
     private Role role;
     private List<Advertisement> advertisements;
 

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        p {
+            margin-left: 15px;
+        }
+
+        .labelModal {
+            width: 200px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 25px;
+            background: #67d30e;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: rgba(94, 99, 175, 0.57);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: rgba(43, 63, 175, 0.64);
+            cursor: pointer;
+        }
+
+        .footer {
+            position: absolute;
+            margin-left: 50%;
+            transform: translateX(-50%);
+        }
+
+        th {
+            text-align: center;
+        }
+
+        .headDiv {
+            background-color: rgba(255, 4, 0, 0.3);
+            margin-top: 15px;
+            margin-left: 50px;
+            margin-right: 50px;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .headElement {
+            float: left;
+            width: 20%;
+            padding: 1px;
+        }
+
+        .tableDivMain {
+            background-color: rgba(255, 4, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 15px;
+            margin-left: 50px;
+            margin-right: 50px;
+            padding: 5px;
+        }
+
+        .tableMain {
+
+        }
+
+        .tableDivItem {
+
+        }
+
+        .multiselect-container>li>a>label {
+            padding: 4px 20px 3px 20px;
+        }
+    </style>
+
+    <script>
+
+        var marks = [];
+        var bodies = [];
+        var trans = [];
+        var colors = [];
+        var engines = [];
+        var drives = [];
+        var ads = [];
+
+        // Метод, старабывающий при загрузке страницы
+        // Наполняет HTML дефолтными данными
+        $.ajax({
+            url: "./list",
+            method: "get",
+            success: function (data) {
+                var parsedData = JSON.parse(data);
+                console.log(parsedData);
+                marks = parsedData["marks"];
+                bodies = parsedData["bodies"];
+                trans = parsedData["transmissions"];
+                colors = parsedData["colors"];
+                engines = parsedData["engines"];
+                drives = parsedData["drives"];
+                ads = parsedData["ads"];
+
+                fillMarks();
+                fillBodies();
+                fillTransmissions();
+                fillColor();
+                fillEngines();
+                fillDrives();
+                fillRudders();
+                fillAds();
+            }
+        });
+
+        // Метод наполнения модала данными из обьявления
+        function fillModal(adId) {
+            document.getElementById("modalMark").innerText = ads[adId]["car"]["mark"]["descr"];
+            document.getElementById("modalModel").innerText = "в разработке";
+            document.getElementById("modalBody").innerText = ads[adId]["car"]["bodyType"]["descr"];
+            document.getElementById("modalYear").innerText = ads[adId]["car"]["yearOfManufactured"];
+            document.getElementById("modalMills").innerText = ads[adId]["car"]["mileage"];
+            document.getElementById("modalTrans").innerText = ads[adId]["car"]["transmission"]["descr"];
+            document.getElementById("modalEngine").innerText = ads[adId]["car"]["engine"]["descr"];
+            document.getElementById("modalEngineCapacity").innerText = ads[adId]["car"]["engineCapacity"];
+            document.getElementById("modalPower").innerText = ads[adId]["car"]["power"];
+            document.getElementById("modalDrive").innerText = ads[adId]["car"]["drive"]["descr"];
+            var rudder = (ads[adId]["car"]["leftRudder"] == true) ? "Леворульная" : "Праворульная";
+            document.getElementById("modalRudder").innerText = rudder;
+            document.getElementById("modalColor").innerText = ads[adId]["car"]["carColor"]["descr"];
+            document.getElementById("modalPrice").innerText = ads[adId]["car"]["price"];
+
+        }
+
+        // Метод наполнения таблицы обьявлений
+        function fillAds() {
+            var tableAds = document.getElementById("tableBody");
+            for (var i = 0; i < ads.length; i++) {
+                tableAds.innerHTML += "<tr><td>" + ads[i]["id"] + "</td>\n" +
+                                            "<td> "
+                                                + "<div><label style='margin-right: 10px'>Марка: </label>" + ads[i]["car"]["mark"]["descr"] + "</div>"
+                                                + "<div><label style='margin-right: 10px'>Цена: </label>" + ads[i]["car"]["price"] + "</div>"
+                                                + "<div><label style='margin-right: 10px'>Описание: </label>" + ads[i]["description"] + "</div>"
+                                                + "<div><label style='margin-right: 10px'>Цвет автомобиля: </label>" + ads[i]["car"]["carColor"]["descr"] + "</div>"
+
+                                        + "</td>\n" +
+                    "                    <td>\n" +
+                    "                        <div class=\"btn-group-vertical\">\n" +
+                    "                            <button type=\"button\" class=\"btn btn-primary\" onclick=\"fillModal(" + i + ")\" data-toggle=\"modal\" data-target=\"#adModal\">Обьявление</button>\n" +
+                    "                            <button type=\"button\" class=\"btn btn-primary\">Удалить обьявление</button>\n" +
+                    "                        </div>\n" +
+                    "                    </td></tr>";
+            }
+        }
+
+        // Метод наполнения поля выбора типа руля (левый или правый)
+        function fillRudders() {
+            var rudderSelect = document.getElementById("rudderSelect");
+            rudderSelect.options[1] = new Option("Левый", "true");
+            rudderSelect.options[2] = new Option("Правый", "false");
+        }
+
+        // Метод наполнения поля выбора типа привода
+        function fillDrives() {
+            var driveSelect = document.getElementById("driveSelect");
+            for (var i = 0; i < bodies.length; i++) {
+                driveSelect.options[i + 1] = new Option(drives[i]["descr"], drives[i]["id"]);
+            }
+        }
+
+        // Метод наполнения поля выбора типа двигателя (бензин, дизель и тп)
+        function fillEngines() {
+            var engineSelect = document.getElementById("engineSelect");
+            for (var i = 0; i < bodies.length; i++) {
+                engineSelect.options[i + 1] = new Option(engines[i]["descr"], engines[i]["id"]);
+            }
+        }
+
+        // Метод наполнения поля выбора цветв
+        function fillColor() {
+            var colorSelect = document.getElementById("colorSelect");
+            for (var i = 0; i < bodies.length; i++) {
+                colorSelect.options[i + 1] = new Option(colors[i]["descr"], colors[i]["id"]);
+            }
+        }
+
+        // Метод наполнения поля выбора коробки передач
+        function fillTransmissions() {
+            var transSelect = document.getElementById("transSelect");
+            for (var i = 0; i < bodies.length; i++) {
+                transSelect.options[i + 1] = new Option(trans[i]["descr"], trans[i]["id"]);
+            }
+        }
+
+        // Метод наполнения поля выбора кузовов
+        function fillBodies() {
+            var bodySelect = document.getElementById("bodySelect");
+            for (var i = 0; i < bodies.length; i++) {
+                bodySelect.options[i + 1] = new Option(bodies[i]["descr"], bodies[i]["id"]);
+            }
+        }
+
+        // Метод наполнения поля марок автомобилей
+        function fillMarks() {
+            var markField = document.getElementById("marcSelect");
+            for (var i = 0; i < marks.length; i++) {
+                markField.options[i + 1] = new Option(marks[i]["descr"], marks[i]["id"]);
+            }
+        }
+
+        // Метод наполнения поля моделей при изменении поля марки
+        function onChangeMark() {
+            var markValue = document.getElementById("marcSelect").value;
+            console.log(markValue);
+            var modelField = document.getElementById("modelSelect");
+            for (var i = 0; i < marks.length; i++) {
+                if (marks[i]["id"] == markValue) {
+                    for (var j = 0; j < marks[i]["models"].length; j++) {
+                        modelField.options[j + 1] = new Option(marks[i]["models"][j]["descr"], marks[i]["models"][j]["id"]);
+                    }
+                }
+            }
+        }
+
+        // Метод вывода года при вводе
+        function onInputYear() {
+            if (document.getElementById("yearInput").value == 2019) {
+                document.getElementById("yearShow").innerText = "Все";
+            } else {
+                document.getElementById("yearShow").innerText = document.getElementById("yearInput").value;
+            }
+        }
+
+        // Метод вывода пробега при вводе
+        function onInputMills() {
+            if (document.getElementById("millsInput").value == 900001) {
+                document.getElementById("millsShow").innerText = "Все";
+            } else {
+                document.getElementById("millsShow").innerText = document.getElementById("millsInput").value;
+            }
+        }
+
+        // Метод вывода обьема двигателя при вводе
+        function onInputCapacity() {
+            if (document.getElementById("capacityInput").value == 7) {
+                document.getElementById("capacityShow").innerText = "Все";
+            } else {
+                document.getElementById("capacityShow").innerText = document.getElementById("capacityInput").value;
+            }
+        }
+
+        // Метод вывода мощности двигателя при вводе
+        function onInputPower() {
+            if (document.getElementById("powerInput").value == 500) {
+                document.getElementById("powerShow").innerText = "Все";
+            } else {
+                document.getElementById("powerShow").innerText = document.getElementById("powerInput").value;
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-inverse" style="border-radius: 0">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Auto-sell.ru</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Главная страница</a></li>
+                <li><a href="#">Создать обьявление</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#"  data-toggle="modal" data-target="#myModal">
+                        <span class="glyphicon glyphicon-user"></span>
+                        Войти или зарегистрироваться
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="headDiv">
+        <div class="dropdown headElement">
+            <select class="form-control" id="marcSelect" onchange="onChangeMark()">
+                <option>Выберите марку</option>
+            </select>
+
+        </div> <!--Марка-->
+        <div class="dropdown headElement">
+            <select class="form-control" id="modelSelect">
+                <option>Выберите модель</option>
+            </select>
+        </div> <!--Модель-->
+        <div class="dropdown headElement">
+            <select class="form-control" id="bodySelect">
+                <option>Выберите тип кузова</option>
+            </select>
+        </div> <!--Тип кузова-->
+        <div class="dropdown headElement">
+            <div style="float: left; margin-top: 5px; margin-left: 5px">
+                <label>Выпуск от:</label>
+            </div>
+            <div id="yearShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 47px">2018</div>
+            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="1900" max="2019" value="2018" class="slider" id="yearInput" oninput="onInputYear()">
+        </div> <!--Год выпуска-->
+
+        <div class="dropdown headElement">
+            <div style="float: left; margin-top: 5px; margin-left: 5px">
+                <label>Пробег км от:</label>
+            </div>
+            <div id="millsShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 47px">1900</div>
+            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="0" max="900001" value="0" class="slider" id="millsInput" oninput="onInputMills()">
+        </div> <!--Пробег-->
+
+        <div style="clear: both"></div>
+
+        <div class="dropdown headElement">
+            <select class="form-control" id="transSelect">
+                <option>Выберите коробку передач</option>
+            </select>
+
+        </div> <!--Коробка передач-->
+        <div class="dropdown headElement">
+            <select class="form-control" id="engineSelect">
+                <option>Выберите тип двигателя</option>
+            </select>
+        </div> <!--Тип двигателя-->
+        <div class="dropdown headElement">
+            <div style="float: left; margin-top: 5px; margin-left: 5px">
+                <label>V двигателя от:</label>
+            </div>
+            <div id="capacityShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 27px">3</div>
+            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="0" max="7" value="2" class="slider" id="capacityInput" oninput="onInputCapacity()">
+
+        </div> <!--Обьем двигателя-->
+        <div class="dropdown headElement">
+            <div style="float: left; margin-top: 5px; margin-left: 5px">
+                <label>Мощность от:</label>
+            </div>
+            <div id="powerShow" style="float: left; margin-left: 3px; margin-top: 5px; width: 27px">200</div>
+            <input style="float: left; width: auto; margin-left: 3px; margin-top: 3px" type="range" min="0" max="500" value="200" class="slider" id="powerInput" oninput="onInputPower()">
+        </div> <!--Мощность-->
+        <div class="dropdown headElement">
+            <select class="form-control" id="driveSelect">
+                <option>Выберите привод</option>
+            </select>
+        </div> <!--Привод-->
+
+        <div style="clear: both"></div>
+
+        <div class="dropdown headElement">
+            <select class="form-control" id="rudderSelect">
+                <option>Выберите руль</option>
+            </select>
+        </div> <!--Руль-->
+        <div class="dropdown headElement">
+            <select class="form-control" id="colorSelect">
+                <option>Выберите цвет</option>
+            </select>
+        </div> <!--Цвет-->
+        <div class="input-group headElement">
+            <span class="input-group-addon">Цена от</span>
+            <input id="priceFrom" type="number" class="form-control" name="msg" placeholder="введите цену">
+        </div>
+        <div class="input-group headElement">
+            <span class="input-group-addon">Цена до</span>
+            <input id="priceTo" type="number" class="form-control" name="msg" placeholder="введите цену">
+        </div>
+        <div class="input-group headElement">
+            <button type="button" class="btn btn-success" style="width: 100%">Найти</button>
+        </div>
+        <div style="clear: both"></div>
+
+    </div>
+
+    <div class="tableDivMain">
+        <table class="table table-hover" id="usersTable">
+            <thead>
+            <tr>
+                <th style="width: 15%">Id</th>
+                <th style="width: 65%">Описание обьявления</th>
+                <th style="width: 150px">(действия)</th>
+            </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr>
+                    <td>1234567</td>
+                    <td>Самая крутая машина</td>
+                    <td>
+                        <div class="btn-group-vertical">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#adModal">Обьявление</button>
+                            <button type="button" class="btn btn-primary">Удалить обьявление</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Модал авторизации -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div style="background-color: aqua; border-radius: 15px; margin: 20px; padding: 10px">
+                    <div style="text-align: center">
+                        <h2>Авторизация</h2>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="usr">Логин:</label>
+                        <input type="text" class="form-control" id="usr">
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">Пароль:</label>
+                        <input type="password" class="form-control" id="pwd">
+                    </div>
+                    <div class="btn-group" style="margin-left: 160px">
+                        <button type="button" class="btn btn-default">Войти</button>
+                        <button type="button" class="btn btn-default">Зарегистрироваться</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Модал для обьявления -->
+    <div id="adModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div style="background-color: aqua; border-radius: 15px; margin: 20px; padding: 10px">
+                    <div style="text-align: center">
+                        <h2>Информация об обьявлении</h2>
+                    </div>
+                    <div>
+                    <!--Марка-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalMark">Марка:</label>
+                        <p class="form-control-static" id="modalMark"></p>
+                    </div>
+
+                    <!--Модель-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalModel">Модель:</label>
+                        <p class="form-control-static" id="modalModel"></p>
+                    </div>
+
+                    <!--Тип кузова-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalBody">Тип кузова:</label>
+                        <p class="form-control-static" id="modalBody"></p>
+                    </div>
+
+                    <!--Год выпуска-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalYear">Год выпуска:</label>
+                        <p class="form-control-static" id="modalYear"></p>
+                    </div>
+
+                    <!--Пробег-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalMills">Пробег:</label>
+                        <p class="form-control-static" id="modalMills"></p>
+                    </div>
+
+                    <!--Коробка передач-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalTrans">Коробка передач:</label>
+                        <p class="form-control-static" id="modalTrans"></p>
+                    </div>
+
+                    <!--Тип двигателя-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalEngine">Тип двигателя:</label>
+                        <p class="form-control-static" id="modalEngine"></p>
+                    </div>
+
+                    <!--обьем двигателя-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalEngineCapacity">Обьем двигателя:</label>
+                        <p class="form-control-static" id="modalEngineCapacity"></p>
+                    </div>
+
+                    <!--Мощность двигателя-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalPower">Мощность двигателя:</label>
+                        <p class="form-control-static" id="modalPower"></p>
+                    </div>
+
+
+                    <!--Привод-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalDrive">Привод:</label>
+                        <p class="form-control-static" id="modalDrive"></p>
+                    </div>
+
+                    <!--Тип руля-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalRudder">Тип руля:</label>
+                        <p class="form-control-static" id="modalRudder"></p>
+                    </div>
+
+
+                    <!--Цвет-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalColor">Цвет:</label>
+                        <p class="form-control-static" id="modalColor"></p>
+                    </div>
+
+                    <!--Цена-->
+                    <div class="form-group elementInForm">
+                        <label class="control-label col-sm-2 labelModal" for="modalPrice">Цена:</label>
+                        <p class="form-control-static" id="modalPrice"></p>
+                    </div>
+
+
+                    <!--Логин продавца-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalSeller">Продавец:</label>
+                        <p class="form-control-static" id="modalSeller"></p>
+                    </div>
+
+                    <!--Телефон продавца (или почта)-->
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 labelModal" for="modalConnection">Связь с продавцом:</label>
+                        <p class="form-control-static" id="modalConnection"></p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

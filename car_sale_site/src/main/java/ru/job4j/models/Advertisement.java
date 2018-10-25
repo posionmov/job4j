@@ -1,5 +1,7 @@
 package ru.job4j.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.job4j.models.cars.Car;
 
 import java.sql.Timestamp;
@@ -15,9 +17,10 @@ public class Advertisement {
     private int id;
     private String description;
     private Timestamp createDate;
-    private User creator;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Car car;
-    private boolean isClose;
+    private boolean close;
 
     public Advertisement() {
 
@@ -51,22 +54,6 @@ public class Advertisement {
         this.createDate = createDate;
     }
 
-    public User getCreator() {
-        return creator;
-    }
-
-    public void setCreator(User creator) {
-        this.creator = creator;
-    }
-
-    public boolean isClose() {
-        return isClose;
-    }
-
-    public void setClose(boolean close) {
-        isClose = close;
-    }
-
     public Car getCar() {
         return car;
     }
@@ -75,13 +62,22 @@ public class Advertisement {
         this.car = car;
     }
 
+    public boolean getClose() {
+        return close;
+    }
+
+    public void setClose(boolean close) {
+        this.close = close;
+    }
+
     @Override
     public String toString() {
-        return "Advertisement{" + "id=" + id
-                + ", description='" + description + '\''
-                + ", createDate=" + createDate
-                + ", creator=" + creator
-                + ", car=" + car
-                + ", isClose=" + isClose + '}';
+        return "Advertisement{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", createDate=" + createDate +
+                ", car=" + car +
+                ", isClose=" + close +
+                '}';
     }
 }

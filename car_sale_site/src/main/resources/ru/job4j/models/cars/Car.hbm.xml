@@ -1,0 +1,24 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="ru.job4j.models.cars.Car" table="cars">
+        <id name="id" column="id">
+            <generator class="identity"/>
+        </id>
+        <property name="descr" column="description"/>
+        <property name="yearOfManufactured" column="year"/>
+        <property name="mileage" column="mileage"/>
+        <property name="engineCapacity" column="eng_capacity"/>
+        <property name="power" column="eng_pow"/>
+        <property name="leftRudder" column="left_rud"/>
+        <property name="price" column="price"/>
+
+        <many-to-one name="bodyType" column="body_id" class="ru.job4j.models.cars.CarBodyType" fetch="join"/>
+        <many-to-one name="mark" column="mark_id" class="ru.job4j.models.cars.CarMark" fetch="join"/>
+        <many-to-one name="transmission" column="trans_id" class="ru.job4j.models.cars.CarTransmission" fetch="join"/>
+        <many-to-one name="engine" column="engine_id" class="ru.job4j.models.cars.CarEngine" fetch="join"/>
+        <many-to-one name="drive" column="drive_id" class="ru.job4j.models.cars.CarDrive" fetch="join"/>
+        <many-to-one name="carColor" column="color_id" class="ru.job4j.models.cars.CarColor" fetch="join"/>
+
+    </class>
+</hibernate-mapping>

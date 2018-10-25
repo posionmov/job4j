@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.url">jdbc:postgresql://localhost:5432/carstore</property>
+        <property name="connection.driver_class">org.postgresql.Driver</property>
+        <property name="connection.username">sergey</property>
+        <property name="connection.password"></property>
+
+        <property name="show_sql">true</property> <!--Показывать в терминале sql запросы-->
+        <!--<property name="hbm2ddl.auto">create</property> &lt;!&ndash;Автоматически создавать таблицы&ndash;&gt;-->
+        <property name="dialect">org.hibernate.dialect.PostgreSQL94Dialect</property>
+        <property name="hibernate.enable_lazy_load_no_trans">true</property> <!--todo прочитать про это-->
+
+        <property name="hibernate.c3p0.min_size">5</property> <!--Минимальный размер пула -->
+        <property name="hibernate.c3p0.max_size">20</property> <!-- Максимальный размер пула-->
+        <property name="hibernate.c3p0.timeout">5</property> <!-- Время работы (в секундах) одного пула-->
+        <property name="hibernate.c3p0.max_statements">50</property> <!-- размер кэша PreparedStatement в пуле -->
+        <property name="hibernate.c3p0.idle_test_period">5</property> <!-- время проверки потока. если поток бездействует больше данного промежута времени, то он отключается -->
+
+        <!--Маппинг при поомщи XML-->
+        <mapping resource="ru/job4j/models/cars/CarBodyType.hbm.xml"/> <!-- Маппинг-->
+        <mapping resource="ru/job4j/models/cars/CarColor.hbm.xml"/> <!-- Маппинг-->
+        <mapping resource="ru/job4j/models/cars/CarDrive.hbm.xml"/> <!-- Маппинг-->
+        <mapping resource="ru/job4j/models/cars/CarEngine.hbm.xml"/> <!-- Маппинг-->
+        <mapping resource="ru/job4j/models/cars/CarModel.hbm.xml"/> <!-- Маппинг-->
+        <mapping resource="ru/job4j/models/cars/CarTransmission.hbm.xml"/> <!-- Маппинг-->
+        <mapping resource="ru/job4j/models/cars/CarMark.hbm.xml"/> <!-- Маппинг-->
+        <mapping resource="ru/job4j/models/cars/Car.hbm.xml"/> <!-- Маппинг-->
+
+        <mapping resource="ru/job4j/models/Role.hbm.xml"/>
+        <mapping resource="ru/job4j/models/Advertisement.hbm.xml"/>
+        <mapping resource="ru/job4j/models/User.hbm.xml"/>
+    </session-factory>
+</hibernate-configuration>

@@ -1,0 +1,20 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="ru.job4j.models.User" table="users">
+        <id name="id" column="id">
+            <generator class="identity"/>
+        </id>
+        <property name="name" column="u_name"/>
+        <property name="login" column="u_login"/>
+        <property name="password" column="u_password"/>
+        <many-to-one name="role" column="role_id" class="ru.job4j.models.Role"/>
+        <bag name="advertisements">
+            <key>
+                <column name="ad_id"/>
+            </key>
+            <one-to-many class="ru.job4j.models.Advertisement"/>
+        </bag>
+
+    </class>
+</hibernate-mapping>
