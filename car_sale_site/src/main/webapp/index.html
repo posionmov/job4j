@@ -52,12 +52,6 @@
             cursor: pointer;
         }
 
-        .footer {
-            position: absolute;
-            margin-left: 50%;
-            transform: translateX(-50%);
-        }
-
         th {
             text-align: center;
         }
@@ -149,7 +143,7 @@
         // Метод наполнения модала данными из обьявления
         function fillModal(adId) {
             document.getElementById("modalMark").innerText = ads[adId]["car"]["mark"]["descr"];
-            document.getElementById("modalModel").innerText = "в разработке";
+            document.getElementById("modalModel").innerText = ads[adId]["car"]["carModel"]["descr"];
             document.getElementById("modalBody").innerText = ads[adId]["car"]["bodyType"]["descr"];
             document.getElementById("modalYear").innerText = ads[adId]["car"]["yearOfManufactured"];
             document.getElementById("modalMills").innerText = ads[adId]["car"]["mileage"];
@@ -170,6 +164,7 @@
         // Метод наполнения таблицы обьявлений
         function fillAds() {
             var tableAds = document.getElementById("tableBody");
+            tableAds.innerHTML = "";
             for (var i = 0; i < ads.length; i++) {
                 tableAds.innerHTML += "<tr><td>" + ads[i]["id"] + "</td>\n" +
                                             "<td> "
@@ -367,6 +362,8 @@
             });
         }
 
+        // Метод выхода
+        // Уничтожает данные в сессии и перезагружает страницу
         function signOut() {
             $.ajax({
                 url: "./auth",
@@ -376,6 +373,45 @@
                 },
                 success: function (data) {
                     window.location.reload();
+                }
+            });
+        }
+
+        // Метод поиска по обьявлениям
+        function findAds() {
+
+            var from = document.getElementById("priceFrom").value == "" ? 0 : document.getElementById("priceFrom").value;
+            var to = document.getElementById("priceTo").value == "" ? 0 : document.getElementById("priceTo").value;
+
+            var year = document.getElementById("yearInput").value == 2019 ? 0 : document.getElementById("yearInput").value;
+            var mills = document.getElementById("millsInput").value == 900001 ? 0 : document.getElementById("millsInput").value;
+            var capacity = document.getElementById("capacityInput").value == 7 ? 0 : document.getElementById("capacityInput").value;
+            var power = document.getElementById("powerInput").value == 500 ? 0 : document.getElementById("powerInput").value;
+
+
+            $.ajax({
+                url: "./search",
+                method: "get",
+                data: {
+                    mark : document.getElementById("marcSelect").value,
+                    model : document.getElementById("modelSelect").value,
+                    body : document.getElementById("bodySelect").value,
+                    year : year,
+                    mileage : mills,
+                    trans : document.getElementById("transSelect").value,
+                    engine : document.getElementById("engineSelect").value,
+                    capacity : capacity,
+                    power : power,
+                    drive : document.getElementById("driveSelect").value,
+                    left : document.getElementById("rudderSelect").value,
+                    color : document.getElementById("colorSelect").value,
+                    priceFrom : from,
+                    priceTo : to
+                },
+                success: function (data) {
+                    console.log(JSON.parse(data));
+                    ads = JSON.parse(data)["ads"];
+                    fillAds()
                 }
             });
         }
@@ -408,17 +444,17 @@
     <div class="headDiv">
         <div class="dropdown headElement">
             <select class="form-control" id="marcSelect" onchange="onChangeMark()">
-                <option>Выберите марку</option>
+                <option value="0">Выберите марку</option>
             </select>
         </div> <!--Марка-->
         <div class="dropdown headElement">
             <select class="form-control" id="modelSelect">
-                <option>Выберите модель</option>
+                <option value="0">Выберите модель</option>
             </select>
         </div> <!--Модель-->
         <div class="dropdown headElement">
             <select class="form-control" id="bodySelect">
-                <option>Выберите тип кузова</option>
+                <option value="0">Выберите тип кузова</option>
             </select>
         </div> <!--Тип кузова-->
         <div class="dropdown headElement">
@@ -441,13 +477,13 @@
 
         <div class="dropdown headElement">
             <select class="form-control" id="transSelect">
-                <option>Выберите коробку передач</option>
+                <option value="0">Выберите коробку передач</option>
             </select>
 
         </div> <!--Коробка передач-->
         <div class="dropdown headElement">
             <select class="form-control" id="engineSelect">
-                <option>Выберите тип двигателя</option>
+                <option value="0">Выберите тип двигателя</option>
             </select>
         </div> <!--Тип двигателя-->
         <div class="dropdown headElement">
@@ -467,7 +503,7 @@
         </div> <!--Мощность-->
         <div class="dropdown headElement">
             <select class="form-control" id="driveSelect">
-                <option>Выберите привод</option>
+                <option value="0">Выберите привод</option>
             </select>
         </div> <!--Привод-->
 
@@ -475,12 +511,12 @@
 
         <div class="dropdown headElement">
             <select class="form-control" id="rudderSelect">
-                <option>Выберите руль</option>
+                <option value="true">Выберите руль</option>
             </select>
         </div> <!--Руль-->
         <div class="dropdown headElement">
             <select class="form-control" id="colorSelect">
-                <option>Выберите цвет</option>
+                <option value="0">Выберите цвет</option>
             </select>
         </div> <!--Цвет-->
         <div class="input-group headElement">
@@ -492,7 +528,7 @@
             <input id="priceTo" type="number" class="form-control" name="msg" placeholder="введите цену">
         </div>
         <div class="input-group headElement">
-            <button type="button" class="btn btn-success" style="width: 100%">Найти</button>
+            <button type="button" class="btn btn-success" style="width: 100%" onclick="findAds()">Найти</button>
         </div>
         <div style="clear: both"></div>
 

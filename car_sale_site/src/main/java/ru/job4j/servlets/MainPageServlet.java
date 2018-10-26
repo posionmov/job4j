@@ -23,7 +23,6 @@ public class MainPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setCharacterEncoding("utf-8");
         List<Advertisement> ads = DbStore.INSTANCE.getAllAd();
         List<CarMark> marks = DbStore.INSTANCE.getAllMarks();
         List<CarTransmission> transmissions = DbStore.INSTANCE.getAllTransmissions();

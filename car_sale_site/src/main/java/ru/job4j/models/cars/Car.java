@@ -144,22 +144,20 @@ public class Car {
 
     @Override
     public String toString() {
-        return "Car{" +
-                "id=" + id +
-                ", descr='" + descr + '\'' +
-                ", yearOfManufactured=" + yearOfManufactured +
-                ", mileage=" + mileage +
-                ", engineCapacity=" + engineCapacity +
-                ", power=" + power +
-                ", leftRudder=" + leftRudder +
-                ", price=" + price +
-                ", bodyType=" + bodyType +
-                ", mark=" + mark +
-                ", transmission=" + transmission +
-                ", engine=" + engine +
-                ", drive=" + drive +
-                ", carColor=" + carColor +
-                ", carModel=" + carModel +
-                '}';
+        return "Car{" + "id=" + id
+                + ", descr='" + descr + '\''
+                + ", yearOfManufactured=" + yearOfManufactured
+                + ", mileage=" + mileage
+                + ", engineCapacity=" + engineCapacity
+                + ", power=" + power
+                + ", leftRudder=" + leftRudder
+                + ", price=" + price
+                + ", bodyType=" + bodyType
+                + ", mark=" + mark
+                + ", transmission=" + transmission
+                + ", engine=" + engine
+                + ", drive=" + drive
+                + ", carColor=" + carColor
+                + ", carModel=" + carModel + '}';
     }
 }

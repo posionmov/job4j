@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 public class CreateAdServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged")!= null) {
+        if (req.getSession().getAttribute("logged") != null) {
             User user = (User) req.getSession().getAttribute("logged");
 
             Car car = new Car();

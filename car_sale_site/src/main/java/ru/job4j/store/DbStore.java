@@ -171,6 +171,40 @@ public class DbStore implements Store {
         return tx(session -> session.createQuery("from User ").list());
     }
 
+    @Override
+    public List<Advertisement> findAd(Advertisement ad, int priceFrom, int priceTo) {
+        List<Advertisement> result = null;
+        String query = "from Advertisement ad where ";
+        query += ad.getCar().getMark().getId() != 0 ? " ad.car.mark.id = " + ad.getCar().getMark().getId() + " and" : "";
+        query += ad.getCar().getCarModel().getId() != 0 ? " ad.car.carModel.id = " + ad.getCar().getCarModel().getId() + " and" : "";
+        query += ad.getCar().getBodyType().getId() != 0 ? " ad.car.bodyType.id = " + ad.getCar().getBodyType().getId() + " and" : "";
+        query += ad.getCar().getYearOfManufactured() != 0 ? " ad.car.yearOfManufactured >= " + ad.getCar().getYearOfManufactured() + " and" : "";
+        query += ad.getCar().getMileage() != 0 ? " ad.car.mileage >= " + ad.getCar().getMileage() + " and" : "";
+        query += ad.getCar().getTransmission().getId() != 0 ? " ad.car.transmission.id = " + ad.getCar().getTransmission().getId() + " and" : "";
+        query += ad.getCar().getEngine().getId() != 0 ? " ad.car.engine.id = " + ad.getCar().getEngine().getId() + " and" : "";
+        query += ad.getCar().getEngineCapacity() != 0 ? " ad.car.engineCapacity >= " + ad.getCar().getEngineCapacity() + " and" : "";
+        query += ad.getCar().getPower() != 0 ? " ad.car.power >= " + ad.getCar().getPower() + " and" : "";
+        query += ad.getCar().getDrive().getId() != 0 ? " ad.car.drive.id = " + ad.getCar().getDrive().getId() + " and" : "";
+        query += " ad.car.leftRudder = " + ad.getCar().isLeftRudder() + " and";
+        query += ad.getCar().getCarColor().getId() != 0 ? " ad.car.carColor.id = " + ad.getCar().getCarColor().getId() + " and" : "";
+        query += priceFrom != 0 ? " ad.car.price >= " + priceFrom + " and" : "";
+        query += priceTo != 0 ? " ad.car.price <= " + priceTo + " and" : "";
+        query = query.substring(0, query.length() - 3);
+        String finalQuery = query;
+
+        System.out.println("query = " + query);
+
+        List dbData = this.tx(session -> {
+            Query res = session.createQuery(finalQuery);
+            return res.list();
+        });
+        result = dbData;
+
+        return result;
+    }
+
+
+
     /**
      * Метод, принимающий в себя лямбда выражение и производящий её выполненеи
      * @param command

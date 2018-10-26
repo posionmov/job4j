@@ -88,12 +88,10 @@ public class Advertisement {
 
     @Override
     public String toString() {
-        return "Advertisement{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", createDate=" + createDate +
-                ", car=" + car +
-                ", isClose=" + close +
-                '}';
+        return "Advertisement{" + "id=" + id
+                + ", description='" + description + '\''
+                + ", createDate=" + createDate
+                + ", car=" + car
+                + ", isClose=" + close + '}';
     }
 }

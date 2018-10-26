@@ -39,4 +39,6 @@ public interface Store {
     List<Advertisement> getAllAd();
     List<User> getAllUsers();
 
+    List<Advertisement> findAd(Advertisement ad, int priceFrom, int priceTo);
+
 }
