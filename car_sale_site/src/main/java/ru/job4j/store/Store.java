@@ -26,8 +26,6 @@ public interface Store {
     Advertisement addAd(Advertisement ad);
     User addUser(User user);
 
-    User checkUser(User user);
-
     List<Car> getAllCars();
     List<CarMark> getAllMarks();
     List<CarBodyType> getAllBodyTypes();
@@ -40,5 +38,8 @@ public interface Store {
     List<User> getAllUsers();
 
     List<Advertisement> findAd(Advertisement ad, int priceFrom, int priceTo);
+    User checkUser(User user);
 
+    boolean deleteAd(Advertisement ad);
+    boolean closeAd(Advertisement ad);
 }

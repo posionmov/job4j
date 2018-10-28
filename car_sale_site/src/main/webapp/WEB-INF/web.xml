@@ -13,13 +13,13 @@
 
     <!--Servlet For Getting All Ads-->
     <servlet>
-        <servlet-name>MainPageServlet</servlet-name>
-        <servlet-class>ru.job4j.servlets.MainPageServlet</servlet-class>
+        <servlet-name>ListAdsServlet</servlet-name>
+        <servlet-class>ru.job4j.servlets.ListAdsServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>MainPageServlet</servlet-name>
+        <servlet-name>ListAdsServlet</servlet-name>
         <url-pattern>/list</url-pattern>
     </servlet-mapping>
 
@@ -69,6 +69,19 @@
     <servlet-mapping>
         <servlet-name>SearchServlet</servlet-name>
         <url-pattern>/search</url-pattern>
+    </servlet-mapping>
+
+
+    <!--Test Servlet For Uploading File-->
+    <servlet>
+        <servlet-name>PictureServlet</servlet-name>
+        <servlet-class>ru.job4j.servlets.PictureServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PictureServlet</servlet-name>
+        <url-pattern>/saveFile</url-pattern>
     </servlet-mapping>
 
 </web-app>

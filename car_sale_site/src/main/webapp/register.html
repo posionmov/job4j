@@ -4,44 +4,10 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/register.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style>
-        body {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .mainDiv {
-            width: 400px;
-            height: 400px;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 10px;
-            background-color: rgba(0, 0, 255, 0.32);
-        }
-    </style>
-
-    <script>
-        function register() {
-            $.ajax({
-                url: "./reg",
-                method: "post",
-                data: {
-                    name : document.getElementById("name").value,
-                    login : document.getElementById("login").value,
-                    password : document.getElementById("password").value,
-                    email : document.getElementById("email").value
-                },
-                success: function (data) {
-                    if (JSON.parse(data)["add"] == "success") {
-                        window.close();
-                    } else {
-                        alert("Не верный логин или пароль");
-                    }
-                }
-            });
-        }
-    </script>
+    <script src="js/scripts.js"></script>
 </head>
 <body>
 
@@ -63,8 +29,7 @@
             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
             <input id="email" type="email" class="form-control" placeholder="E-mail">
         </div>
-        <button type="button" style="margin-top: 10px; width: 200px; margin-left: 90px" class="btn btn-default" onclick="register()">Зарегистрироваться</button>
-
+        <button type="button" class="btn btn-default btnReg" onclick="register()">Зарегистрироваться</button>
     </div>
 </form>
 

@@ -9,14 +9,26 @@ import java.sql.Timestamp;
 /**
  * Класс, описыващий модель обьявлений на сайте
  * @author Galanov Sergey
- * @since
+ * @since 28.10.2018
  * @version 1.0
  */
 public class Advertisement {
 
+    /**
+     * Поля класса:
+     *      id
+     *      описание (имя)
+     *      дата создания
+     *      статус закрытия (boolean)
+     *      путь до картинки обьявления
+     *      обьект класса User
+     *      обьект класса Car
+     */
     private int id;
     private String description;
     private Timestamp createDate;
+    private boolean close;
+    private String pathToImage;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
@@ -24,16 +36,24 @@ public class Advertisement {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Car car;
 
-    private boolean close;
-
+    /**
+     * Дефлоный конструктор класса
+     */
     public Advertisement() {
 
     }
 
+    /**
+     * Конструктор класса с полем id
+     * @param id
+     */
     public Advertisement(int id) {
         this.id = id;
     }
 
+    /**
+     * Блок геттеров и сеттеров
+     */
     public int getId() {
         return id;
     }
@@ -86,6 +106,18 @@ public class Advertisement {
         return close;
     }
 
+    public String getPathToImage() {
+        return pathToImage;
+    }
+
+    public void setPathToImage(String pathToImage) {
+        this.pathToImage = pathToImage;
+    }
+
+    /**
+     * Переопределенный метод toString()
+     * @return строка, описывающая всет екущие поля обьекта данного класса
+     */
     @Override
     public String toString() {
         return "Advertisement{" + "id=" + id

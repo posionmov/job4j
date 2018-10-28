@@ -12,11 +12,27 @@ import ru.job4j.models.cars.*;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Класс-синглтон для работы с БД
+ * @author Galanov Sergey
+ * @since 28.10.2018
+ * @version 1.0
+ */
 public class DbStore implements Store {
 
+    /**
+     * Статические final поля класса:
+     *      фабрика подключений
+     *      обьект данного класса
+     */
     private final static SessionFactory SOURCE = new Configuration().configure().buildSessionFactory();
     public final static DbStore INSTANCE = new DbStore();
 
+    /**
+     * Метод добавления модели автомобиля
+     * @param model
+     * @return
+     */
     @Override
     public int addModel(CarModel model) {
         return this.tx(session -> {
@@ -25,6 +41,11 @@ public class DbStore implements Store {
         });
     }
 
+    /**
+     * Метод добавления кузова автомобиля
+     * @param bodyType - кузов автомобиля
+     * @return id добавленного кузова
+     */
     @Override
     public int addBody(CarBodyType bodyType) {
         return this.tx(session -> {
@@ -33,6 +54,11 @@ public class DbStore implements Store {
         });
     }
 
+    /**
+     * Метод добавления коробки передач автомобиля
+     * @param transmission - коробка передач автомобиля
+     * @return id добавленной коробки передач
+     */
     @Override
     public int addTransmission(CarTransmission transmission) {
         return this.tx(session -> {
@@ -41,6 +67,11 @@ public class DbStore implements Store {
         });
     }
 
+    /**
+     * Метод добавления двигателя
+     * @param engine - двигатель
+     * @return id добавленного двигателя
+     */
     @Override
     public int addEngine(CarEngine engine) {
         return this.tx(session -> {
@@ -49,6 +80,11 @@ public class DbStore implements Store {
         });
     }
 
+    /**
+     * Мтод добавления привода
+     * @param drive - привод
+     * @return id добавленного привода
+     */
     @Override
     public int addDrive(CarDrive drive) {
         return this.tx(session -> {
@@ -57,6 +93,11 @@ public class DbStore implements Store {
         });
     }
 
+    /**
+     * Метод добавления цвета автомобиля
+     * @param carColor - цвет автомобиля
+     * @return id добавленного цвета
+     */
     @Override
     public int addCarColor(CarColor carColor) {
         return this.tx(session -> {
@@ -65,6 +106,11 @@ public class DbStore implements Store {
         });
     }
 
+    /**
+     * Метод добавления марки автомобиля
+     * @param mark - марка автомобиля для добавления
+     * @return id добавленной марки автомобиля
+     */
     @Override
     public int addMark(CarMark mark) {
         return this.tx(session -> {
@@ -73,6 +119,11 @@ public class DbStore implements Store {
         });
     }
 
+    /**
+     * Метод добавления права доступа
+     * @param role - право доступа на добавление
+     * @return id добавленного права доступа
+     */
     @Override
     public int addRole(Role role) {
         return this.tx(session -> {
@@ -81,6 +132,11 @@ public class DbStore implements Store {
         });
     }
 
+    /**
+     * Метод добавления автомобиля
+     * @param car - автомобиль для добавления
+     * @return добавленный автомобиль
+     */
     @Override
     public Car addCar(Car car) {
         return this.tx(session -> {
@@ -89,14 +145,41 @@ public class DbStore implements Store {
         });
     }
 
+    /**
+     * Метод добавления обьявления
+     * @param ad - обьявление для добавления
+     * @return созданное обьявление
+     */
     @Override
     public Advertisement addAd(Advertisement ad) {
-        return this.tx(session -> {
+        Advertisement result = this.tx(session -> {
             session.save(ad);
             return ad;
         });
+        result = this.addPathToImage(result);
+        return result;
     }
 
+    /**
+     * Приватный метод добавления пути к картинке к обьявлению
+     * @param ad - обьявление, в которое необходимо добавить путь до картинки на сервере
+     * @return обновленное обьявление
+     */
+    private Advertisement addPathToImage(Advertisement ad) {
+        ad.setPathToImage("/images/" + ad.getId() + ".jpg");
+        Session session = SOURCE.openSession();
+        session.beginTransaction();
+        session.update(ad);
+        session.getTransaction().commit();
+        session.close();
+        return ad;
+    }
+
+    /**
+     * Метод добавления пользователя
+     * @param user - пользователь для добавления
+     * @return созданный пользователь
+     */
     @Override
     public User addUser(User user) {
         return this.tx(session -> {
@@ -105,7 +188,11 @@ public class DbStore implements Store {
         });
     }
 
-    // Метод проверки существования пользователя
+    /**
+     * Метод проверки существования пользователя в БД
+     * @param user пользователь для проверки
+     * @return true если пользователь существует
+     */
     @Override
     public User checkUser(User user) {
         User result = null;
@@ -121,56 +208,159 @@ public class DbStore implements Store {
         return result;
     }
 
+    /**
+     * Метод удаления обьявления из БД
+     * @param ad - обьявление для удаления
+     * @return true если обьявление удачно удалено
+     */
+    @Override
+    public boolean deleteAd(Advertisement ad) {
+        boolean result = false;
+        Session session = SOURCE.openSession();
+        session.beginTransaction();
+        try {
+            ad = session.get(Advertisement.class, ad.getId());
+            session.delete(ad);
+            session.delete(ad.getCar());
+            result = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = false;
+        } finally {
+            if (!result) {
+                session.getTransaction().rollback();
+            } else {
+                session.getTransaction().commit();
+            }
+            session.close();
+        }
+        return result;
+    }
+
+    /**
+     * Метод закрытия обьявления
+     * @param ad - обьявление для закрытия
+     * @return true если обьявление удачно закрыто
+     */
+    @Override
+    public boolean closeAd(Advertisement ad) {
+        boolean result = false;
+        Session session = SOURCE.openSession();
+        session.beginTransaction();
+        try {
+            ad = session.get(Advertisement.class, ad.getId());
+            ad.setClose(true);
+            result = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (!result) {
+                session.getTransaction().rollback();
+            } else {
+                session.getTransaction().commit();
+            }
+            session.close();
+        }
+        return result;
+    }
+
+    /**
+     * Метод получения всех автомобилей
+     * @return коллекция автомобилей
+     */
     @Override
     public List<Car> getAllCars() {
         return tx(session -> session.createQuery("from Car ").list());
     }
 
+    /**
+     * Метод получения всех марок автомобилей
+     * @return коллекция марок автомобилей
+     */
     @Override
     public List<CarMark> getAllMarks() {
         return tx(session -> session.createQuery("from CarMark ").list());
     }
 
+    /**
+     * Метод получения всех кузовов автомобилей
+     * @return коллекция типов кузовов
+     */
     @Override
     public List<CarBodyType> getAllBodyTypes() {
         return tx(session -> session.createQuery("from CarBodyType ").list());
     }
 
+    /**
+     * Метод получения всех коробок передач
+     * @return коллекция коробок передач
+     */
     @Override
     public List<CarTransmission> getAllTransmissions() {
         return tx(session -> session.createQuery("from CarTransmission ").list());
     }
 
+    /**
+     * Метод получения всех двигателей автомобилей
+     * @return коллекция двигателей
+     */
     @Override
     public List<CarEngine> getAllEngines() {
         return tx(session -> session.createQuery("from CarEngine ").list());
     }
 
+    /**
+     * Метод получения всех приводов автомобилей
+     * @return коллекция приводов
+     */
     @Override
     public List<CarDrive> getAllDrives() {
         return tx(session -> session.createQuery("from CarDrive ").list());
     }
 
+    /**
+     * Метод получения всех цветов автомобилей
+     * @return коллекция цветов автомобилей
+     */
     @Override
     public List<CarColor> getAllColors() {
         return tx(session -> session.createQuery("from CarColor ").list());
     }
 
+    /**
+     * Метод получения всех ролей
+     * @return коллекция ролей
+     */
     @Override
     public List<Role> getAllRoles() {
         return tx(session -> session.createQuery("from Role ").list());
     }
 
+    /**
+     * Метод получения всех обьявлений
+     * @return коллекция обьявлений
+     */
     @Override
     public List<Advertisement> getAllAd() {
         return tx(session -> session.createQuery("from Advertisement ").list());
     }
 
+    /**
+     * Метод получения всех пользователей
+     * @return коллекция пользователей
+     */
     @Override
     public List<User> getAllUsers() {
         return tx(session -> session.createQuery("from User ").list());
     }
 
+    /**
+     * Метод поиска по обьявлениям
+     * @param ad - обьявление с заполненными полями пользователем
+     * @param priceFrom - цена от
+     * @param priceTo - цена до
+     * @return коллекция найденных обьявлений
+     */
     @Override
     public List<Advertisement> findAd(Advertisement ad, int priceFrom, int priceTo) {
         List<Advertisement> result = null;
@@ -191,19 +381,13 @@ public class DbStore implements Store {
         query += priceTo != 0 ? " ad.car.price <= " + priceTo + " and" : "";
         query = query.substring(0, query.length() - 3);
         String finalQuery = query;
-
-        System.out.println("query = " + query);
-
         List dbData = this.tx(session -> {
             Query res = session.createQuery(finalQuery);
             return res.list();
         });
         result = dbData;
-
         return result;
     }
-
-
 
     /**
      * Метод, принимающий в себя лямбда выражение и производящий её выполненеи

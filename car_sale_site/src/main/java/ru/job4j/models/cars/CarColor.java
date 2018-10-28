@@ -1,17 +1,39 @@
 package ru.job4j.models.cars;
 
+/**
+ * Класс-модель цвета автомобиля
+ * @author Galanov Sergey
+ * @since 28.10.2018
+ * @version 1.0
+ */
 public class CarColor {
+
+    /**
+     * Поля класса:
+     *      id
+     *      описание (имя)
+     */
     private int id;
     private String descr;
 
+    /**
+     * Дефлоный конструктор класса
+     */
     public CarColor() {
 
     }
 
+    /**
+     * Конструктор класса с полем id
+     * @param id
+     */
     public CarColor(int id) {
         this.id = id;
     }
 
+    /**
+     * Блок геттеров и сеттеров
+     */
     public int getId() {
         return id;
     }
@@ -28,6 +50,10 @@ public class CarColor {
         this.descr = descr;
     }
 
+    /**
+     * Переопределенный метод toString()
+     * @return строка, описывающая всет екущие поля обьекта данного класса
+     */
     @Override
     public String toString() {
         return "CarBodyType{" + "id=" + id

@@ -1,10 +1,31 @@
 package ru.job4j.models.cars;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.awt.*;
-
+/**
+ * Класс-модель автомобиля
+ * @author Galanov Sergey
+ * @since 28.10.2018
+ * @version 1.0
+ */
 public class Car {
+
+    /**
+     * Поля класса:
+     *      id автомобиля в бд
+     *      название
+     *      год выпуска
+     *      пробег
+     *      обьем двигателя
+     *      мощность двигателя
+     *      леворульный (да, нет)
+     *      цена
+     *      тип кузова
+     *      марка автомобиля
+     *      модель автомобиля
+     *      коробка передач
+     *      тип двигателя (бензин, дизель и тп)
+     *      привод автомобиля (передний, задний, полный)
+     *      цвет машины
+     */
     private int id;                         // id автомобиля в бд
     private String descr;                   // название
     private int yearOfManufactured;         // год выпуска
@@ -13,15 +34,33 @@ public class Car {
     private float power;                    // мощность двигателя
     private boolean leftRudder;             // леворульный (да, нет)
     private float price;                    // цена
-
     private CarBodyType bodyType;           // тип кузова
     private CarMark mark;                   // марка автомобиля
     private CarTransmission transmission;   // коробка передач
     private CarEngine engine;               // тип двигателя (бензин, дизель и тп)
     private CarDrive drive;                 // привод автомобиля (передний, задний, полный)
     private CarColor carColor;              // цвет машины
-    private CarModel carModel;
+    private CarModel carModel;              // модель автомобиля
 
+    /**
+     * Дефлоный конструктор класса
+     */
+    public Car() {
+
+    }
+
+    /**
+     * Конструктор класса с полем id
+     * @param id
+     */
+    public Car(int id) {
+        this.id = id;
+    }
+
+
+    /**
+     * Блок геттеров и сеттеров
+     */
     public int getId() {
         return id;
     }
@@ -142,6 +181,10 @@ public class Car {
         this.carModel = carModel;
     }
 
+    /**
+     * Переопределенный метод toString()
+     * @return строка, описывающая всет екущие поля обьекта данного класса
+     */
     @Override
     public String toString() {
         return "Car{" + "id=" + id

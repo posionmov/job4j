@@ -142,31 +142,33 @@ public class Test {
 //        DbStore.INSTANCE.addCar(car);
 //
 //
-//        // Добавление обьявления
+        // Добавление обьявления
 //        Advertisement ad = new Advertisement();
 //        ad.setDescription("test ad");
 //        ad.setCreateDate(new Timestamp(System.currentTimeMillis()));
-//        ad.setCar(car);
-//        ad.setUser(user);
+//        ad.setCar(new Car(1));
+//        ad.setUser(new User(1));
 //        ad.setClose(false);
 //        DbStore.INSTANCE.addAd(ad);
-//
+
 //        List<Advertisement> ads = DbStore.INSTANCE.getAllAd();
 //        ObjectMapper mapper = new ObjectMapper();
 //        Map<String, Object> res = new LinkedHashMap<>();
 //        res.put("res", ads);
 //        System.out.println(mapper.writeValueAsString(res));
 
-        SessionFactory factory = new Configuration().configure().buildSessionFactory();
-        Session session = factory.openSession();
+//        SessionFactory factory = new Configuration().configure().buildSessionFactory();
+//        Session session = factory.openSession();
+//
+//        Query query = session.createQuery("from User where login = :login and password = :password");
+//        query.setParameter("login", "login");
+//        query.setParameter("password", "password1");
+//        List list = query.list();
+//        session.close();
 
-        Query query = session.createQuery("from User where login = :login and password = :password");
-        query.setParameter("login", "login");
-        query.setParameter("password", "password1");
-        List list = query.list();
-        session.close();
+//        System.out.println(list.size());
 
-        System.out.println(list.size());
+//        DbStore.INSTANCE.deleteAd(new Advertisement(21));
 
     }
 }

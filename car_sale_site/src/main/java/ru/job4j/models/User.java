@@ -8,13 +8,24 @@ import java.util.List;
 /**
  * Класс, описывающий модель пользователей сайтом
  * @author Galanov Sergey
- * @since
+ * @since 28.10.2018
  * @version 1.0
  */
 public class User {
 
+    /**
+     * Поля класса:
+     *      id
+     *      описание (имя)
+     *      логин
+     *      пароль
+     *      обьект класса Role (роль)
+     *      коллекция обьявлений
+     *      e-mail
+     */
     private int id;
     private String name;
+    private String email;
 
     @JsonIgnore
     private String login;
@@ -28,16 +39,24 @@ public class User {
     @JsonIgnore
     private List<Advertisement> advertisements;
 
-    private String email;
-
+    /**
+     * Дефлоный конструктор класса
+     */
     public User() {
 
     }
 
+    /**
+     * Конструктор класса с полем id
+     * @param id
+     */
     public User(int id) {
         this.id = id;
     }
 
+    /**
+     * Блок геттеров и сеттеров
+     */
     public int getId() {
         return id;
     }
@@ -94,6 +113,10 @@ public class User {
         this.email = email;
     }
 
+    /**
+     * Переопределенный метод toString()
+     * @return строка, описывающая всет екущие поля обьекта данного класса
+     */
     @Override
     public String toString() {
         return "User{" + "id=" + id
