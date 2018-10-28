@@ -45,6 +45,10 @@ $.ajax({
     }
 });
 
+function showToday() {
+    fillAds(false, true)
+}
+
 // Метод наполнения модала данными из обьявления
 function fillModal(adId) {
     document.getElementById("modalMark").innerText = ads[adId]["car"]["mark"]["descr"];
@@ -66,11 +70,14 @@ function fillModal(adId) {
 }
 
 // Метод наполнения таблицы обьявлений
-function fillAds(showAll) {
+function fillAds(showAll, showToday) {
+    var curDate = new Date();
     var tableAds = document.getElementById("tableBody");
     tableAds.innerHTML = "";
     for (var i = 0; i < ads.length; i++) {
-        if (showAll || !ads[i]["close"]) {
+        if (showAll || (showToday && (curDate.getFullYear() === new Date(ads[i]["createDate"]).getFullYear())
+                    && (curDate.getMonth() === new Date(ads[i]["createDate"]).getMonth())
+                    && (curDate.getUTCDate() === new Date(ads[i]["createDate"]).getUTCDate())) || !ads[i]["close"]) {
             tableAds.innerHTML += "<tr><td>" + ads[i]["id"] + "</td>\n"
                 + "<td><img src=\"." + ads[i]["pathToImage"] + "\" width='220' height='117' class='adPicture'></td>"
                 + "<td> "

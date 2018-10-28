@@ -58,7 +58,7 @@ public enum  ValidateService implements Store {
     }
 
     /**
-     * Мтод добавления привода
+     * Метод добавления привода
      * @param drive - привод
      * @return id добавленного привода
      */
