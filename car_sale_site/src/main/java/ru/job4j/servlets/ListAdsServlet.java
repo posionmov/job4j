@@ -63,7 +63,7 @@ public class ListAdsServlet extends HttpServlet {
         res.put("colors", colors);
         res.put("bodies", bodies);
         res.put("login", req.getSession().getAttribute("logged") != null);
-        res.put("curUser", req.getSession().getAttribute("logged")!= null ? req.getSession().getAttribute("logged") : new User(0));
+        res.put("curUser", req.getSession().getAttribute("logged") != null ? req.getSession().getAttribute("logged") : new User(0));
         resp.getWriter().append(mapper.writeValueAsString(res)).flush();
     }
 
